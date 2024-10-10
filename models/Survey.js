@@ -7,21 +7,39 @@ const surveySchema = new Schema({
   age: { type: Number, required: true },
   country: { type: String, required: true },
   education: { type: String, required: false },
-  ethnicity: { type: String, required: false },
+  ethnicity: { type: String, enum: ['Greek', 'Italian', 'Spaniard', 'Turks', 'North_African', 'Middle Eastern', 'Sicilians'], required: true },
   dietDescription: { type: String, enum: ['Vegetarian', 'Non-Vegetarian', 'Vegan', 'Others'], required: true },
-  householdPurchasedFood: [{ type: String }], // array of strings for selected food
+  household: [{ type: String }], // array of strings for selected food
   readyToEatFood: [String],
   foodConsumptionFrequency: [{
-    foodItem: { type: String },
+    dietDescription: { type: String, enum: ['Home_Made', 'Ordered'], required: true },
     period: { type: String, enum: ['Day', 'Week', 'Month'] },
     unit: { type: String, enum: ['Gram', 'Litre', 'Number'] },
     value: { type: Number }
 }],
-  traditionalEatingHabits: [Boolean],
-  newEatingHabits: [Boolean],
-  medicalHistory: [String],
-  unit: { type: String, enum: ['Cold', 'Hot', 'Moderate'] },
+  traditionalEatingHabits: {type: Boolean},
+  newEatingHabits: {type: Boolean},
+  medicalHistory: {type: String},
+  weather: { type: String, enum: ['Cold', 'Hot', 'Moderate'] },
   physicalActivity: { type: Boolean, required: true }
+});
+
+surveySchema.index({
+  name: 'text',
+  gender: 'text',
+  country: 'text',
+  education: 'text',
+  ethnicity: 'text',
+  dietDescription: 'text',
+  household: 'text',
+  readyToEatFood: 'text',
+  foodConsumptionFrequency: 'text',
+  traditionalEatingHabits: 'text',
+  newEatingHabits: 'text',
+  medicalHistory: 'text',
+  weather: 'text',
+  physicalActivity:'text',
+  // Add more fields if needed
 });
 
 module.exports = mongoose.model('Survey', surveySchema);
