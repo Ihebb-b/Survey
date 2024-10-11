@@ -3,10 +3,16 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const surveyRoutes = require('./routes/surveyRoutes');
 const statisticsRoutes = require('./routes/statisticsRoutes');
+const searchRoutes = require('./routes/searchRoutes');
+const userRoutes = require('./routes/userRoutes');
+
 
 const connectDB = require('./config/db');
 
-dotenv.config();
+require('dotenv').config();
+
+
+//dotenv.config();
 
 const app = express();
 
@@ -20,8 +26,9 @@ connectDB();
 
 // Routes
 app.use('/api/surveys', surveyRoutes);
-app.use('/api/statistics', statisticsRoutes); // Register statistics route
-
+app.use('/api/statistics', statisticsRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/user', userRoutes);
 // Set up a root route
 app.get('/', (req, res) => {
   res.send('API is running...');
