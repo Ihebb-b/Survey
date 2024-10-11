@@ -173,5 +173,4 @@ module.exports = {
   getPopularFoodChoices,
   getPhysicalActivityRatio,
   getSurveyStatistics,
-  getAllSuggestions,
 };
