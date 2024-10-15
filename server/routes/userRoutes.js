@@ -14,7 +14,8 @@ const {
 router.post('/auth', authUser);
 router.post('/register', register);
 router.post('/logout', logoutUser);
-router.route('/profile').get(protect, getUserProfile)
-                        .put(protect, UpdateUserProfile);
+router.route('/profile')
+.get(protect, getUserProfile)
+.put(protect, UpdateUserProfile);
 
 module.exports = router;
