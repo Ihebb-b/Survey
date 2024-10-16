@@ -136,7 +136,7 @@ const Survey = () => {
         toast.success("Survey submitted successfully!");
         setTimeout(() => {
           navigate("/");
-        }, 1000); // Navigate after 1 second
+        }, 2000); // Navigate after 1 second
       }
     } catch (err) {
       console.error("Error caught: ", err);
