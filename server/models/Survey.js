@@ -25,8 +25,8 @@ const surveySchema = new Schema({
      'Manakish', 'Lahmacun', 'Koshari', 'Other'] }],
   foodConsumptionFrequency: [{
     dietDescription: { type: String, enum: ['Home_Made', 'Ordered'], required: true },
-    period: { type: String, enum: ['Day', 'Week', 'Month'] },
-    unit: { type: String, enum: ['Gram', 'Litre', 'Number'] },
+    period: { type: String, enum: ['Day', 'Week', 'Month'], required: true },
+    unit: { type: String, enum: ['Gram', 'Litre', 'Number'], required: true },
     value: { type: Number }
 }],
   traditionalEatingHabits: {type: Boolean},

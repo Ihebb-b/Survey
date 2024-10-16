@@ -34,7 +34,6 @@ const Survey = () => {
   const [isError, setIsError] = useState(false);
 
   const navigate = useNavigate();
-
   const [createSurvey, { isLoading }] = useCreateSurveyMutation();
 
   const handleChange = (e) => {
@@ -92,11 +91,28 @@ const Survey = () => {
     if (!formData.gender) newErrors.gender = "Gender is required.";
     if (!formData.age) newErrors.age = "Age is required.";
     if (!formData.country) newErrors.country = "Country is required.";
+    if (!formData.education) newErrors.education = "Education is required.";
     if (!formData.ethnicity) newErrors.ethnicity = "Ethnicity is required.";
     if (!formData.dietDescription)
       newErrors.dietDescription = "Diet description is required.";
+    
+    formData.foodConsumptionFrequency.forEach((item, index) => {
+      if (!item.dietDescription)
+        newErrors[`foodDescription-${index}`] = `Diet description for item ${
+          index + 1
+        } is required.`;
+      if (!item.period)
+        newErrors[`period-${index}`] = `Period for item ${
+          index + 1
+        } is required.`;
+      if (!item.unit)
+        newErrors[`unit-${index}`] = `Unit for item ${index + 1} is required.`;
+      if (!item.value)
+        newErrors[`value-${index}`] = `Value for item ${
+          index + 1
+        } is required.`;
+    });
 
-    // Check if any errors exist
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -142,8 +158,8 @@ const Survey = () => {
             value={formData.name}
             onChange={handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
-
           />
+          {errors.name && <span className="text-red-500">{errors.name}</span>}
         </label>
 
         {/* Gender */}
@@ -154,13 +170,15 @@ const Survey = () => {
             value={formData.gender}
             onChange={handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
-            
           >
             <option value="">Select...</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
             <option value="Other">Other</option>
           </select>
+          {errors.gender && (
+            <span className="text-red-500">{errors.gender}</span>
+          )}
         </label>
 
         {/* Age */}
@@ -171,7 +189,6 @@ const Survey = () => {
             value={formData.age}
             onChange={handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
-            
           >
             <option value="">Select...</option>
             <option value="Under 20 years">Under 20 years</option>
@@ -181,6 +198,7 @@ const Survey = () => {
             <option value="Between 50-60 years">Between 50-60 years</option>
             <option value="Over 60 years">Over 60 years</option>
           </select>
+          {errors.age && <span className="text-red-500">{errors.age}</span>}
         </label>
 
         {/* Country */}
@@ -191,7 +209,6 @@ const Survey = () => {
             value={formData.country}
             onChange={handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
-            
           >
             <option value="">Select...</option>
             <option value="Tunisia">Tunisia</option>
@@ -217,6 +234,8 @@ const Survey = () => {
             <option value="Slovenia">Slovenia</option>
             <option value="Spain">Spain</option>
           </select>
+          {errors.country && <span className="text-red-500">{errors.country}</span>}
+
         </label>
 
         {/* Education */}
@@ -236,6 +255,7 @@ const Survey = () => {
             <option value="Higher education">Higher education</option>
             <option value="Technical education">Technical education</option>
           </select>
+          {errors.education && <span className="text-red-500">{errors.education}</span>}
         </label>
 
         {/* Ethnicity */}
@@ -246,7 +266,6 @@ const Survey = () => {
             value={formData.ethnicity}
             onChange={handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
-            
           >
             <option value="">Select...</option>
             <option value="Greek">Greek</option>
@@ -257,6 +276,7 @@ const Survey = () => {
             <option value="Middle Eastern">Middle Eastern</option>
             <option value="Sicilians">Sicilians</option>
           </select>
+          {errors.ethnicity && <span className="text-red-500">{errors.ethnicity}</span>}
         </label>
 
         {/* Diet Description */}
@@ -273,6 +293,7 @@ const Survey = () => {
             <option value="Non-Vegetarian">Non-Vegetarian</option>
             <option value="Both">Both</option>
           </select>
+          {errors.dietDescription && <span className="text-red-500">{errors.dietDescription}</span>}
         </label>
 
         <h3 className="text-lg font-semibold mt-4">
@@ -284,7 +305,7 @@ const Survey = () => {
           <span className="font-bold mb-2 block">Household:</span>
           <div
             className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
-            style={{ maxHeight: "200px" }} // Adjust height as needed
+            style={{ maxHeight: "200px" }} 
           >
             {[
               "Shakshouka",
@@ -326,7 +347,7 @@ const Survey = () => {
         <label className="block mt-4">
           <span className="font-bold mb-2 block">Ready-to-Eat Food:</span>
           <div
-            className="grid grid-cols-2 gap-2 h-32 overflow-y-auto border p-2 rounded-md"
+            className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
             style={{ maxHeight: "160px" }} // Adjust height as needed
           >
             {[
@@ -380,12 +401,12 @@ const Survey = () => {
                   )
                 }
                 className="border border-gray-300 px-4 py-2 rounded-md w-full"
-                
               >
                 <option value="">Select...</option>
                 <option value="Home_Made">Home Made</option>
                 <option value="Ordered">Ordered</option>
               </select>
+              {errors.dietDescription && <span className="text-red-500">{errors.dietDescription}</span>}
             </div>
 
             {/* Period */}
@@ -406,6 +427,8 @@ const Survey = () => {
                 <option value="Week">Week</option>
                 <option value="Month">Month</option>
               </select>
+              {errors.period && <span className="text-red-500">{errors.period}</span>}
+
             </div>
 
             {/* Unit */}
@@ -549,6 +572,9 @@ const Survey = () => {
             <option value="Skin diseases">Skin diseases</option>
             <option value="Other">Other</option>
           </select>
+          {errors.medicalHistory && (
+                  <span className="text-red-500">{errors.medicalHistory}</span>
+                )}
         </label>
 
         {/* Weather */}
