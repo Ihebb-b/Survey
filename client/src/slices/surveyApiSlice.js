@@ -1,11 +1,11 @@
 import { apiSlice } from "./apiSlice";
-const USERS_URL = "/api/user";
+const USERS_URL = "/api/surveys";
 
 export const surveyApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createSurvey: builder.mutation({
       query: (newSurvey) => ({
-        url: `${USERS_URL}/survey`,
+        url: `${USERS_URL}/create`,
         method: "POST",
         body: newSurvey,
       }),

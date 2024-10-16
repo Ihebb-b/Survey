@@ -4,13 +4,25 @@ const Schema = mongoose.Schema;
 const surveySchema = new Schema({
   name: { type: String, required: true },
   gender: { type: String, enum: ['Male', 'Female', 'Other'], required: true },
-  age: { type: Number, required: true },
-  country: { type: String, required: true },
-  education: { type: String, required: false },
+  age: { type: String, enum: ['Under 20 years','Between 20-30 years', 'Between 30-40 years',
+     'Between 40-50 years', 'Between 50-60 years', 'Over 60 years'  ] ,required: true },
+  country: { type: String, enum: ['Algeria', 'Egypt', 'Morocco', 'Tunisia', 'Libya', 'Lebanon', 'Palestine',
+     'Syria', 'Turkey', 'Albania', 'Bosnia', 'Herzegovina', 'Croatia', 'Cyprus',
+      'France', 'Greece', 'Italy', 'Malta', 'Monaco', 'Montenegro', 'Slovenia', 'Spain'], required: true },
+  education: { type: String, enum:  [ 'None', 'Primary education', 'Secondary education',
+     'Higher education', 'Technical education'], required: false },
   ethnicity: { type: String, enum: ['Greek', 'Italian', 'Spaniard', 'Turks', 'North_African', 'Middle Eastern', 'Sicilians'], required: true },
-  dietDescription: { type: String, enum: ['Vegetarian', 'Non-Vegetarian', 'Vegan', 'Others'], required: true },
-  household: [{ type: String }], // array of strings for selected food
-  readyToEatFood: [String],
+  dietDescription: { type: String, enum: ['Vegetarian', 'Non-Vegetarian', 'Both'], required: true },
+  household: [{ type: String, enum: [ 'Shakshouka', 'Couscous', 
+    'Moroccan Tagine', 'Musakhan', 'Harira',
+     'Horiatiki (Greek salad)', 
+   'Moussaka', 'Spanakopita', 'Melomakarono', 
+   'Manti', 'Borek', 'Kofte', 'Risotto', 
+   'Timballo', 'Polenta', 'Baba Ghanoush', 'Hummus', 
+   'Other'] }],
+  readyToEatFood: [{ type: String, enum: ['Pizza', 'Sandwiches', 
+    'Burgers', 'Wraps', 'Paninis', 'Mlewi', 'Chappati',
+     'Manakish', 'Lahmacun', 'Koshari', 'Other'] }],
   foodConsumptionFrequency: [{
     dietDescription: { type: String, enum: ['Home_Made', 'Ordered'], required: true },
     period: { type: String, enum: ['Day', 'Week', 'Month'] },
@@ -19,9 +31,16 @@ const surveySchema = new Schema({
 }],
   traditionalEatingHabits: {type: Boolean},
   newEatingHabits: {type: Boolean},
-  medicalHistory: {type: String},
-  weather: { type: String, enum: ['Cold', 'Hot', 'Moderate'] },
-  physicalActivity: { type: Boolean, required: true }
+  medicalHistory: {type: String, enum: ['None', 'Diabetes', 
+    'Hypertension', 'Heart_Disease', 'Cancer', 
+    'Cardiovascular Disease', 
+    'Obesity', 'Asthma', 'Arthritis', 
+    'Gastrointestinal disorders', 'Metabolic syndrome', 
+    'Skin diseases', 'Tuberculosis', 'Hepatitis', 'Other'], required: false },
+  weather: { type: String, enum: ['Cold', 'Hot', 'Warm', 'Moderate', 'Rainy'], required: true },
+  sportPractice: { type: Boolean },
+  noSportPractice: { type: Boolean }
+
 });
 
 surveySchema.index({
