@@ -12,7 +12,7 @@ const surveySchema = new Schema({
   education: { type: String, enum:  [ 'None', 'Primary education', 'Secondary education',
      'Higher education', 'Technical education'], required: false },
   ethnicity: { type: String, enum: ['Greek', 'Italian', 'Spaniard', 'Turks', 'North_African', 'Middle Eastern', 'Sicilians'], required: true },
-  dietDescription: { type: String, enum: ['Vegetarian', 'Non-Vegetarian', 'Both'], required: true },
+  diet: { type: String, enum: ['Vegetarian', 'Non-Vegetarian', 'Both'], required: true },
   household: [{ type: String, enum: [ 'Shakshouka', 'Couscous', 
     'Moroccan Tagine', 'Musakhan', 'Harira',
      'Horiatiki (Greek salad)', 
@@ -36,7 +36,7 @@ const surveySchema = new Schema({
     'Cardiovascular Disease', 
     'Obesity', 'Asthma', 'Arthritis', 
     'Gastrointestinal disorders', 'Metabolic syndrome', 
-    'Skin diseases', 'Tuberculosis', 'Hepatitis', 'Other'], required: false },
+    'Skin diseases', 'Tuberculosis', 'Hepatitis', 'Other', 'Prefer not to say'], required: false },
   weather: { type: String, enum: ['Cold', 'Hot', 'Warm', 'Moderate', 'Rainy'], required: true },
   sportPractice: { type: Boolean },
   noSportPractice: { type: Boolean }

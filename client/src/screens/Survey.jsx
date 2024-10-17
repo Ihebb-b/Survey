@@ -11,9 +11,9 @@ const Survey = () => {
     country: "",
     education: "",
     ethnicity: "",
-    dietDescription: "",
-    household: "",
-    readyToEatFood: "",
+    diet: "",
+    household: [],
+    readyToEatFood: [],
     foodConsumptionFrequency: [
       {
         dietDescription: "",
@@ -45,13 +45,22 @@ const Survey = () => {
     }));
   };
 
-  const toggleSelection = (fieldName, item) => {
-    setFormData((prevFormData) => {
-      const updatedField = prevFormData[fieldName].includes(item)
-        ? prevFormData[fieldName].filter((i) => i !== item) // Deselect
-        : [...prevFormData[fieldName], item]; // Select
-
-      return { ...prevFormData, [fieldName]: updatedField };
+  const toggleSelection = (field, value) => {
+    setFormData((prevData) => {
+      const selectedValues = prevData[field];
+      if (selectedValues.includes(value)) {
+        // Unselect the value
+        return {
+          ...prevData,
+          [field]: selectedValues.filter((item) => item !== value),
+        };
+      } else {
+        // Select the value
+        return {
+          ...prevData,
+          [field]: [...selectedValues, value],
+        };
+      }
     });
   };
 
@@ -93,24 +102,24 @@ const Survey = () => {
     if (!formData.country) newErrors.country = "Country is required.";
     if (!formData.education) newErrors.education = "Education is required.";
     if (!formData.ethnicity) newErrors.ethnicity = "Ethnicity is required.";
-    if (!formData.dietDescription)
-      newErrors.dietDescription = "Diet description is required.";
-    
+    if (!formData.diet) newErrors.diet = "Diet is required.";
+
+    if (!formData.household.length && !formData.readyToEatFood.length) {
+      newErrors.foodPreference =
+        "You must select at least one option from Household or Ready-to-Eat Food.";
+    }
+
+    if (!formData.traditionalEatingHabits && !formData.newEatingHabits) {
+      newErrors.eatingHabits =
+        "You must select at least one option from Traditional or New Eating Habits.";
+    }
+
     formData.foodConsumptionFrequency.forEach((item, index) => {
       if (!item.dietDescription)
-        newErrors[`foodDescription-${index}`] = `Diet description for item ${
-          index + 1
-        } is required.`;
-      if (!item.period)
-        newErrors[`period-${index}`] = `Period for item ${
-          index + 1
-        } is required.`;
-      if (!item.unit)
-        newErrors[`unit-${index}`] = `Unit for item ${index + 1} is required.`;
-      if (!item.value)
-        newErrors[`value-${index}`] = `Value for item ${
-          index + 1
-        } is required.`;
+        newErrors[`dietDescription-${index}`] = `Diet is required.`;
+      if (!item.period) newErrors[`period-${index}`] = `Period is required.`;
+      if (!item.unit) newErrors[`unit-${index}`] = `Unit is required.`;
+      if (!item.value) newErrors[`value-${index}`] = `Value is required.`;
     });
 
     setErrors(newErrors);
@@ -119,7 +128,13 @@ const Survey = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted", formData); // Log the form data here
+
+    const updatedFormData = {
+      ...formData,
+      household: formData.household.length > 0 ? formData.household : [],
+      readyToEatFood: formData.readyToEatFood.length > 0 ? formData.readyToEatFood : [],
+    };
+    console.log("Form submitted", formData); 
 
     if (!validateForm()) {
       setIsError(true);
@@ -129,20 +144,22 @@ const Survey = () => {
     try {
       const res = await createSurvey(formData).unwrap();
 
-      console.log("Response: ", res); // Inspect the response
+      console.log("Response: ", res); 
 
-      // Simple success toast if response exists (can be adjusted based on your actual response)
       if (res) {
         toast.success("Survey submitted successfully!");
         setTimeout(() => {
           navigate("/");
-        }, 2000); // Navigate after 1 second
+        }, 2000); 
       }
     } catch (err) {
       console.error("Error caught: ", err);
       toast.error(err?.data?.message || err.error || "Submission failed.");
     }
   };
+
+
+
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-6 bg-gray-300 shadow-md rounded-lg">
@@ -234,8 +251,9 @@ const Survey = () => {
             <option value="Slovenia">Slovenia</option>
             <option value="Spain">Spain</option>
           </select>
-          {errors.country && <span className="text-red-500">{errors.country}</span>}
-
+          {errors.country && (
+            <span className="text-red-500">{errors.country}</span>
+          )}
         </label>
 
         {/* Education */}
@@ -249,13 +267,14 @@ const Survey = () => {
           >
             <option value="">Select...</option>
             <option value="None">None</option>
-
             <option value="Primary education">Primary education</option>
             <option value="Secondary education">Secondary education</option>
             <option value="Higher education">Higher education</option>
             <option value="Technical education">Technical education</option>
           </select>
-          {errors.education && <span className="text-red-500">{errors.education}</span>}
+          {errors.education && (
+            <span className="text-red-500">{errors.education}</span>
+          )}
         </label>
 
         {/* Ethnicity */}
@@ -276,15 +295,17 @@ const Survey = () => {
             <option value="Middle Eastern">Middle Eastern</option>
             <option value="Sicilians">Sicilians</option>
           </select>
-          {errors.ethnicity && <span className="text-red-500">{errors.ethnicity}</span>}
+          {errors.ethnicity && (
+            <span className="text-red-500">{errors.ethnicity}</span>
+          )}
         </label>
 
-        {/* Diet Description */}
+        {/* Diet */}
         <label className="block">
-          <span className="font-bold">Diet Description:</span>
+          <span className="font-bold">Diet:</span>
           <select
-            name="dietDescription"
-            value={formData.dietDescription}
+            name="diet"
+            value={formData.diet}
             onChange={handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
@@ -293,7 +314,7 @@ const Survey = () => {
             <option value="Non-Vegetarian">Non-Vegetarian</option>
             <option value="Both">Both</option>
           </select>
-          {errors.dietDescription && <span className="text-red-500">{errors.dietDescription}</span>}
+          {errors.diet && <span className="text-red-500">{errors.diet}</span>}
         </label>
 
         <h3 className="text-lg font-semibold mt-4">
@@ -305,7 +326,7 @@ const Survey = () => {
           <span className="font-bold mb-2 block">Household:</span>
           <div
             className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
-            style={{ maxHeight: "200px" }} 
+            style={{ maxHeight: "200px" }}
           >
             {[
               "Shakshouka",
@@ -329,7 +350,7 @@ const Survey = () => {
             ].map((item) => (
               <button
                 key={item}
-                type="button" // This prevents the button from submitting the form
+                type="button"
                 className={`px-4 py-2 border rounded-md text-center ${
                   formData.household.includes(item)
                     ? "bg-blue-500 text-white"
@@ -348,7 +369,7 @@ const Survey = () => {
           <span className="font-bold mb-2 block">Ready-to-Eat Food:</span>
           <div
             className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
-            style={{ maxHeight: "160px" }} // Adjust height as needed
+            style={{ maxHeight: "160px" }}
           >
             {[
               "Pizza",
@@ -365,7 +386,7 @@ const Survey = () => {
             ].map((item) => (
               <button
                 key={item}
-                type="button" // Prevents form submission
+                type="button"
                 className={`px-4 py-2 border rounded-md text-center ${
                   formData.readyToEatFood.includes(item)
                     ? "bg-blue-500 text-white"
@@ -378,6 +399,9 @@ const Survey = () => {
             ))}
           </div>
         </label>
+        {errors.foodPreference && (
+          <span className="text-red-500">{errors.foodPreference}</span>
+        )}
 
         {/* Food Consumption Frequency */}
         <h3 className="text-lg font-semibold mt-4">
@@ -406,7 +430,11 @@ const Survey = () => {
                 <option value="Home_Made">Home Made</option>
                 <option value="Ordered">Ordered</option>
               </select>
-              {errors.dietDescription && <span className="text-red-500">{errors.dietDescription}</span>}
+              {errors[`dietDescription-${index}`] && (
+                <span className="text-red-500">
+                  {errors[`dietDescription-${index}`]}
+                </span>
+              )}{" "}
             </div>
 
             {/* Period */}
@@ -427,8 +455,11 @@ const Survey = () => {
                 <option value="Week">Week</option>
                 <option value="Month">Month</option>
               </select>
-              {errors.period && <span className="text-red-500">{errors.period}</span>}
-
+              {errors[`period-${index}`] && (
+                <span className="text-red-500">
+                  {errors[`period-${index}`]}
+                </span>
+              )}
             </div>
 
             {/* Unit */}
@@ -449,6 +480,9 @@ const Survey = () => {
                 <option value="Litre">Litre</option>
                 <option value="Number">Number</option>
               </select>
+              {errors[`unit-${index}`] && (
+                <span className="text-red-500">{errors[`unit-${index}`]}</span>
+              )}
             </div>
 
             {/* Value */}
@@ -466,6 +500,9 @@ const Survey = () => {
                 className="border border-gray-300 px-4 py-2 rounded-md w-full"
                 placeholder="Value"
               />
+              {errors[`value-${index}`] && (
+                <span className="text-red-500">{errors[`value-${index}`]}</span>
+              )}
             </div>
 
             {/* Remove Button with Icon */}
@@ -540,6 +577,10 @@ const Survey = () => {
           New Eating Habits
         </label>
 
+        {errors.eatingHabits && (
+          <span className="text-red-500">{errors.eatingHabits}</span>
+        )}
+
         {/* Medical History */}
         <label className="block">
           <span className="font-bold">
@@ -553,6 +594,7 @@ const Survey = () => {
           >
             <option value="">Select...</option>
             <option value="None">None</option>
+            <option value="Prefer not to say">Prefer not to say</option>
             <option value="Diabetes">Diabetes</option>
             <option value="Hypertension">Hypertension</option>
             <option value="Heart Disease">Heart Disease</option>
@@ -573,8 +615,8 @@ const Survey = () => {
             <option value="Other">Other</option>
           </select>
           {errors.medicalHistory && (
-                  <span className="text-red-500">{errors.medicalHistory}</span>
-                )}
+            <span className="text-red-500">{errors.medicalHistory}</span>
+          )}
         </label>
 
         {/* Weather */}
