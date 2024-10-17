@@ -4,10 +4,9 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import FormContainer from "../components/FormContainer";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import  Loader  from "../components/Loader";
+import Loader from "../components/Loader";
 import { useRegisterMutation } from "../slices/userApiSlice";
 import { setCredentials } from "../slices/authSlice";
-
 
 const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -45,8 +44,8 @@ const RegisterScreen = () => {
 
   return (
     <FormContainer>
-<h1 className='text-center text-4xl font-bold mb-4'>Sign Up</h1>
-<Form onSubmit={submitHandler}>
+      <h1 className="text-center text-4xl font-bold mb-4">Sign Up</h1>
+      <Form onSubmit={submitHandler}>
         <Form.Group className="my-2" controlId="name">
           <Form.Label>Name</Form.Label>
           <Form.Control
@@ -95,7 +94,10 @@ const RegisterScreen = () => {
 
         <Row className="py-3">
           <Col>
-            Already registered? <Link to="/login">Login</Link>
+            Already registered?{" "}
+            <Link to="/login" className="border-b border-black">
+              Login
+            </Link>
           </Col>
         </Row>
       </Form>

@@ -12,7 +12,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [ logoutApiCall ] = useLogoutMutation();
+  const [logoutApiCall] = useLogoutMutation();
 
   const logoutHandler = async () => {
     try {
@@ -32,6 +32,18 @@ const Header = () => {
           </LinkContainer>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="mx-auto">
+              <LinkContainer to="/statistics">
+                <Nav.Link className="me-4">Statistics</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/reports">
+                <Nav.Link className="me-4">Reports</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/about">
+                <Nav.Link className="me-4">About</Nav.Link>
+              </LinkContainer>
+            </Nav>
+
             <Nav className="ms-auto">
               {userInfo ? (
                 <>
@@ -51,11 +63,11 @@ const Header = () => {
                       <FaSignInAlt /> Sign In
                     </Nav.Link>
                   </LinkContainer>
-                  <LinkContainer to="/register">
+                  {/* <LinkContainer to="/register">
                     <Nav.Link>
                       <FaSignOutAlt /> Sign Up
                     </Nav.Link>
-                  </LinkContainer>
+                  </LinkContainer> */}
                 </>
               )}
             </Nav>

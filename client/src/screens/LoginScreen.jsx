@@ -64,7 +64,7 @@ const LoginScreen = () => {
 
             <Row className='py-3'>
                 <Col>
-                New Customer? <Link to='/register'>Register</Link>
+                This is your first time? <Link to='/register' className="border-b border-black">Register</Link>
                 </Col>
             </Row>
 
