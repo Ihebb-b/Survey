@@ -6,11 +6,7 @@ import { FaSearch, FaTimes } from "react-icons/fa";
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const {
-    data: allSuggestions,
-    isLoading,
-    error,
-  } = useGetAllSuggestionsQuery();
+  const {data: allSuggestions,isLoading,error} = useGetAllSuggestionsQuery();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,10 +33,6 @@ const Hero = () => {
       setFilteredSuggestions([]);
     }
   }, [searchQuery, allSuggestions]);
-
-  // useEffect(() => {
-  //   setFilteredSuggestions([]);
-  // }, [searchQuery]);
 
   const handleSuggestionClick = (suggestion) => {
     setSearchQuery(suggestion);
@@ -81,12 +73,14 @@ const Hero = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
+
               {filteredSuggestions.length > 0 && (
                 <FaTimes
-                  className="absolute right-14 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                  className="absolute right-28 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer z-20"
                   onClick={() => setSearchQuery("")} 
                 />
-              )}{" "}
+              )}
+              
               {/* Search Button */}
               <button
                 onClick={handleSearch}
