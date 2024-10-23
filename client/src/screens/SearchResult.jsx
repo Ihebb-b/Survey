@@ -8,6 +8,7 @@ const SearchResult = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get("query");
+  
 
   
 

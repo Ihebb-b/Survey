@@ -31,7 +31,7 @@ const advancedSearch = async (req, res) => {
     ageMax,
     country,
     page = 1,
-    limit = 10,
+    limit = 100,
   } = req.query;
 
   let filter = {};

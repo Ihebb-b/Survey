@@ -5,8 +5,13 @@ import { FaSearch, FaTimes } from "react-icons/fa";
 
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState("");
+
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const {data: allSuggestions,isLoading,error} = useGetAllSuggestionsQuery();
+  const {
+    data: allSuggestions,
+    isLoading,
+    error,
+  } = useGetAllSuggestionsQuery();
   const navigate = useNavigate();
   const inputRef = useRef();
 
@@ -37,8 +42,8 @@ const Hero = () => {
   const handleSuggestionClick = (suggestion) => {
     setSearchQuery(suggestion);
     setTimeout(() => {
-      setFilteredSuggestions([]); 
-      inputRef.current.blur();    
+      setFilteredSuggestions([]);
+      inputRef.current.blur();
     }, 0);
   };
 
@@ -66,13 +71,14 @@ const Hero = () => {
           </p>
 
           {/* Search Bar */}
-          <div className="relative mb-4">
-            <div className="relative">
+          <div className="flex justify-center mb-4">
+            <div className="relative w-full max-w-lg">
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+
               <input
                 ref={inputRef}
                 type="text"
-                className="w-full py-3 pl-10 pr-4 border border-gray-300  shadow-sm focus:outline-none focus:ring focus:ring-indigo-500"
+                className="w-full py-2 pl-10 pr-4 border border-gray-300 shadow-sm focus:outline-none focus:ring focus:ring-indigo-500"
                 placeholder="Search statistics..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -81,33 +87,32 @@ const Hero = () => {
               {filteredSuggestions.length > 0 && (
                 <FaTimes
                   className="absolute right-28 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer z-20"
-                  onClick={() => setSearchQuery("")} 
+                  onClick={() => setSearchQuery("")}
                 />
               )}
-              
-              {/* Search Button */}
+
               <button
                 onClick={handleSearch}
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 py-3 px-4 bg-blue-600 text-white text-sm  shadow hover:bg-blue-800 transition duration-300"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 py-2 px-4 bg-blue-600 text-white text-sm shadow hover:bg-blue-800 transition duration-300"
               >
                 Search
               </button>
-            </div>
 
-            {/* Autocomplete Suggestions */}
-            {filteredSuggestions.length > 0 && (
-              <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-2 max-h-40 overflow-auto">
-                {filteredSuggestions.slice(0, 15).map((suggestion, index) => (
-                  <li
-                    key={index}
-                    className="px-4 py-2 hover:bg-blue-500 hover:text-white cursor-pointer"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
-            )}
+              {/* Autocomplete Suggestions */}
+              {filteredSuggestions.length > 0 && (
+                <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-2 max-h-80 overflow-y-auto">
+                  {filteredSuggestions.slice(0, 50).map((suggestion, index) => (
+                    <li
+                      key={index}
+                      className="px-4 py-2 hover:bg-blue-500 hover:text-white cursor-pointer"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
 
           {/* Filter Buttons Section */}
