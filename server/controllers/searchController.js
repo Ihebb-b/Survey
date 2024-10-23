@@ -1,11 +1,11 @@
 const Survey = require("../models/Survey");
 
 const searchStatistics = async (req, res) => {
-  const { query, page = 1, limit = 10 } = req.query; // Get the search query from the URL
+  const { query, page = 1, limit = 30 } = req.query; 
 
   try {
     const results = await Survey.find(
-      { $text: { $search: query } } // MongoDB text search
+      { $text: { $search: query } } 
     )
       .limit(limit * 1) // Convert limit to number
       .skip((page - 1) * limit) // Skip based on current page
@@ -54,8 +54,8 @@ const advancedSearch = async (req, res) => {
 
   try {
     const results = await Survey.find(filter)
-      .limit(limit * 1) // Convert limit to number
-      .skip((page - 1) * limit) // Skip based on current page
+      .limit(limit * 1) 
+      .skip((page - 1) * limit) 
       .exec();
 
     const count = await Survey.countDocuments({ $text: { $search: query } });

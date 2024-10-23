@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetAllSuggestionsQuery } from "../slices/searchApiSlice";
 import { FaSearch, FaTimes } from "react-icons/fa";
@@ -8,11 +8,11 @@ const Hero = () => {
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const {data: allSuggestions,isLoading,error} = useGetAllSuggestionsQuery();
   const navigate = useNavigate();
+  const inputRef = useRef();
 
   useEffect(() => {
     if (searchQuery.trim() && allSuggestions) {
       const combinedSuggestions = [
-        ...(allSuggestions.name || []),
         ...(allSuggestions.gender || []),
         ...(allSuggestions.country || []),
         ...(allSuggestions.education || []),
@@ -36,7 +36,10 @@ const Hero = () => {
 
   const handleSuggestionClick = (suggestion) => {
     setSearchQuery(suggestion);
-    setFilteredSuggestions([]);
+    setTimeout(() => {
+      setFilteredSuggestions([]); 
+      inputRef.current.blur();    
+    }, 0);
   };
 
   const handleSearch = () => {
@@ -67,6 +70,7 @@ const Hero = () => {
             <div className="relative">
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
               <input
+                ref={inputRef}
                 type="text"
                 className="w-full py-3 pl-10 pr-4 border border-gray-300  shadow-sm focus:outline-none focus:ring focus:ring-indigo-500"
                 placeholder="Search statistics..."
