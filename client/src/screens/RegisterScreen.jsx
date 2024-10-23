@@ -37,7 +37,7 @@ const RegisterScreen = () => {
         dispatch(setCredentials({ ...res }));
         navigate("/");
       } catch (err) {
-        toast.error(err?.data?.message || err.error);
+        toast.error("All fields are required" || err.error);
       }
     }
   };
