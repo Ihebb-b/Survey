@@ -1,4 +1,6 @@
 import { apiSlice } from "./apiSlice";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
 const USERS_URL = "/api/search";
 
 export const searchApiSlice = apiSlice.injectEndpoints({
@@ -11,14 +13,25 @@ export const searchApiSlice = apiSlice.injectEndpoints({
       providesTags: ["Search"],
     }),
     advancedSearch: builder.query({
-      query: ({ gender, ageMin, ageMax, country }) => ({
-        url: `${SURVEYS_URL}/advanced-search`,
-        params: { gender, ageMin, ageMax, country },
+      query: ({ gender, ageMin, ageMax, country, page = 1, limit =10 }) => ({
+        url: `${USERS_URL}/advanced-search`,
+        params: { gender, ageMin, ageMax, country, page, limit },
       }),
-      providesTags: ["Search"],
+      providesTags: ["AdvancedSearch"],
     }),
+
+    getAllSuggestions: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/suggestions`,
+      }),
+      providesTags: ["Suggestions"],
+    }),
+  
   }),
+
+
 });
 
 export const {useSearchStatisticsQuery,
-  useAdvancedSearchQuery} = searchApiSlice;
+  useAdvancedSearchQuery,
+  useGetAllSuggestionsQuery,} = searchApiSlice;

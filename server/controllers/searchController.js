@@ -71,39 +71,28 @@ const advancedSearch = async (req, res) => {
 };
 
 const getAllSuggestions = async (req, res) => {
-    try {
-      // Fetch distinct values for each field in the survey schema
-      const nameSuggestions = await Survey.distinct("name");
-      const genderSuggestions = await Survey.distinct("gender");
-      const countrySuggestions = await Survey.distinct("country");
-      const educationSuggestions = await Survey.distinct("education");
-      const ethnicitySuggestions = await Survey.distinct("ethnicity");
-      const dietDescriptionSuggestions = await Survey.distinct("dietDescription");
-      const householdFoodSuggestions = await Survey.distinct("household");
-      const readyToEatFoodSuggestions = await Survey.distinct("readyToEatFood");
-      const dietConsumptionDescriptionSuggestions = await Survey.distinct("foodConsumptionFrequency.dietDescription");
-      const weatherSuggestions = await Survey.distinct("weather");
-      const medicalHistorySuggestions = await Survey.distinct("medicalHistory");
-      
-      // Return the results as an object where each field has its own array of distinct values
-      res.status(200).json({
-        name: nameSuggestions,
-        gender: genderSuggestions,
-        country: countrySuggestions,
-        education: educationSuggestions,
-        ethnicity: ethnicitySuggestions,
-        dietDescription: dietDescriptionSuggestions,
-        household: householdFoodSuggestions,
-        readyToEatFood: readyToEatFoodSuggestions,
-        foodConsumptionFrequencyDietDescription: dietConsumptionDescriptionSuggestions,
-        weather: weatherSuggestions,
-        medicalHistory: medicalHistorySuggestions
-      });
-      
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+  try {
+    const suggestions = {
+      name: await Survey.distinct("name"),
+      gender: await Survey.distinct("gender"),
+      country: await Survey.distinct("country"),
+      education: await Survey.distinct("education"),
+      ethnicity: await Survey.distinct("ethnicity"),
+      dietDescription: await Survey.distinct("dietDescription"),
+      household: await Survey.distinct("household"),
+      readyToEatFood: await Survey.distinct("readyToEatFood"),
+      foodConsumptionFrequencyDietDescription: await Survey.distinct("foodConsumptionFrequency.dietDescription"),
+      weather: await Survey.distinct("weather"),
+      medicalHistory: await Survey.distinct("medicalHistory")
+    };
+
+    res.status(200).json(suggestions);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
   };
+
+
 
 
 

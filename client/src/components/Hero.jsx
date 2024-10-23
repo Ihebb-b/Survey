@@ -1,82 +1,127 @@
-import { Container, Card, Button, Form, Row, Col } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
-import { useState } from 'react';
+import { useState, useEffect  } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Container, Card, Button, Form, Row, Col, InputGroup  } from 'react-bootstrap';
+import { useGetAllSuggestionsQuery } from '../slices/searchApiSlice';
+import { FaSearch } from "react-icons/fa";
+
 
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState({
-    gender: '',
-    ageMin: '',
-    ageMax: '',
-    country: '',
-  });
+  const [suggestions, setSuggestions] = useState([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+
+  const { data: allSuggestions, isLoading, error } = useGetAllSuggestionsQuery(); 
+  const navigate = useNavigate(); 
+
+  useEffect(() => {
+  
+
+    if (searchQuery.trim() && allSuggestions) { 
+      const combinedSuggestions = [
+        ...(allSuggestions.name || []),
+        ...(allSuggestions.gender || []),
+        ...(allSuggestions.country || []),
+        ...(allSuggestions.education || []),
+        ...(allSuggestions.ethnicity || []),
+        ...(allSuggestions.dietDescription || []),
+        ...(allSuggestions.household || []),
+        ...(allSuggestions.readyToEatFood || []),
+        ...(allSuggestions.weather || []),
+        ...(allSuggestions.medicalHistory || [])
+      ];
+  
+      const filtered = combinedSuggestions.filter(suggestion =>
+        suggestion?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+  
+      setFilteredSuggestions(filtered);
+    } else {
+      setFilteredSuggestions([]); }
+
+  }, [searchQuery, allSuggestions]);
 
   const handleSearch = () => {
-    // Implement search functionality here
-    console.log('Search Query:', searchQuery);
-    console.log('Filters:', filters);
+    if (searchQuery.trim()) { 
+      navigate(`/search-results?query=${encodeURIComponent(searchQuery)}`, { replace: true });
+      setSearchQuery('');
+     // window.location.reload();
+    } else {
+      console.log("Search query is empty");
+    }
   };
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
-  };
-
+  if (isLoading) return <p>Loading suggestions...</p>;
+  if (error) return <p>Error loading suggestions: {error.message}</p>;
   return (
-    <div className='py-5'>
-      <Container className='d-flex justify-content-center'>
-        <Card className='p-5 d-flex flex-column align-items-center hero-card bg-light w-75'>
-          <h1 className='text-center text-4xl font-bold mb-4'>Statistics Observatory</h1>
-          <p className='text-center mb-4'>
-            Search and explore health statistics across various demographics.
-          </p>
+    <div className="py-3 bg-gray-100 min-h-screen">
+    <div className="container mx-auto flex justify-center">
+      <div className="p-10 bg-white shadow-lg rounded-lg w-full md:w-2/3 lg:w-2/2">
+        <h1 className="text-4xl font-bold text-center mb-6">Statistics Observatory</h1>
+        <p className="text-center mb-6 text-gray-600">
+          Search and explore health statistics across various demographics.
+        </p>
 
-          {/* Search Bar */}
-          <Form className='w-100 mb-4'>
-            <Row>
-              <Col md={9}>
-                <Form.Control
-                  type='text'
-                  placeholder='Search statistics...'
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </Col>
-              <Col md={2}>
-                <Button variant='primary' onClick={handleSearch} className='w-100'>
-                  Search
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-
-            {/* Filter Buttons Section */}
-          <div className='d-flex flex-wrap justify-content-center'>
-            <Button className="bg-gray-500 text-white hover:bg-gray-600 m-2">
-              Sport practicing
-            </Button>
-            <Button className="bg-gray-500 text-white hover:bg-gray-600 m-2">
-              Healthiest foods
-            </Button>
-            <Button className="bg-gray-500 text-white hover:bg-gray-600 m-2">
-              Pizza consumed during one year
-            </Button>
-            <Button className="bg-gray-500 text-white hover:bg-gray-600 m-2">
-              Weather and foods
-            </Button>
-            <Button className="bg-gray-500 text-white hover:bg-gray-600 m-2">
-              Saty slim
-            </Button>
-            <Button className="bg-gray-500 text-white hover:bg-gray-600 m-2">
-              Or not
-            </Button>
-            
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <div className="relative">
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+            <input
+              type="text"
+              className="w-full py-3 pl-10 pr-4 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring focus:ring-indigo-500"
+              placeholder="Search statistics..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
 
-        </Card>
-      </Container>
+          {/* Autocomplete Suggestions */}
+          {filteredSuggestions.length > 0 && (
+            <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-2 max-h-40 overflow-auto">
+              {filteredSuggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  className="px-4 py-2 hover:bg-indigo-500 hover:text-white cursor-pointer"
+                  onClick={() => setSearchQuery(suggestion)}
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <button
+          onClick={handleSearch}
+          className="w-full py-3 bg-blue-600 text-white font-semibold rounded-full shadow-md hover:bg-indigo-700 transition duration-300"
+        >
+          Search
+        </button>
+
+        {/* Filter Buttons Section */}
+        <div className="mt-6 flex flex-wrap justify-center gap-4">
+          <button className="px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition duration-300">
+            Sport practicing
+          </button>
+          <button className="px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition duration-300">
+            Healthiest foods
+          </button>
+          <button className="px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition duration-300">
+            Pizza consumed during one year
+          </button>
+          <button className="px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition duration-300">
+            Weather and foods
+          </button>
+          <button className="px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition duration-300">
+            Stay slim
+          </button>
+          <button className="px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition duration-300">
+            Or not
+          </button>
+        </div>
+      </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default Hero;
