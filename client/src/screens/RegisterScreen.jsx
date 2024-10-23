@@ -43,11 +43,13 @@ const RegisterScreen = () => {
   };
 
   return (
+    <div className="py-3 bg-gray-100 min-h-screen">
+
     <FormContainer>
       <h1 className="text-center text-4xl font-bold mb-4">Sign Up</h1>
       <Form onSubmit={submitHandler}>
         <Form.Group className="my-2" controlId="name">
-          <Form.Label>Name</Form.Label>
+          <Form.Label className="font-bold">Name</Form.Label>
           <Form.Control
             type="name"
             placeholder="Enter name"
@@ -57,7 +59,7 @@ const RegisterScreen = () => {
         </Form.Group>
 
         <Form.Group className="my-2" controlId="email">
-          <Form.Label>Email Address</Form.Label>
+          <Form.Label className="font-bold">Email Address</Form.Label>
           <Form.Control
             type="email"
             placeholder="Enter email"
@@ -67,7 +69,7 @@ const RegisterScreen = () => {
         </Form.Group>
 
         <Form.Group className="my-2" controlId="password">
-          <Form.Label>Password</Form.Label>
+          <Form.Label className="font-bold">Password</Form.Label>
           <Form.Control
             type="password"
             placeholder="Enter Password"
@@ -77,7 +79,7 @@ const RegisterScreen = () => {
         </Form.Group>
 
         <Form.Group className="my-2" controlId="confirmPassword">
-          <Form.Label>Confirm Password</Form.Label>
+          <Form.Label className="font-bold">Confirm Password</Form.Label>
           <Form.Control
             type="password"
             placeholder="Confirm Password"
@@ -95,13 +97,14 @@ const RegisterScreen = () => {
         <Row className="py-3">
           <Col>
             Already registered?{" "}
-            <Link to="/login" className="border-b border-black">
+            <Link to="/login" className="border-b border-black font-bold">
               Login
             </Link>
           </Col>
         </Row>
       </Form>
     </FormContainer>
+    </div>
   );
 };
 export default RegisterScreen;
