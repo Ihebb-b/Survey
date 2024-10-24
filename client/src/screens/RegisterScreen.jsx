@@ -45,6 +45,7 @@ const RegisterScreen = () => {
   return (
     <div className="py-3 bg-gray-100 min-h-screen">
 
+
     <FormContainer>
       <h1 className="text-center text-4xl font-bold mb-4">Sign Up</h1>
       <Form onSubmit={submitHandler}>
@@ -97,7 +98,7 @@ const RegisterScreen = () => {
         <Row className="py-3">
           <Col>
             Already registered?{" "}
-            <Link to="/login" className="border-b border-black font-bold">
+            <Link to="/login" className=" border-black font-bold">
               Login
             </Link>
           </Col>
@@ -105,6 +106,7 @@ const RegisterScreen = () => {
       </Form>
     </FormContainer>
     </div>
+    
   );
 };
 export default RegisterScreen;

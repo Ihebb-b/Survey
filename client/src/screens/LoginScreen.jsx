@@ -38,6 +38,7 @@ const LoginScreen = () => {
   return (
     <div className="py-3 bg-gray-100 min-h-screen">
 
+
     <FormContainer>
       <h1 className="text-center text-4xl font-bold mb-4">Sign In</h1>
       <Form onSubmit={submitHandler}>
@@ -70,14 +71,16 @@ const LoginScreen = () => {
         <Row className="py-3">
           <Col>
             This is your first time?{" "}
-            <Link to="/register" className="border-b border-black font-bold">
+            <Link to="/register" className="border-black font-bold">
               Register
             </Link>
           </Col>
         </Row>
       </Form>
     </FormContainer>
+
     </div>
+    
   );
 };
 export default LoginScreen;

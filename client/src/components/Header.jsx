@@ -28,7 +28,7 @@ const Header = () => {
 
   return (
     <header>
-      <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect style={{ margin: '0 auto', maxHeight: '55px' }}>
+      <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect style={{  margin: '0 auto', maxHeight: '55px' }}>
         <Container>
           <LinkContainer to="/">
             <Navbar.Brand>Statistics observatory</Navbar.Brand>
