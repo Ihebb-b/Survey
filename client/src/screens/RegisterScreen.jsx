@@ -98,7 +98,7 @@ const RegisterScreen = () => {
         <Row className="py-3">
           <Col>
             Already registered?{" "}
-            <Link to="/login" className=" border-black font-bold">
+            <Link to="/login" className=" border-bottom border-black font-bold">
               Login
             </Link>
           </Col>
