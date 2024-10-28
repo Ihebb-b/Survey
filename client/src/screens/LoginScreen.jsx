@@ -38,7 +38,6 @@ const LoginScreen = () => {
   return (
     <div className="py-3 bg-gray-100 min-h-screen">
 
-
     <FormContainer>
       <h1 className="text-center text-4xl font-bold mb-4">Sign In</h1>
       <Form onSubmit={submitHandler}>

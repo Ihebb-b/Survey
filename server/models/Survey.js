@@ -35,7 +35,7 @@ const surveySchema = new Schema({
     type: String,
     enum: function () {
       // Conditional list of cities (villes) based on selected state
-      if (this.state === "Tunisia") return ["Ariana", "Beja", "Ben Arous","Sidi Bouzid", 
+      if (this.state === "Tunisia") return ["Ariana", "Beja", "Ben_Arous","Sidi Bouzid", 
         "Tunis", "Sousse", "Gabes", "Kairouan", "Bizerte", "Gafsa", "Kasserine", "Kef", 
         "Mahdia", "Manouba", "Medenine", "Monastir", "Nabeul", "Sfax", "Sidi Bouzid", 
         "Siliana", "Tataouine", "Tozeur", "Zaghouan", "Jendouba" 
@@ -72,7 +72,7 @@ const surveySchema = new Schema({
         , "Heraklion", "Rhodes", "Chania", "Kavala", "Kastoria", "Kilkis", "Kozani"
       ];
       if (this.state === "Lebanon") return ["Akkar","Beirut", "Bekaa",
-        "Baalbek-Hermel",  "Mount Lebanon", "North Lebanon", "Nabatiyeh", "South Lebanon"
+        "Baalbek-Hermel",  "Mount_Lebanon", "North Lebanon", "Nabatiyeh", "South Lebanon"
       ];
       if (this.state === "Syria") return ["Dimashq", "Aleppo", "Homs", "Hama",
         "Halab", "Daraa", "Idlib", "Quneitra", "Rif Dimashq", "Tartus", "Deir ez-Zor",
@@ -117,13 +117,13 @@ const surveySchema = new Schema({
     enum: function () {
       // Conditional list of countries based on selected city (ville)
       //ville tunis
-      if (this.ville === "Sidi Bouzid") return ["Rgueb", "Menzel Bouzaiane"];
+      if (this.ville === "Sidi Bouzid") return ["Rgueb", "Menzel_Bouzaiane"];
       if (this.ville === "Tunis") return ["La Marsa", "La Soukra"];
       if (this.ville === "Sfax") return ["La Marsa", "La Soukra"];
       if (this.ville === "Sousse") return ["La Marsa", "La Soukra"];
-      if (this.ville === "Jendouba") return ["La Marsa", "La Soukra"]
-      if (this.ville === "Gafsa") return ["Carthage", "La Marsa"];
-      if (this.ville === "Beja") return ["Kalaa Kebira", "Hammam Sousse"];
+      if (this.ville === "Jendouba") return ["La Marsa", "La_Soukra"]
+      if (this.ville === "Gafsa") return ["Carthage", "La_Marsa"];
+      if (this.ville === "Beja") return ["Kalaa_Kebira", "Hammam_Sousse"];
       if (this.ville === "Gabes") return ["La Marsa", "La Soukra"];
       if (this.ville === "Kairouan") return ["La Marsa", "La Soukra"];
       if (this.ville === "Kasserine") return ["La Marsa", "La Soukra"];
@@ -240,9 +240,35 @@ const surveySchema = new Schema({
       if (this.ville === "Fontvieille") return ["Monte Carlo"];
       if (this.ville === "La Condamine") return ["Monte Carlo"];
 
-      //ville 
+      //ville montengro
+      if (this.ville === "Podgorica") return ["Podgorica"];
+      if (this.ville === "Budva") return ["Podgorica"];
+      if (this.ville === "Kotor") return ["Podgorica"];
+      if (this.ville === "Herceg Novi") return ["Podgorica"];
 
+      //ville slovenia
+      if (this.ville === "Ljubljana") return ["Ljubljana"];
+      if (this.ville === "Maribor") return ["Ljubljana"];
+      if (this.ville === "Celje") return ["Ljubljana"];
+      if (this.ville === "Kranj") return ["Ljubljana"];
 
+      //ville palestine
+      if (this.ville === "Gaza") return ["Gaza"];
+      if (this.ville === "Baysan") return ["Baysan"];
+      if (this.ville === "Enassr") return ["Enassr"];
+      if (this.ville === "Nablus") return ["Nablus"];
+
+      //ville libya
+      if (this.ville === "Tripoli") return ["Tripoli"];
+      if (this.ville === "Benghazi") return ["Tripoli"];
+      if (this.ville === "Misrata") return ["Tripoli"];
+      if (this.ville === "Derna") return ["Tripoli"];
+
+      //ville egypt 
+      if (this.ville === "Cairo") return ["Cairo"];
+      if (this.ville === "Alexandria") return ["Cairo"];
+      if (this.ville === "Giza") return ["Cairo"];
+      if (this.ville === "Suez") return ["Cairo"];
 
       return [];
     },
@@ -260,8 +286,6 @@ const surveySchema = new Schema({
       "Between 170-180",
       "Between 180-190",
       "Between 190-200",
-      "Between 200-210",
-      "Between 210-220",
       "Over 220",
     ],
     required: true,
@@ -319,7 +343,7 @@ const surveySchema = new Schema({
       return this.occupation === "Other";
     },
   },
-  salaire: {
+  salary: {
     type: String,
     enum: [
       "Prefer not to say",
@@ -349,7 +373,9 @@ const surveySchema = new Schema({
       "ALL",
       "Other",
     ],
-    required: true,
+    required: function () {
+      return this.salary !== "Prefer not to say";
+    },
   },
   customCurrency: {
     type: String,
@@ -359,7 +385,7 @@ const surveySchema = new Schema({
   },
   socialState: {
     type: String,
-    enum: ["Single", "Married", "Divorced", "Widowed"],
+    enum: ["Prefer not to say", "Single", "Married", "Divorced", "Widowed"],
     required: true,
   },
   children: {
@@ -370,7 +396,7 @@ const surveySchema = new Schema({
     },
   childrenNumber: {
     type: String,
-    enum: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+    enum: ["One", "Two", "Three", "Four", "Five", "More than five"],
     required: function () {
       return this.children === "Yes";}
     },
@@ -394,7 +420,7 @@ const surveySchema = new Schema({
       return this.diet === "Other";
     },
   },
-  meat: {
+  meat: [{
     type: String,
     enum: [
       "Beef",
@@ -411,7 +437,7 @@ const surveySchema = new Schema({
     required: function () {
       return !["Vegan", "Vegetarian", "Fruitarian"].includes(this.diet);
     },
-  },
+  }],
   customMeat: {
     type: String,
     required: function () {
@@ -424,7 +450,7 @@ const surveySchema = new Schema({
       return this.diet === "Religiously Observant";
     },
   },
-  fruits: {
+  fruits: [{
     type: String,
     enum: [
       "None",
@@ -453,7 +479,7 @@ const surveySchema = new Schema({
       "Other",
     ],
     required: true,
-  },
+  }],
   customFruits: {
     type: String,
     required: function () {
@@ -479,7 +505,7 @@ const surveySchema = new Schema({
       return this.fruits !== "None";  
     },
   },
-  vegetables: {
+  vegetables: [{
     type: String,
     enum: [
       "Carrot",
@@ -511,14 +537,14 @@ const surveySchema = new Schema({
       "Okra",
       "Other",
     ],
-  },
+  }],
   customVegetables: {
     type: String,
     required: function () {
       return this.vegetables === "Other";
     },
   },
-  veegetableUnitPerDay: {
+  vegetableUnitPerDay: {
     type: String,
     enum: [
       "1",
@@ -540,6 +566,7 @@ const surveySchema = new Schema({
   religious: {
     type: String,
     enum: [
+      "Prefer Not to say",
       "Muslim",
       "Christian",
       "Jewish",
@@ -552,7 +579,7 @@ const surveySchema = new Schema({
       return this.religious === "Other";
     },
   },
-  fish: {
+  fish: [{
     type: String,
     enum: [
       "Bonito",
@@ -575,14 +602,14 @@ const surveySchema = new Schema({
       "Anchovies",
       "Other",
     ],
-  },
+  }],
   customFish: {
     type: String,
     required: function () {
       return this.fish === "Other";
     },
   },
-  dairy: {
+  dairy: [{
     type: String,
     enum: [
       "None",
@@ -607,14 +634,14 @@ const surveySchema = new Schema({
       "Blue Cheese",
       "Other",
     ],
-  },
+  }],
   customDairy: {
     type: String,
     required: function () {
       return this.dairy === "Other";
     },
   },
-  oil: {
+  oil: [{
     type: String,
     enum: [
       "None",
@@ -634,14 +661,14 @@ const surveySchema = new Schema({
       "Vegetable Oil",
       "Other",
     ],
-  },
+  }],
   customOil: {
     type: String,
     required: function () {
       return this.oil === "Other";
     },
   },
-  HomeMade: [
+  homeMade: [
     {
       type: String,
       enum: [
@@ -667,7 +694,7 @@ const surveySchema = new Schema({
       ],
     },
   ],
-  CustomHomeMade: {
+  customHomeMade: {
     type: String,
     required: function () {
       return this.HomeMade === "Other";
@@ -700,7 +727,7 @@ const surveySchema = new Schema({
       "More than 1000",
     ],
   },
-  Ordered: [
+  ordered: [
     {
       type: String,
       enum: [
@@ -785,21 +812,42 @@ const surveySchema = new Schema({
   noSportPractice: { type: Boolean },
 });
 
-surveySchema.index({
+
+ surveySchema.index({
   name: "text",
   gender: "text",
+  age: "text",
+  state: "text",
+  ville: "text",
   country: "text",
+  height: "text",
+  weight: "text",
   education: "text",
-  ethnicity: "text",
-  dietDescription: "text",
-  household: "text",
-  readyToEatFood: "text",
-  foodConsumptionFrequency: "text",
+  occupation: "text",
+  salary: "text",
+  socialState: "text",
+  children: "text",
+  diet: "text",
+  meat: "text",
+  fruits: "text",
+  fruitUnitPerDay: "text",
+  vegetables: "text",
+  vegetableUnitPerDay: "text",
+  religious: "text",
+  fish: "text",
+  dairy: "text",
+  oil: "text",
+  HomeMade: "text",
+  HomeMadeConsumption: "text",
+  HomeMadeConsumptionBudget: "text",
+  Ordered: "text",
+  OrderedConsumption: "text",
+  OrderedConsumptionBudget: "text",
   traditionalEatingHabits: "text",
   newEatingHabits: "text",
   medicalHistory: "text",
-  weather: "text",
-  physicalActivity: "text",
+  sportPractice: "text",
+  noSportPractice: "text",
 });
 
 module.exports = mongoose.model("Survey", surveySchema);

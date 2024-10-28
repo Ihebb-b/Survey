@@ -8,24 +8,52 @@ const Survey = () => {
     name: "",
     gender: "",
     age: "",
+    state: "",
+    ville: "",
     country: "",
+    height: "",
+    weight: "",
     education: "",
-    ethnicity: "",
+    customEducation: "",
+    occupation: "",
+    customOcccupation: "",
+    salary: "",
+    currency: "",
+    customCurrecny: "",
+    socialState: "",
+    children: "",
+    childrenNumber: "",
     diet: "",
-    household: [],
-    readyToEatFood: [],
-    foodConsumptionFrequency: [
-      {
-        dietDescription: "",
-        period: "",
-        unit: "",
-        value: "",
-      },
-    ],
+    customDiet: "",
+    meat: [],
+    customMeat: "",
+    religiouslyObservant: "",
+    fruits: [],
+    customFruits: "",
+    fruitUnitPerDay: "",
+    vegetables: [],
+    customVegetables: "",
+    vegetableUnitPerDay: "",
+    religious: "",
+    customReligious: "",
+    fish: [],
+    customFish: "",
+    dairy: [],
+    customDairy: "",
+    oil: [],
+    customOil: "",
+    homeMade: [],
+    customHomeMade: "",
+    homeMadeConsumption: "",
+    homeMadeConsumptionBudget: "",
+    ordered: [],
+    customOrdered: "",
+    orderedConsumption: "",
+    orderedConsumptionBudget: "",
     traditionalEatingHabits: false,
     newEatingHabits: false,
     medicalHistory: "",
-    weather: "",
+    customMedicalHistory: "",
     sportPractice: false,
     noSportPractice: false,
   });
@@ -39,10 +67,49 @@ const Survey = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setFormData((prevState) => {
+      const updatedData = {
+        ...prevState,
+        [name]: type === "checkbox" ? checked : value,
+      };
+
+      if (name === "state") {
+        updatedData.ville = "";
+        updatedData.country = "";
+      } else if (name === "ville") {
+        updatedData.country = "";
+      }
+
+      if (name === "salary" && value === "Prefer not to say") {
+        updatedData.currency = "";
+        updatedData.customCurrency = "";
+      }
+
+      if (name === "currency" && value !== "Other") {
+        updatedData.customCurrency = "";
+      }
+
+      if (name === "socialState" && value === "Prefer not to say") {
+        updatedData.children = "";
+        updatedData.childrenNumber = "";
+      }
+
+      if (name === "children" && value !== "Yes") {
+        updatedData.childrenNumber = "";
+      }
+
+      return updatedData;
+    });
+  };
+  const stateOptions = {
+    Tunisia: ["Ariana", "Beja", "Gabes"],
+    Lebanon: ["Akkar", "Mount_Lebanon", "Bekaa"],
+  };
+
+  const villeOptions = {
+    Ariana: ["Rgueb", "Menzel_Bouzaine"],
+    Beja: ["Kalaa_Kebira", "Hammam_Sousse"],
+    Akkar: ["Beirut", "Beirut"],
   };
 
   const toggleSelection = (field, value) => {
@@ -64,34 +131,34 @@ const Survey = () => {
     });
   };
 
-  const handleFoodFrequencyChange = (index, field, value) => {
-    const updatedFoodFrequency = [...formData.foodConsumptionFrequency];
-    updatedFoodFrequency[index][field] = value;
-    setFormData((prevState) => ({
-      ...prevState,
-      foodConsumptionFrequency: updatedFoodFrequency,
-    }));
-  };
+  // const handleFoodFrequencyChange = (index, field, value) => {
+  //   const updatedFoodFrequency = [...formData.foodConsumptionFrequency];
+  //   updatedFoodFrequency[index][field] = value;
+  //   setFormData((prevState) => ({
+  //     ...prevState,
+  //     foodConsumptionFrequency: updatedFoodFrequency,
+  //   }));
+  // };
 
-  const addFoodFrequency = () => {
-    setFormData((prevState) => ({
-      ...prevState,
-      foodConsumptionFrequency: [
-        ...prevState.foodConsumptionFrequency,
-        { dietDescription: "", period: "", unit: "", value: "" },
-      ],
-    }));
-  };
+  // const addFoodFrequency = () => {
+  //   setFormData((prevState) => ({
+  //     ...prevState,
+  //     foodConsumptionFrequency: [
+  //       ...prevState.foodConsumptionFrequency,
+  //       { dietDescription: "", period: "", unit: "", value: "" },
+  //     ],
+  //   }));
+  // };
 
-  const removeFoodFrequency = (index) => {
-    const updatedFrequencies = formData.foodConsumptionFrequency.filter(
-      (_, idx) => idx !== index
-    );
-    setFormData((prevState) => ({
-      ...prevState,
-      foodConsumptionFrequency: updatedFrequencies,
-    }));
-  };
+  // const removeFoodFrequency = (index) => {
+  //   const updatedFrequencies = formData.foodConsumptionFrequency.filter(
+  //     (_, idx) => idx !== index
+  //   );
+  //   setFormData((prevState) => ({
+  //     ...prevState,
+  //     foodConsumptionFrequency: updatedFrequencies,
+  //   }));
+  // };
 
   const validateForm = () => {
     const newErrors = {};
@@ -104,62 +171,75 @@ const Survey = () => {
     if (!formData.ethnicity) newErrors.ethnicity = "Ethnicity is required.";
     if (!formData.diet) newErrors.diet = "Diet is required.";
 
-    if (!formData.household.length && !formData.readyToEatFood.length) {
-      newErrors.foodPreference =
-        "You must select at least one option from Household or Ready-to-Eat Food.";
-    }
+    // if (!formData.household.length && !formData.readyToEatFood.length) {
+    //   newErrors.foodPreference =
+    //     "You must select at least one option from Household or Ready-to-Eat Food.";
+    // }
 
     if (!formData.traditionalEatingHabits && !formData.newEatingHabits) {
       newErrors.eatingHabits =
         "You must select at least one option from Traditional or New Eating Habits.";
     }
 
-    formData.foodConsumptionFrequency.forEach((item, index) => {
-      if (!item.dietDescription)
-        newErrors[`dietDescription-${index}`] = `Diet is required.`;
-      if (!item.period) newErrors[`period-${index}`] = `Period is required.`;
-      if (!item.unit) newErrors[`unit-${index}`] = `Unit is required.`;
-      if (!item.value) newErrors[`value-${index}`] = `Value is required.`;
-    });
+    // formData.foodConsumptionFrequency.forEach((item, index) => {
+    //   if (!item.dietDescription)
+    //     newErrors[`dietDescription-${index}`] = `Diet is required.`;
+    //   if (!item.period) newErrors[`period-${index}`] = `Period is required.`;
+    //   if (!item.unit) newErrors[`unit-${index}`] = `Unit is required.`;
+    //   if (!item.value) newErrors[`value-${index}`] = `Value is required.`;
+    // });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const updatedFormData = {
+  //     ...formData,
+  //     household: formData.household.length > 0 ? formData.household : [],
+  //     readyToEatFood:
+  //       formData.readyToEatFood.length > 0 ? formData.readyToEatFood : [],
+  //   };
+  //   console.log("Form submitted", formData);
+
+  //   if (!validateForm()) {
+  //     setIsError(true);
+  //     return;
+  //   }
+
+  //   try {
+  //     const res = await createSurvey(formData).unwrap();
+
+  //     console.log("Response: ", res);
+
+  //     if (res) {
+  //       toast.success("Survey submitted successfully!");
+  //       setTimeout(() => {
+  //         navigate("/");
+  //       }, 2000);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error caught: ", err);
+  //     toast.error(err?.data?.message || err.error || "Submission failed.");
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const updatedFormData = {
-      ...formData,
-      household: formData.household.length > 0 ? formData.household : [],
-      readyToEatFood: formData.readyToEatFood.length > 0 ? formData.readyToEatFood : [],
-    };
-    console.log("Form submitted", formData); 
-
     if (!validateForm()) {
       setIsError(true);
       return;
     }
-
     try {
       const res = await createSurvey(formData).unwrap();
-
-      console.log("Response: ", res); 
-
-      if (res) {
-        toast.success("Survey submitted successfully!");
-        setTimeout(() => {
-          navigate("/");
-        }, 2000); 
-      }
+      toast.success("Survey submitted successfully!");
+      setTimeout(() => navigate("/"), 2000);
     } catch (err) {
-      console.error("Error caught: ", err);
-      toast.error(err?.data?.message || err.error || "Submission failed.");
+      toast.error("Submission failed.");
     }
   };
-
-
-
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-6 bg-gray-300 shadow-md rounded-lg">
@@ -207,51 +287,122 @@ const Survey = () => {
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
-            <option value="Under 20 years">Under 20 years</option>
-            <option value="Between 20-30 years">Between 20-30 years</option>
-            <option value="Between 30-40 years">Between 30-40 years</option>
-            <option value="Between 40-50 years">Between 40-50 years</option>
-            <option value="Between 50-60 years">Between 50-60 years</option>
-            <option value="Over 60 years">Over 60 years</option>
+            <option value="Between 1-10 years">Between 1-10 years</option>
+            <option value="Between 10-18 years">Between 10-18 years</option>
+            <option value="Between 19-25 years">Between 19-25 years</option>
+            <option value="Between 26-29 years">Between 26-29 years</option>
+            <option value="Between 30-39 years">Between 30-39 years</option>
+            <option value="Between 40-49 years">Between 40-49 years</option>
+            <option value="Between 50-59 years">Between 50-59 years</option>
+            <option value="Between 60-69 years">Between 60-69 years</option>
+            <option value="Over 70 years">Over 70 years</option>
           </select>
           {errors.age && <span className="text-red-500">{errors.age}</span>}
         </label>
 
-        {/* Country */}
+        {/* State */}
         <label className="block">
-          <span className="font-bold">Country:</span>
+          <span className="font-bold">State:</span>
           <select
-            name="country"
-            value={formData.country}
+            name="state"
+            value={formData.state}
+            onChange={handleChange}
+            className="border border-gray-300 px-4 py-2 rounded-md w-full"
+          >
+            <option value="">Select a State</option>
+            {Object.keys(stateOptions).map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
+          {errors.state && <span className="text-red-500">{errors.state}</span>}
+        </label>
+
+        {/* Ville */}
+        {formData.state && (
+          <label className="block">
+            <span className="font-bold">Ville:</span>
+            <select
+              name="ville"
+              value={formData.ville}
+              onChange={handleChange}
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            >
+              <option value="">Select Ville</option>
+              {stateOptions[formData.state]?.map((ville) => (
+                <option key={ville} value={ville}>
+                  {ville}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+
+        {/* Country */}
+        {formData.ville && (
+          <label>
+            Country:
+            <select
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            >
+              <option value="">Select a country</option>
+              {villeOptions[formData.ville]?.map((country) => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+
+        {/* Height */}
+        <label className="block">
+          <span className="font-bold">Height:</span>
+          <select
+            name="height"
+            value={formData.height}
             onChange={handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
-            <option value="Tunisia">Tunisia</option>
-            <option value="Algeria">Algeria</option>
-            <option value="Egypt">Egypt</option>
-            <option value="Morocco">Morocco</option>
-            <option value="Libya">Libya</option>
-            <option value="Lebanon">Lebanon</option>
-            <option value="Palestine">Palestine</option>
-            <option value="Syria">Syria</option>
-            <option value="Turkey">Turkey</option>
-            <option value="Albania">Albania</option>
-            <option value="Bosnia">Bosnia</option>
-            <option value="Herzegovina">Herzegovina</option>
-            <option value="Croatia">Croatia</option>
-            <option value="Cyprus">Cyprus</option>
-            <option value="France">France</option>
-            <option value="Greece">Greece</option>
-            <option value="Italy">Italy</option>
-            <option value="Malta">Malta</option>
-            <option value="Monaco">Monaco</option>
-            <option value="Montenegro">Montenegro</option>
-            <option value="Slovenia">Slovenia</option>
-            <option value="Spain">Spain</option>
+            <option value="Less than 160">Less than 160</option>
+            <option value="Between 160-170">Between 160-170</option>
+            <option value="Between 170-180">Between 170-180</option>
+            <option value="Between 180-190">Between 180-190</option>
+            <option value="Between 190-200">Between 190-200</option>
+            <option value="Over 200">Over 200</option>
           </select>
-          {errors.country && (
-            <span className="text-red-500">{errors.country}</span>
+          {errors.height && (
+            <span className="text-red-500">{errors.height}</span>
+          )}
+        </label>
+
+        {/* Weight */}
+        <label className="block">
+          <span className="font-bold">Weight:</span>
+          <select
+            name="weight"
+            value={formData.weight}
+            onChange={handleChange}
+            className="border border-gray-
+          300 px-4 py-2 rounded-md w-full"
+          >
+            <option value="">Select...</option>
+            <option value="Less than 50">Less than 50</option>
+            <option value="Between 50-60">Between 50-60</option>
+            <option value="Between 60-70">Between 60-70</option>
+            <option value="Between 70-80">Between 70-80</option>
+            <option value="Between 80-90">Between 80-90</option>
+            <option value="Between 90-100">Between 90-100</option>
+            <option value="Between 100-110">Between 100-110</option>
+            <option value="Over 110">Over 110</option>
+          </select>
+          {errors.weight && (
+            <span className="text-red-500">{errors.weight}</span>
           )}
         </label>
 
@@ -269,35 +420,184 @@ const Survey = () => {
             <option value="Primary education">Primary education</option>
             <option value="Secondary education">Secondary education</option>
             <option value="Higher education">Higher education</option>
+            <option value="Engineerig degree">Engineerig degree</option>
+            <option value="Masters degree">Masters degree</option>
+            <option value="Doctorate degree">Doctorate degree</option>
             <option value="Technical education">Technical education</option>
+            <option value="Other">Other</option>
           </select>
           {errors.education && (
             <span className="text-red-500">{errors.education}</span>
           )}
         </label>
 
-        {/* Ethnicity */}
+        {/* Custom Education */}
+        {formData.education === "Other" && (
+          <label className="block">
+            <span className="font-bold">*Custom Education</span>
+            <input
+              type="text"
+              name="customEducation"
+              value={formData.customEducation}
+              onChange={handleChange}
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
+          </label>
+        )}
+
+        {/* Occupation */}
         <label className="block">
-          <span className="font-bold">Ethnicity:</span>
+          <span className="font-bold">Occupation:</span>
           <select
-            name="ethnicity"
-            value={formData.ethnicity}
+            name="occupation"
+            value={formData.occupation}
             onChange={handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
-            <option value="Greek">Greek</option>
-            <option value="Italian">Italian</option>
-            <option value="North_African">North African</option>
-            <option value="Spaniard">Spaniard</option>
-            <option value="Turks">Turks</option>
-            <option value="Middle Eastern">Middle Eastern</option>
-            <option value="Sicilians">Sicilians</option>
+            <option value="Student">Student</option>
+            <option value="Employee">Employee</option>
+            <option value="Unemployed">Unemployed</option>
+            <option value="Retired">Retired</option>
+            <option value="Housewife">House Wife</option>
+            <option value="Other">Other</option>
           </select>
-          {errors.ethnicity && (
-            <span className="text-red-500">{errors.ethnicity}</span>
+          {errors.occupation && (
+            <span className="text-red-500">{errors.occupation}</span>
           )}
         </label>
+
+        {/* Custom Occupation */}
+        {formData.occupation === "Other" && (
+          <label className="block">
+            <span className="font-bold">*Custom Occupation</span>
+            <input
+              type="text"
+              name="customOccupation"
+              value={formData.customOcccupation}
+              onChange={handleChange}
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
+          </label>
+        )}
+
+        {/* Salary */}
+        <label className="block">
+          <span className="font-bold">Salary:</span>
+          <select
+            name="salary"
+            value={formData.salary}
+            onChange={handleChange}
+            className="border border-gray-300 px-4 py-2 rounded-md w-full"
+          >
+            <option value="">Select...</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+            <option value="Less than 1000">Less than 1000</option>
+            <option value="Between 1000-2000">Between 1000-2000</option>
+            <option value="Between 2000-3000">Between 2000-3000</option>
+            <option value="Between 3000-4000">Between 3000-4000</option>
+            <option value="Between 4000-5000">Between 4000-5000</option>
+            <option value="Over 5000">Over 5000</option>
+          </select>
+          {errors.salary && (
+            <span className="text-red-500">{errors.salary}</span>
+          )}
+        </label>
+
+        {/* Currency */}
+        {formData.salary !== "Prefer not to say" && (
+          <label>
+            Currency:
+            <select
+              name="currency"
+              value={formData.currency}
+              onChange={handleChange}
+            >
+              <option value="">Select...</option>
+              <option value="TND">TND</option>
+              <option value="EUR">EUR</option>
+              <option value="EGP">EGP</option>
+              <option value="CK">CK</option>
+              <option value="CM">CM</option>
+              <option value="TKL">TKL</option>
+              <option value="LBD">LBD</option>
+              <option value="MCD">MCD</option>
+              <option value="LBP">LBP</option>
+              <option value="PLP">PLP</option>
+              <option value="SYP">SYP</option>
+              <option value="ALL">ALL</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+        )}
+        {/* Custom Currency */}
+        {formData.currency === "Other" && (
+          <label>
+            Custom Currency:
+            <input
+              type="text"
+              name="customCurrency"
+              value={formData.customCurrency}
+              onChange={handleChange}
+            />
+          </label>
+        )}
+
+        {/* Social State */}
+        <label className="block">
+          <span className="font-bold">Social State:</span>
+          <select
+            name="socialState"
+            value={formData.socialState}
+            onChange={handleChange}
+            className="border border-gray-300 px-4 py-2 rounded-md w-full"
+          >
+            <option value="">Select...</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+            <option value="Single">Single</option>
+            <option value="Married">Married</option>
+            <option value="Divorced">Divorced</option>
+            <option value="Widowed">Widowed</option>
+          </select>
+          {errors.socialState && (
+            <span className="text-red-500">{errors.socialState}</span>
+          )}
+        </label>
+
+        {/* Children */}
+        {formData.socialState !== "Prefer not to say" && (
+          <label>
+            Children:
+            <select
+              name="children"
+              value={formData.children}
+              onChange={handleChange}
+            >
+              <option value="">Select...</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>  
+            </select>
+          </label>
+        )}
+        {/* Custom children */}
+        {formData.children === "Yes" && (
+          <label>
+            Children Number:
+            <select
+              name="childrenNumber"
+              value={formData.childrenNumber}
+              onChange={handleChange}
+            >
+              <option value="">Select...</option>
+              <option value="One">One</option>
+              <option value="Two">Two</option>
+              <option value="Three">Three</option>
+              <option value="Four">Four</option>
+              <option value="Five">Five</option>
+              <option value="More than five">More than five</option>
+            </select>
+          </label>
+        )}
 
         {/* Diet */}
         <label className="block">
@@ -321,7 +621,7 @@ const Survey = () => {
         </h3>
 
         {/* Household */}
-        <label className="block">
+        {/* <label className="block">
           <span className="font-bold mb-2 block">Household:</span>
           <div
             className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
@@ -361,10 +661,10 @@ const Survey = () => {
               </button>
             ))}
           </div>
-        </label>
+        </label> */}
 
         {/* Ready-to-Eat Food */}
-        <label className="block mt-4">
+        {/* <label className="block mt-4">
           <span className="font-bold mb-2 block">Ready-to-Eat Food:</span>
           <div
             className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
@@ -400,15 +700,14 @@ const Survey = () => {
         </label>
         {errors.foodPreference && (
           <span className="text-red-500">{errors.foodPreference}</span>
-        )}
+        )} */}
 
-        {/* Food Consumption Frequency */}
-        <h3 className="text-lg font-semibold mt-4">
+        {/* <h3 className="text-lg font-semibold mt-4">
           Food Consumption Frequency
         </h3>
         {formData.foodConsumptionFrequency.map((item, index) => (
           <div key={index} className="flex space-x-4 mb-4 items-end">
-            {/* Diet Description */}
+          
             <div className="w-1/4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Diet Description
@@ -436,7 +735,7 @@ const Survey = () => {
               )}{" "}
             </div>
 
-            {/* Period */}
+            
             <div className="w-1/4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Period
@@ -461,7 +760,6 @@ const Survey = () => {
               )}
             </div>
 
-            {/* Unit */}
             <div className="w-1/4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Unit
@@ -484,7 +782,7 @@ const Survey = () => {
               )}
             </div>
 
-            {/* Value */}
+            
             <div className="w-1/4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Value
@@ -504,7 +802,7 @@ const Survey = () => {
               )}
             </div>
 
-            {/* Remove Button with Icon */}
+            
             <button
               type="button"
               onClick={() => removeFoodFrequency(index)}
@@ -528,7 +826,7 @@ const Survey = () => {
           </div>
         ))}
 
-        {/* Add More Button with Icon */}
+        
         <button
           type="button"
           onClick={addFoodFrequency}
@@ -549,7 +847,7 @@ const Survey = () => {
             />
           </svg>
           Add More
-        </button>
+        </button>  */}
 
         <h3 className="text-lg font-semibold mt-4">What do you prefer?</h3>
         {/* Traditional Eating Habits */}
@@ -581,7 +879,7 @@ const Survey = () => {
         )}
 
         {/* Medical History */}
-        <label className="block">
+        {/* <label className="block">
           <span className="font-bold">
             Do you have any of the followoing conditions?
           </span>
@@ -616,27 +914,7 @@ const Survey = () => {
           {errors.medicalHistory && (
             <span className="text-red-500">{errors.medicalHistory}</span>
           )}
-        </label>
-
-        {/* Weather */}
-        <label className="block">
-          <span className="font-bold">
-            Usually, how's the weather in your country?
-          </span>
-          <select
-            name="weather"
-            value={formData.weather}
-            onChange={handleChange}
-            className="border border-gray-300 px-4 py-2 rounded-md w-full"
-          >
-            <option value="">Select...</option>
-            <option value="Cold">Cold</option>
-            <option value="Warm">Warm</option>
-            <option value="Hot">Hot</option>
-            <option value="Moderate">Modrate</option>
-            <option value="Rainy">Rainy</option>
-          </select>
-        </label>
+        </label> */}
 
         <h3 className="text-lg font-semibold mt-4">Do you practice sports?</h3>
         {/* Physical Activity */}
