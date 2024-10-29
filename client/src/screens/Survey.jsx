@@ -89,13 +89,80 @@ const Survey = () => {
         updatedData.customCurrency = "";
       }
 
-      if (name === "socialState" && value === "Prefer not to say") {
+      if (
+        name === "socialState" &&
+        (value === "Prefer not to say" || value === "Single")
+      ) {
         updatedData.children = "";
         updatedData.childrenNumber = "";
       }
 
       if (name === "children" && value !== "Yes") {
         updatedData.childrenNumber = "";
+      }
+
+      if (name === "diet" && value !== "Other") {
+        updatedData.customDiet = "";
+      }
+
+      if (
+        name === "diet" &&
+        ["Vegan", "Vegetarian", "Fruitarian"].includes(value)
+      ) {
+        updatedData.meat = [];
+        updatedData.customMeat = "";
+      }
+
+      if (name === "diet" && value !== "Religiously Observant") {
+        updatedData.religiouslyObservant = "";
+      }
+
+      if (name === "meat" && value !== "Other") {
+        updatedData.customMeat = "";
+      }
+
+      if (name === "fruits" && value !== "Other") {
+        updatedData.customFruits = "";
+      }
+
+      if (name === "fruits" && value !== "None") {
+        updatedData.fruitUnitPerDay = "";
+      }
+
+      if (name === "vegetables" && value !== "Other") {
+        updatedData.customVegetables = "";
+      }
+
+      if (name === "vegetables" && value !== "None") {
+        updatedData.vegetableUnitPerDay = "";
+      }
+
+      if (name === "fish" && value !== "Other") {
+        updatedData.customFish = "";
+      }
+
+      if (name === "dairy" && value !== "Other") {
+        updatedData.customDairy = "";
+      }
+
+      if (name === "oil" && value !== "Other") {
+        updatedData.customOil = "";
+      }
+
+      if (name === "religious" && value !== "Other") {
+        updatedData.customReligious = "";
+      }
+
+      if (name === "medicalHistory" && value !== "Other") {
+        updatedData.customMedicalHistory = "";
+      }
+
+      if (name === "homeMade" && value !== "Other") {
+        updatedData.customHomeMade = "";
+      }
+
+      if (name === "ordered" && value !== "Other") {
+        updatedData.customOrdered = "";
       }
 
       return updatedData;
@@ -115,6 +182,19 @@ const Survey = () => {
   const toggleSelection = (field, value) => {
     setFormData((prevData) => {
       const selectedValues = prevData[field];
+      const isCurrentlySelected = prevData[field].includes(value);
+      let updatedSelection;
+
+      if (value === "None") {
+        // If "None" is selected, clear all other selections and select only "None"
+        updatedSelection = isCurrentlySelected ? [] : ["None"];
+      } else {
+        // Remove "None" from selection if another item is chosen
+        updatedSelection = isCurrentlySelected
+          ? prevData[field].filter((item) => item !== value)
+          : [...prevData[field].filter((item) => item !== "None"), value];
+      }
+
       if (selectedValues.includes(value)) {
         // Unselect the value
         return {
@@ -126,6 +206,15 @@ const Survey = () => {
         return {
           ...prevData,
           [field]: [...selectedValues, value],
+          [field]: updatedSelection,
+          fruitUnitPerDay: updatedSelection.includes("None")
+            ? ""
+            : prevData.fruitUnitPerDay,
+
+          customMeat:
+            field === "meat" && updatedSelection.includes("Other")
+              ? prevData.customMeat
+              : "",
         };
       }
     });
@@ -309,7 +398,7 @@ const Survey = () => {
             onChange={handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
-            <option value="">Select a State</option>
+            <option value="">Select a State...</option>
             {Object.keys(stateOptions).map((state) => (
               <option key={state} value={state}>
                 {state}
@@ -439,6 +528,7 @@ const Survey = () => {
               type="text"
               name="customEducation"
               value={formData.customEducation}
+              placeholder="Please specify your education"
               onChange={handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             />
@@ -475,6 +565,7 @@ const Survey = () => {
               type="text"
               name="customOccupation"
               value={formData.customOcccupation}
+              placeholder="Please specify your occupation"
               onChange={handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             />
@@ -506,12 +597,13 @@ const Survey = () => {
 
         {/* Currency */}
         {formData.salary !== "Prefer not to say" && (
-          <label>
-            Currency:
+          <label className="block">
+            <span className="font-bold"> Currency: </span>
             <select
               name="currency"
               value={formData.currency}
               onChange={handleChange}
+              className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
               <option value="TND">TND</option>
@@ -530,15 +622,18 @@ const Survey = () => {
             </select>
           </label>
         )}
+
         {/* Custom Currency */}
         {formData.currency === "Other" && (
-          <label>
-            Custom Currency:
+          <label className="block">
+            <span className="font-bold"> Custom Currency: </span>
             <input
               type="text"
               name="customCurrency"
               value={formData.customCurrency}
+              placeholder="Specify your currency"
               onChange={handleChange}
+              className="border border-gray-300 px-4 py-2 rounded-md"
             />
           </label>
         )}
@@ -565,28 +660,32 @@ const Survey = () => {
         </label>
 
         {/* Children */}
-        {formData.socialState !== "Prefer not to say" && (
-          <label>
-            Children:
-            <select
-              name="children"
-              value={formData.children}
-              onChange={handleChange}
-            >
-              <option value="">Select...</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>  
-            </select>
-          </label>
-        )}
-        {/* Custom children */}
+        {formData.socialState !== "Prefer not to say" &&
+          formData.socialState !== "Single" && (
+            <label className="block">
+              <span className="font-bold">Children: </span>
+              <select
+                name="children"
+                value={formData.children}
+                onChange={handleChange}
+                className="border border-gray-300 px-4 py-2 rounded-md"
+              >
+                <option value="">Select...</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </label>
+          )}
+
+        {/* Children Number */}
         {formData.children === "Yes" && (
-          <label>
-            Children Number:
+          <label className="block">
+            <span className="font-bold">Children Number: </span>
             <select
               name="childrenNumber"
               value={formData.childrenNumber}
               onChange={handleChange}
+              className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
               <option value="One">One</option>
@@ -596,6 +695,39 @@ const Survey = () => {
               <option value="Five">Five</option>
               <option value="More than five">More than five</option>
             </select>
+          </label>
+        )}
+
+        {/* Religious */}
+        <label className="block">
+          <span className="font-bold">Religious:</span>
+          <select
+            name="religious"
+            value={formData.religious}
+            onChange={handleChange}
+            className="border border-gray-300 px-4 py-2 rounded-md w-full"
+          >
+            <option value="">Select...</option>
+            <option value="Prefer Not to say">Prefer Not to say</option>
+            <option value="Muslim">Muslim</option>
+            <option value="Christian">Christian</option>
+            <option value="Jewish">Jewish</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+
+        {/* Custom Religious */}
+        {formData.religious === "Other" && (
+          <label className="block">
+            <span className="font-bold">*Custom:</span>
+            <input
+              type="text"
+              name="customReligious"
+              value={formData.customReligious}
+              onChange={handleChange}
+              placeholder="Please specify your religioun"
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
           </label>
         )}
 
@@ -609,15 +741,336 @@ const Survey = () => {
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
+            <option value="Crudism">Crudism</option>
+            <option value="Fruitarian">Fruitarian</option>
             <option value="Vegetarian">Vegetarian</option>
-            <option value="Non-Vegetarian">Non-Vegetarian</option>
-            <option value="Both">Both</option>
+            <option value="Vegan">Vegan</option>
+            <option value="Flexitarian">Flexitarian</option>
+            <option value="No Diet">No Diet</option>
+            <option value="Religiously Observant">Religiously Observant</option>
+            <option value="Other">Other</option>
           </select>
           {errors.diet && <span className="text-red-500">{errors.diet}</span>}
         </label>
 
+        {/* Religiously observant field */}
+        {formData.diet === "Religiously Observant" && (
+          <label className="block">
+            <span className="font-bold">
+              *Please specify the foods that you don't eat:
+            </span>
+            <input
+              type="text"
+              name="religiouslyObservant"
+              value={formData.religiouslyObservant}
+              onChange={handleChange}
+              placeholder="Specify observance details"
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
+          </label>
+        )}
+
+        {/* Custom Diet */}
+        {formData.diet === "Other" && (
+          <label className="block">
+            <span className="font-bold">*Custom Diet:</span>
+            <input
+              type="text"
+              name="customDiet"
+              value={formData.customDiet}
+              onChange={handleChange}
+              placeholder="Please specify your diet"
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
+          </label>
+        )}
+
+        {/* Meat */}
+        {!["Vegan", "Vegetarian", "Fruitarian"].includes(formData.diet) && (
+          <>
+            <label className="block">
+              <span className="font-bold mb-2 block">Meat:</span>
+              <div
+                className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
+                style={{ maxHeight: "200px" }}
+              >
+                {[
+                  "Beef",
+                  "Chicken",
+                  "Pork",
+                  "Lamb",
+                  "Turkey",
+                  "Duck",
+                  "Goose",
+                  "Venison",
+                  "Partridge",
+                  "Other",
+                ].map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    className={`px-4 py-2 border rounded-md text-center ${
+                      formData.meat.includes(item)
+                        ? "bg-blue-500 text-white"
+                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-00"
+                    }`}
+                    onClick={() => toggleSelection("meat", item)}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </label>
+
+            {/* Show customMeat field only if "Other" is selected in meat */}
+            {formData.meat.includes("Other") && (
+              <label className="block">
+                <span className="font-bold">*Custom Meat:</span>
+                <input
+                  type="text"
+                  name="customMeat"
+                  value={formData.customMeat}
+                  onChange={handleChange}
+                  placeholder="Please specify other meat"
+                  className="border border-gray-300 px-4 py-2 rounded-md w-full"
+                />
+              </label>
+            )}
+          </>
+        )}
+
+        {/* Fruits */}
+        <label className="block">
+          <span className="font-bold mb-2 block">Fruits:</span>
+          <div
+            className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
+            style={{ maxHeight: "200px" }}
+          >
+            {[
+              "None",
+              "Apple",
+              "Avocados",
+              "Banana",
+              "Orange",
+              "Grapes",
+              "Strawberry",
+              "Watermelon",
+              "Mango",
+              "Kiwi",
+              "Pear",
+              "Cherry",
+              "Peach",
+              "Plum",
+              "Apricot",
+              "Grapefruit",
+              "Lemon",
+              "Other",
+            ].map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`px-4 py-2 border rounded-md text-center ${
+                  formData.fruits.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-00"
+                }`}
+                onClick={() => toggleSelection("fruits", item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </label>
+
+        {/* Custom Fruits */}
+        {formData.fruits.includes("Other") && (
+          <label className="block">
+            <span className="font-bold">*Custom Fruits:</span>
+            <input
+              type="text"
+              name="customFruits"
+              value={formData.customFruits}
+              onChange={handleChange}
+              placeholder="Please specify other fruits"
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
+          </label>
+        )}
+
+        {/* Fruit Unit Per Day */}
+
+        {!formData.fruits.includes("None") && (
+          <label className="block">
+            <span className="font-bold">How many fruits per day: </span>
+            <select
+              name="fruitUnitPerDay"
+              value={formData.fruitUnitPerDay}
+              onChange={handleChange}
+              className="border border-gray-300 px-4 py-2 rounded-md"
+            >
+              <option value="">Select...</option>
+              <option value="1">1</option>
+              <option value="Between 1-2">Between 1-2</option>
+              <option value="Between 2-3">Between 2-3</option>
+              <option value="Between 3-4">Between 3-4</option>
+              <option value="Between 4-5">Between 4-5</option>
+              <option value="Between 5-6">Between 5-6</option>
+              <option value="Between 6-7">Between 6-7</option>
+              <option value="Between 7-8">Between 7-8</option>
+              <option value="Between 8-9">Between 8-9</option>
+              <option value="Between 9-10">Between 9-10</option>
+              <option value="Over 10">Over 10</option>
+            </select>
+          </label>
+        )}
+
+        {/* Vegetables */}
+        <label className="block">
+          <span className="font-bold mb-2 block">Vegetables:</span>
+          <div
+            className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
+            style={{ maxHeight: "200px" }}
+          >
+            {[
+              "None",
+              "Carrot",
+              "Potato",
+              "Tomato",
+              "Cucumber",
+              "Broccoli",
+              "Lettuce",
+              "Cabbage",
+              "Spinach",
+              "Zucchini",
+              "Eggplant",
+              "Celery",
+              "Onion",
+              "Garlic",
+              "Ginger",
+              "Parsnip",
+              "Radish",
+              "Other",
+            ].map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`px-4 py-2 border rounded-md text-center ${
+                  formData.vegetables.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-00"
+                }`}
+                onClick={() => toggleSelection("vegetables", item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </label>
+
+        {/* Custom Vegetabels */}
+        {formData.vegetables.includes("Other") && (
+          <label className="block">
+            <span className="font-bold">*Custom Vegetables:</span>
+            <input
+              type="text"
+              name="customVegetables"
+              value={formData.customVegetables}
+              onChange={handleChange}
+              placeholder="Please specify other vegetables"
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
+          </label>
+        )}
+
+        {/* Vegetable Unit Per Day */}
+
+        {!formData.vegetables.includes("None") && (
+          <label className="block">
+            <span className="font-bold">How many vegetables per day: </span>
+            <select
+              name="vegetableUnitPerDay"
+              value={formData.vegetableUnitPerDay}
+              onChange={handleChange}
+              className="border border-gray-300 px-4 py-2 rounded-md"
+            >
+              <option value="">Select...</option>
+              <option value="1">1</option>
+              <option value="Between 1-2">Between 1-2</option>
+              <option value="Between 2-3">Between 2-3</option>
+              <option value="Between 3-4">Between 3-4</option>
+              <option value="Between 4-5">Between 4-5</option>
+              <option value="Between 5-6">Between 5-6</option>
+              <option value="Between 6-7">Between 6-7</option>
+              <option value="Between 7-8">Between 7-8</option>
+              <option value="Between 8-9">Between 8-9</option>
+              <option value="Between 9-10">Between 9-10</option>
+              <option value="Over 10">Over 10</option>
+            </select>
+          </label>
+        )}
+
+        {/* Fish */}
+        <label className="block">
+          <span className="font-bold mb-2 block">Fish:</span>
+          <div
+            className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
+            style={{ maxHeight: "200px" }}
+          >
+            {[
+              "None",
+              "Bonito",
+              "Picarel",
+              "Salmon",
+              "Sea Bass",
+              "Hake",
+              "Tuna",
+              "Shrimp",
+              "Crab",
+              "Lobster",
+              "Oyster",
+              "Scallop",
+              "Clam",
+              "Plum",
+              "Squid",
+              "Sardines",
+              "Mackerel",
+              "Herring",
+              "Anchovies",
+              "Other",
+            ].map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`px-4 py-2 border rounded-md text-center ${
+                  formData.fish.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-00"
+                }`}
+                onClick={() => toggleSelection("fish", item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </label>
+
+        {/* Custom Fish */}
+        {formData.fish.includes("Other") && (
+          <label className="block">
+            <span className="font-bold">*Custom Fish:</span>
+            <input
+              type="text"
+              name="customFish"
+              value={formData.customFish}
+              onChange={handleChange}
+              placeholder="Please specify other fish"
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
+          </label>
+        )}
+
         <h3 className="text-lg font-semibold mt-4">
-          Do you prefer Houseold foods or Ready to eat foods? or Both?
+          Do you prefer Home made foods or Ready to eat foods? or Both?
         </h3>
 
         {/* Household */}
@@ -705,7 +1158,7 @@ const Survey = () => {
         {/* <h3 className="text-lg font-semibold mt-4">
           Food Consumption Frequency
         </h3>
-        {formData.foodConsumptionFrequency.map((item, index) => (
+        {formData.fruitUnitPerDay.map((item, index) => (
           <div key={index} className="flex space-x-4 mb-4 items-end">
           
             <div className="w-1/4">

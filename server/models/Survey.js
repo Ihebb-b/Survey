@@ -508,6 +508,7 @@ const surveySchema = new Schema({
   vegetables: [{
     type: String,
     enum: [
+      "None",
       "Carrot",
       "Potato",
       "Tomato",
@@ -582,6 +583,7 @@ const surveySchema = new Schema({
   fish: [{
     type: String,
     enum: [
+      "None",
       "Bonito",
       "Picarel",
       "Salmon",
@@ -593,7 +595,6 @@ const surveySchema = new Schema({
       "Lobster",
       "Oyster",
       "Scallop",
-      "Crab",
       "Clam",
       "Squid",
       "Sardines",
