@@ -52,7 +52,7 @@ const Survey = () => {
     orderedConsumptionBudget: "",
     traditionalEatingHabits: false,
     newEatingHabits: false,
-    medicalHistory: "",
+    medicalHistory: [],
     customMedicalHistory: "",
     sportPractice: false,
     noSportPractice: false,
@@ -168,6 +168,7 @@ const Survey = () => {
       return updatedData;
     });
   };
+
   const stateOptions = {
     Tunisia: ["Ariana", "Beja", "Gabes"],
     Lebanon: ["Akkar", "Mount_Lebanon", "Bekaa"],
@@ -182,7 +183,7 @@ const Survey = () => {
   const toggleSelection = (field, value) => {
     setFormData((prevData) => {
       const selectedValues = prevData[field];
-      const isCurrentlySelected = prevData[field].includes(value);
+      const isCurrentlySelected = selectedValues.includes(value);
       let updatedSelection;
 
       if (value === "None") {
@@ -191,32 +192,45 @@ const Survey = () => {
       } else {
         // Remove "None" from selection if another item is chosen
         updatedSelection = isCurrentlySelected
-          ? prevData[field].filter((item) => item !== value)
-          : [...prevData[field].filter((item) => item !== "None"), value];
+          ? selectedValues.filter((item) => item !== value)
+          : [...selectedValues.filter((item) => item !== "None"), value];
       }
 
-      if (selectedValues.includes(value)) {
-        // Unselect the value
-        return {
-          ...prevData,
-          [field]: selectedValues.filter((item) => item !== value),
-        };
-      } else {
-        // Select the value
-        return {
-          ...prevData,
-          [field]: [...selectedValues, value],
-          [field]: updatedSelection,
-          fruitUnitPerDay: updatedSelection.includes("None")
-            ? ""
-            : prevData.fruitUnitPerDay,
+      // if (value === "Other" && !isCurrentlySelected) {
+      //   updatedSelection.push("Other");
+      // }
 
-          customMeat:
-            field === "meat" && updatedSelection.includes("Other")
-              ? prevData.customMeat
-              : "",
-        };
-      }
+      // if (selectedValues.includes(value)) {
+      // Unselect the value
+      //   return {
+      //    ...prevData,
+      //    [field]: selectedValues.filter((item) => item !== value),
+      //   };
+      //  } else {
+      // Select the value
+      return {
+        ...prevData,
+        // [field]: [...selectedValues, value],
+        [field]: updatedSelection,
+        fruitUnitPerDay: updatedSelection.includes("None")
+          ? ""
+          : prevData.fruitUnitPerDay,
+
+        customMeat:
+          field === "meat" && updatedSelection.includes("Other")
+            ? prevData.customMeat
+            : "",
+
+        // homeMadeConsumption: shouldShowCustomHomeMade
+        //   ? ""
+        //   : prevData.homeMadeConsumption,
+        // homeMadeConsumptionBudget: shouldShowCustomHomeMade
+        //   ? ""
+        //   : prevData.homeMadeConsumptionBudget,
+
+        customHomeMade: updatedSelection.includes("Other") ? "" : null,
+        customOrdered: updatedSelection.includes("Other") ? "" : null,
+      };
     });
   };
 
@@ -229,25 +243,54 @@ const Survey = () => {
   //   }));
   // };
 
-  // const addFoodFrequency = () => {
-  //   setFormData((prevState) => ({
-  //     ...prevState,
-  //     foodConsumptionFrequency: [
-  //       ...prevState.foodConsumptionFrequency,
-  //       { dietDescription: "", period: "", unit: "", value: "" },
-  //     ],
-  //   }));
-  // };
+  const handleFoodFrequencyChange = (index, field, value) => {
+    const updatedHomeMade = [...formData.homeMade];
+    updatedHomeMade[index][field] = value;
 
-  // const removeFoodFrequency = (index) => {
-  //   const updatedFrequencies = formData.foodConsumptionFrequency.filter(
-  //     (_, idx) => idx !== index
-  //   );
-  //   setFormData((prevState) => ({
-  //     ...prevState,
-  //     foodConsumptionFrequency: updatedFrequencies,
-  //   }));
-  // };
+    setFormData((prevState) => ({
+      ...prevState,
+      homeMade: updatedHomeMade,
+      ordered: updatedHomeMade,
+    }));
+  };
+
+  const addFoodFrequency = () => {
+    setFormData((prevState) => ({
+      ...prevState,
+      homeMade: [
+        ...prevState.homeMade,
+        {
+          selectedDish: "",
+          homeMadeConsumption: "",
+          homeMadeConsumptionBudget: "",
+        },
+      ],
+
+      ordered: [
+        ...prevState.ordered,
+        {
+          selectedDish: "",
+          orderedConsumption: "",
+          orderedConsumptionBudget: "",
+        },
+      ],
+    }));
+  };
+
+  const removeFoodFrequency = (index) => {
+    const updatedFrequencies = formData.homeMade.filter(
+      (_, idx) => idx !== index
+    );
+    setFormData((prevState) => ({
+      ...prevState,
+      homeMade: updatedFrequencies,
+    }));
+    const updatedOrdered = formData.ordered.filter((_, idx) => idx !== index);
+    setFormData((prevState) => ({
+      ...prevState,
+      ordered: updatedOrdered,
+    }));
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -255,20 +298,27 @@ const Survey = () => {
     if (!formData.name.trim()) newErrors.name = "Name is required.";
     if (!formData.gender) newErrors.gender = "Gender is required.";
     if (!formData.age) newErrors.age = "Age is required.";
+    if (!formData.state) newErrors.state = "State is required.";
+    if (!formData.ville) newErrors.ville = "Ville is required.";
     if (!formData.country) newErrors.country = "Country is required.";
+    if (!formData.height) newErrors.height = "Height is required.";
+    if (!formData.weight) newErrors.weight = "Weight is required.";
     if (!formData.education) newErrors.education = "Education is required.";
-    if (!formData.ethnicity) newErrors.ethnicity = "Ethnicity is required.";
+    if (!formData.occupation) newErrors.occupation = "Occupation is required.";
+    if (!formData.salary) newErrors.salary = "Salary is required.";
+    if (!formData.socialState) newErrors.socialState = "Social State is required.";
     if (!formData.diet) newErrors.diet = "Diet is required.";
-
-    // if (!formData.household.length && !formData.readyToEatFood.length) {
-    //   newErrors.foodPreference =
-    //     "You must select at least one option from Household or Ready-to-Eat Food.";
-    // }
-
+    if (!formData.fruits || formData.fruits.length === 0) {
+      errors.fruits = "Please select at least one fruit.";
+    }    if (!formData.vegetables) newErrors.vegetables = "Vegetables is required.";
+    if (!formData.homeMade) newErrors.homeMade = "Home Made Food is required.";
+    if (!formData.ordered) newErrors.ordered = "Ordered Food is required.";
+    if (!formData.medicalHistory) newErrors.medicalHistory = "Medical History Food is required.";
     if (!formData.traditionalEatingHabits && !formData.newEatingHabits) {
       newErrors.eatingHabits =
         "You must select at least one option from Traditional or New Eating Habits.";
     }
+
 
     // formData.foodConsumptionFrequency.forEach((item, index) => {
     //   if (!item.dietDescription)
@@ -425,6 +475,9 @@ const Survey = () => {
                 </option>
               ))}
             </select>
+            {errors.ville && (
+            <span className="text-red-500">{errors.ville}</span>
+          )}
           </label>
         )}
 
@@ -445,6 +498,9 @@ const Survey = () => {
                 </option>
               ))}
             </select>
+            {errors.country && (
+            <span className="text-red-500">{errors.country}</span>
+          )}
           </label>
         )}
 
@@ -809,10 +865,10 @@ const Survey = () => {
                   <button
                     key={item}
                     type="button"
-                    className={`px-4 py-2 border rounded-md text-center ${
+                    className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
                       formData.meat.includes(item)
-                        ? "bg-blue-500 text-white"
-                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-00"
+                        ? "bg-blue-500 text-white border-transparent"
+                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
                     }`}
                     onClick={() => toggleSelection("meat", item)}
                   >
@@ -869,17 +925,21 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center ${
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
                   formData.fruits.includes(item)
                     ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-00"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
                 }`}
                 onClick={() => toggleSelection("fruits", item)}
               >
                 {item}
               </button>
             ))}
+            
           </div>
+          {errors.fruits && (
+            <span className="text-red-500">{errors.fruits}</span>
+          )}
         </label>
 
         {/* Custom Fruits */}
@@ -954,10 +1014,10 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center ${
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
                   formData.vegetables.includes(item)
                     ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-00"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
                 }`}
                 onClick={() => toggleSelection("vegetables", item)}
               >
@@ -965,6 +1025,9 @@ const Survey = () => {
               </button>
             ))}
           </div>
+          {errors.vegetables && (
+            <span className="text-red-500">{errors.vegetables}</span>
+          )}
         </label>
 
         {/* Custom Vegetabels */}
@@ -1041,10 +1104,10 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center ${
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
                   formData.fish.includes(item)
                     ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-00"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
                 }`}
                 onClick={() => toggleSelection("fish", item)}
               >
@@ -1069,12 +1132,129 @@ const Survey = () => {
           </label>
         )}
 
+        {/* Dairy */}
+        <label className="block">
+          <span className="font-bold mb-2 block">Dairy:</span>
+          <div
+            className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
+            style={{ maxHeight: "200px" }}
+          >
+            {[
+              "None",
+              "Milk",
+              "Cheese",
+              "Yogurt",
+              "Butter",
+              "Cream",
+              "Ice Cream",
+              "Sour Cream",
+              "Ricotta",
+              "Mozzarella",
+              "Feta",
+              "Cottage Cheese",
+              "Cream Cheese",
+              "Parmesan",
+              "Gouda",
+              "Swiss Cheese",
+              "Brie",
+              "Camembert",
+              "Goat Cheese",
+              "Blue Cheese",
+              "Other",
+            ].map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
+                  formData.dairy.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                }`}
+                onClick={() => toggleSelection("dairy", item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </label>
+
+        {/* Custom Dairy */}
+        {formData.dairy.includes("Other") && (
+          <label className="block">
+            <span className="font-bold">*Custom Dairy:</span>
+            <input
+              type="text"
+              name="customDairy"
+              value={formData.customDairy}
+              onChange={handleChange}
+              placeholder="Please specify other dairy"
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
+          </label>
+        )}
+
+        {/* Oil */}
+        <label className="block">
+          <span className="font-bold mb-2 block">Oil:</span>
+          <div
+            className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
+            style={{ maxHeight: "200px" }}
+          >
+            {[
+              "None",
+              "Olive Oil",
+              "Sunflower Oil",
+              "Canola Oil",
+              "Sesame Oil",
+              "Safflower Oil",
+              "Peanut Oil",
+              "Avocado Oil",
+              "Coconut Oil",
+              "Grapeseed Oil",
+              "Walnut Oil",
+              "Hazelnut Oil",
+              "Soybean Oil",
+              "Truffle Oil",
+              "Vegetable Oil",
+              "Other",
+            ].map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
+                  formData.oil.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                }`}
+                onClick={() => toggleSelection("oil", item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </label>
+
+        {/* Custom Oil */}
+        {formData.oil.includes("Other") && (
+          <label className="block">
+            <span className="font-bold">*Custom Oil:</span>
+            <input
+              type="text"
+              name="customOil"
+              value={formData.customOil}
+              onChange={handleChange}
+              placeholder="Please specify other dairy"
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
+          </label>
+        )}
+
         <h3 className="text-lg font-semibold mt-4">
           Do you prefer Home made foods or Ready to eat foods? or Both?
         </h3>
 
-        {/* Household */}
-        {/* <label className="block">
+        {/* HomeMade */}
+        <label className="block">
           <span className="font-bold mb-2 block">Household:</span>
           <div
             className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
@@ -1104,31 +1284,152 @@ const Survey = () => {
                 key={item}
                 type="button"
                 className={`px-4 py-2 border rounded-md text-center ${
-                  formData.household.includes(item)
+                  formData.homeMade.includes(item)
                     ? "bg-blue-500 text-white"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
                 }`}
-                onClick={() => toggleSelection("household", item)}
+                onClick={() => toggleSelection("homeMade", item)}
               >
                 {item}
               </button>
             ))}
           </div>
-        </label> */}
+          {errors.homeMade && (
+            <span className="text-red-500">{errors.homeMade}</span>
+          )}
+        </label>
+        {/* HomeMade consumption*/}
+        <div>
+          {formData.homeMade.map((item, index) => (
+            <div key={index} className="flex space-x-4 mb-4 items-end">
+              <div className="w-1/4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {item === "Other" ? formData.customHomeMade : item}{" "}
+                  Consumption
+                </label>
+                <select
+                  name="homeMadeConsumption"
+                  value={item.homeMadeConsumption}
+                  onChange={(e) =>
+                    handleFoodFrequencyChange(
+                      index,
+                      "homeMadeConsumption",
+                      e.target.value
+                    )
+                  }
+                  className="border border-gray-300 px-4 py-2 rounded-md w-full"
+                >
+                  <option value="">Select Period</option>
+                  <option value="Every Day">Every Day</option>
+                  <option value="2-3 Times a Week">2-3 Times a Week</option>
+                  <option value="1-2 Times a Week">1-2 Times a Week</option>
+                  <option value="1-2 Times a Month">1-2 Times a Month</option>
+                  <option value="Rarely">Rarely</option>
+                  <option value="Never">Never</option>
+                </select>
+                {errors[`homeMadeConsumption-${index}`] && (
+                  <span className="text-red-500">
+                    {errors[`homeMadeConsumption-${index}`]}
+                  </span>
+                )}
+              </div>
 
-        {/* Ready-to-Eat Food */}
-        {/* <label className="block mt-4">
-          <span className="font-bold mb-2 block">Ready-to-Eat Food:</span>
+              {/* Home Made Consumption Budget */}
+              {item.homeMadeConsumption !== "Other" && (
+                <div className="w-1/4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {item === "Other" ? formData.customHomeMade : item}{" "}
+                    Consumption Budget
+                  </label>
+                  <select
+                    name="homeMadeConsumptionBudget"
+                    value={item.homeMadeConsumptionBudget}
+                    onChange={(e) =>
+                      handleFoodFrequencyChange(
+                        index,
+                        "homeMadeConsumptionBudget",
+                        e.target.value
+                      )
+                    }
+                    className="border border-gray-300 px-4 py-2 rounded-md w-full"
+                  >
+                    <option value="">Select Budget</option>
+                    <option value="Less than 100">Less than 100</option>
+                    <option value="100-200">100-200</option>
+                    <option value="200-300">200-300</option>
+                    <option value="300-400">300-400</option>
+                    <option value="400-500">400-500</option>
+                    <option value="500-600">500-600</option>
+                    <option value="600-700">600-700</option>
+                    <option value="700-800">700-800</option>
+                    <option value="800-900">800-900</option>
+                    <option value="900-1000">900-1000</option>
+                    <option value="More than 1000">More than 1000</option>
+                  </select>
+                  {errors[`homeMadeConsumptionBudget-${index}`] && (
+                    <span className="text-red-500">
+                      {errors[`homeMadeConsumptionBudget-${index}`]}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => removeFoodFrequency(index)}
+                className="text-red-500 hover:text-red-700 ml-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          ))}
+
+          {/* Display custom input for "Other" */}
+          {formData.homeMade.includes("Other") && (
+            <div className="w-1/4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Custom Other
+              </label>
+              <input
+                type="text"
+                name="customHomeMade"
+                value={formData.customHomeMade}
+                onChange={(e) =>
+                  setFormData({ ...formData, customHomeMade: e.target.value })
+                }
+                placeholder="Enter custom item"
+                className="border border-gray-300 px-4 py-2 rounded-md w-full"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Ordered */}
+        <label className="block">
+          <span className="font-bold mb-2 block">Ordered:</span>
           <div
             className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
-            style={{ maxHeight: "160px" }}
+            style={{ maxHeight: "200px" }}
           >
             {[
               "Pizza",
+              "Sandiwches",
               "Burgers",
-              "Sandwiches",
               "Wraps",
-              "Paninis",
+              "Paniis",
               "Mlewi",
               "Chappati",
               "Manakish",
@@ -1140,167 +1441,197 @@ const Survey = () => {
                 key={item}
                 type="button"
                 className={`px-4 py-2 border rounded-md text-center ${
-                  formData.readyToEatFood.includes(item)
+                  formData.ordered.includes(item)
                     ? "bg-blue-500 text-white"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
                 }`}
-                onClick={() => toggleSelection("readyToEatFood", item)}
+                onClick={() => toggleSelection("ordered", item)}
               >
                 {item}
               </button>
             ))}
           </div>
+          {errors.ordered && (
+            <span className="text-red-500">{errors.ordered}</span>
+          )}
         </label>
-        {errors.foodPreference && (
-          <span className="text-red-500">{errors.foodPreference}</span>
-        )} */}
 
-        {/* <h3 className="text-lg font-semibold mt-4">
-          Food Consumption Frequency
-        </h3>
-        {formData.fruitUnitPerDay.map((item, index) => (
-          <div key={index} className="flex space-x-4 mb-4 items-end">
-          
-            <div className="w-1/4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Diet Description
-              </label>
-              <select
-                name="dietDescription"
-                value={item.dietDescription}
-                onChange={(e) =>
-                  handleFoodFrequencyChange(
-                    index,
-                    "dietDescription",
-                    e.target.value
-                  )
-                }
-                className="border border-gray-300 px-4 py-2 rounded-md w-full"
-              >
-                <option value="">Select...</option>
-                <option value="Home_Made">Home Made</option>
-                <option value="Ordered">Ordered</option>
-              </select>
-              {errors[`dietDescription-${index}`] && (
-                <span className="text-red-500">
-                  {errors[`dietDescription-${index}`]}
-                </span>
-              )}{" "}
-            </div>
+        {/* Ordered consumption*/}
+        <div>
+          {formData.ordered.map((item, index) => (
+            <div key={index} className="flex space-x-4 mb-4 items-end">
+              <div className="w-1/4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {item === "Other" ? formData.customOrdered : item} Consumption
+                </label>
+                <select
+                  name="orederedConsumption"
+                  value={item.orederedConsumption}
+                  onChange={(e) =>
+                    handleFoodFrequencyChange(
+                      index,
+                      "orederedConsumption",
+                      e.target.value
+                    )
+                  }
+                  className="border border-gray-300 px-4 py-2 rounded-md w-full"
+                >
+                  <option value="">Select Period</option>
+                  <option value="Every Day">Every Day</option>
+                  <option value="2-3 Times a Week">2-3 Times a Week</option>
+                  <option value="1-2 Times a Week">1-2 Times a Week</option>
+                  <option value="1-2 Times a Month">1-2 Times a Month</option>
+                  <option value="Rarely">Rarely</option>
+                  <option value="Never">Never</option>
+                </select>
+                {errors[`orederedConsumption-${index}`] && (
+                  <span className="text-red-500">
+                    {errors[`orederedConsumption-${index}`]}
+                  </span>
+                )}
+              </div>
 
-            
-            <div className="w-1/4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Period
-              </label>
-              <select
-                name="period"
-                value={item.period}
-                onChange={(e) =>
-                  handleFoodFrequencyChange(index, "period", e.target.value)
-                }
-                className="border border-gray-300 px-4 py-2 rounded-md w-full"
-              >
-                <option value="">Select Period</option>
-                <option value="Day">Day</option>
-                <option value="Week">Week</option>
-                <option value="Month">Month</option>
-              </select>
-              {errors[`period-${index}`] && (
-                <span className="text-red-500">
-                  {errors[`period-${index}`]}
-                </span>
+              {/* Ordered Consumption Budget */}
+              {item.orderedConsumption !== "Other" && (
+                <div className="w-1/4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {item === "Other" ? formData.customOrdered : item}{" "}
+                    Consumption Budget
+                  </label>
+                  <select
+                    name="orderedConsumptionBudget"
+                    value={item.orderedConsumptionBudget}
+                    onChange={(e) =>
+                      handleFoodFrequencyChange(
+                        index,
+                        "orderedConsumptionBudget",
+                        e.target.value
+                      )
+                    }
+                    className="border border-gray-300 px-4 py-2 rounded-md w-full"
+                  >
+                    <option value="">Select Budget</option>
+                    <option value="Less than 100">Less than 100</option>
+                    <option value="100-200">100-200</option>
+                    <option value="200-300">200-300</option>
+                    <option value="300-400">300-400</option>
+                    <option value="400-500">400-500</option>
+                    <option value="500-600">500-600</option>
+                    <option value="600-700">600-700</option>
+                    <option value="700-800">700-800</option>
+                    <option value="800-900">800-900</option>
+                    <option value="900-1000">900-1000</option>
+                    <option value="More than 1000">More than 1000</option>
+                  </select>
+                  {errors[`orderedConsumptionBudget-${index}`] && (
+                    <span className="text-red-500">
+                      {errors[`orderedConsumptionBudget-${index}`]}
+                    </span>
+                  )}
+                </div>
               )}
-            </div>
 
-            <div className="w-1/4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Unit
-              </label>
-              <select
-                name="unit"
-                value={item.unit}
-                onChange={(e) =>
-                  handleFoodFrequencyChange(index, "unit", e.target.value)
-                }
-                className="border border-gray-300 px-4 py-2 rounded-md w-full"
+              <button
+                type="button"
+                onClick={() => removeFoodFrequency(index)}
+                className="text-red-500 hover:text-red-700 ml-2"
               >
-                <option value="">Select Unit</option>
-                <option value="Gram">Gram</option>
-                <option value="Litre">Litre</option>
-                <option value="Number">Number</option>
-              </select>
-              {errors[`unit-${index}`] && (
-                <span className="text-red-500">{errors[`unit-${index}`]}</span>
-              )}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </div>
+          ))}
 
-            
+          {/* Display custom input for "Other" */}
+          {formData.ordered.includes("Other") && (
             <div className="w-1/4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Value
+                Custom Other
               </label>
               <input
-                type="number"
-                name="value"
-                value={item.value}
+                type="text"
+                name="customOrdered"
+                value={formData.customOrdered}
                 onChange={(e) =>
-                  handleFoodFrequencyChange(index, "value", e.target.value)
+                  setFormData({ ...formData, customOrdered: e.target.value })
                 }
+                placeholder="Enter custom item"
                 className="border border-gray-300 px-4 py-2 rounded-md w-full"
-                placeholder="Value"
               />
-              {errors[`value-${index}`] && (
-                <span className="text-red-500">{errors[`value-${index}`]}</span>
-              )}
             </div>
+          )}
+        </div>
 
-            
-            <button
-              type="button"
-              onClick={() => removeFoodFrequency(index)}
-              className="text-red-500 hover:text-red-700 ml-2"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-        ))}
-
-        
-        <button
-          type="button"
-          onClick={addFoodFrequency}
-          className="flex items-center text-blue-500 hover:text-blue-700 mt-4"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        {/* Medical History */}
+        <label className="block">
+          <span className="font-bold mb-2 block">Medical History:</span>
+          <div
+            className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
+            style={{ maxHeight: "200px" }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
+            {[
+              "None",
+              "Diabetes",
+              "Hypertension",
+              "Heart_Disease",
+              "Cancer",
+              "Cardiovascular Disease",
+              "Obesity",
+              "Asthma",
+              "Arthritis",
+              "Gastrointestinal disorders",
+              "Metabolic syndrome",
+              "Skin diseases",
+              "Tuberculosis",
+              "Hepatitis",
+              "Other",
+              "Prefer not to say",
+            ].map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
+                  formData.medicalHistory.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                }`}
+                onClick={() => toggleSelection("medicalHistory", item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+          {errors.medicalHistory && (
+            <span className="text-red-500">{errors.medicalHistory}</span>
+          )}
+        </label>
+
+        {/* Custom Mdical History */}
+        {formData.medicalHistory.includes("Other") && (
+          <label className="block">
+            <span className="font-bold">*Custom Medical History:</span>
+            <input
+              type="text"
+              name="customMedicalHistory"
+              value={formData.customMedicalHistory}
+              onChange={handleChange}
+              placeholder="Please specify other dairy"
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
             />
-          </svg>
-          Add More
-        </button>  */}
+          </label>
+        )}
 
         <h3 className="text-lg font-semibold mt-4">What do you prefer?</h3>
         {/* Traditional Eating Habits */}
@@ -1331,43 +1662,6 @@ const Survey = () => {
           <span className="text-red-500">{errors.eatingHabits}</span>
         )}
 
-        {/* Medical History */}
-        {/* <label className="block">
-          <span className="font-bold">
-            Do you have any of the followoing conditions?
-          </span>
-          <select
-            name="medicalHistory"
-            value={formData.medicalHistory}
-            onChange={handleChange}
-            className="border border-gray-300 px-4 py-2 rounded-md w-full"
-          >
-            <option value="">Select...</option>
-            <option value="None">None</option>
-            <option value="Prefer not to say">Prefer not to say</option>
-            <option value="Diabetes">Diabetes</option>
-            <option value="Hypertension">Hypertension</option>
-            <option value="Heart Disease">Heart Disease</option>
-            <option value="Asthma">Asthma</option>
-            <option value="Cancer">Cancer</option>
-            <option value="Arthritis">Arthritis</option>
-            <option value="Cardiovascular Disease">
-              Cardiovascular Disease
-            </option>
-            <option value="Obesity">Obesity</option>
-            <option value="Tuberculosis">Tuberculosis</option>
-            <option value="Gastrointestinal disorders">
-              Gastrointestinal disorders
-            </option>
-            <option value="Metabolic syndrome">Metabolic syndrome</option>
-            <option value="Hepatitis">Hepatitis</option>
-            <option value="Skin diseases">Skin diseases</option>
-            <option value="Other">Other</option>
-          </select>
-          {errors.medicalHistory && (
-            <span className="text-red-500">{errors.medicalHistory}</span>
-          )}
-        </label> */}
 
         <h3 className="text-lg font-semibold mt-4">Do you practice sports?</h3>
         {/* Physical Activity */}
