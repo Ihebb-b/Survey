@@ -16,16 +16,16 @@ const stateVilleMappings = {
     "Bejaia",
     "Mostaganem",
     "Tissemsilt",
-    "El Oued",
+    "El_Oued",
     "Laghouat",
-    "M'Sila",
+    "M_Sila",
     "Mascara",
   ],
   Tunisia: [
     "Ariana",
     "Beja",
     "Ben_Arous",
-    "Sidi Bouzid",
+    "Sidi_Bouzid",
     "Tunis",
     "Sousse",
     "Gabes",
@@ -40,7 +40,6 @@ const stateVilleMappings = {
     "Monastir",
     "Nabeul",
     "Sfax",
-    "Sidi Bouzid",
     "Siliana",
     "Tataouine",
     "Tozeur",
@@ -60,8 +59,8 @@ const stateVilleMappings = {
     "Lille",
     "Rennes",
     "Reims",
-    "Le Havre",
-    "Saint-Etienne",
+    "Le_Havre",
+    "Saint_Etienne",
     "Toulon",
     "Grenoble",
     "Dijon",
@@ -90,7 +89,7 @@ const stateVilleMappings = {
     "Zaragoza",
     "Málaga",
     "Murcia",
-    "Palma de Mallorca",
+    "Palma_de_Mallorca",
   ],
   Albania: [
     "Tirana",
@@ -114,7 +113,7 @@ const stateVilleMappings = {
     "Brcko",
     "Prijedor",
     "Trebinje",
-    "Banja Luka",
+    "Banja_Luka",
     "Zenica",
     "Sarajevo",
   ],
@@ -137,11 +136,11 @@ const stateVilleMappings = {
     "Akkar",
     "Beirut",
     "Bekaa",
-    "Baalbek-Hermel",
+    "Baalbek_Hermel",
     "Mount_Lebanon",
-    "North Lebanon",
+    "North_Lebanon",
     "Nabatiyeh",
-    "South Lebanon",
+    "South_Lebanon",
   ],
   Syria: [
     "Dimashq",
@@ -152,9 +151,9 @@ const stateVilleMappings = {
     "Daraa",
     "Idlib",
     "Quneitra",
-    "Rif Dimashq",
+    "Rif_Dimashq",
     "Tartus",
-    "Deir ez-Zor",
+    "Deir_ez_Zor",
     "Latakia",
     "Raqqa",
     "Suwayda",
@@ -170,26 +169,26 @@ const stateVilleMappings = {
     "Kenitra",
     "Oujda",
     "Safi",
-    "El Jadida",
+    "El_Jadida",
     "Settat",
-    "El Kelaa des Sraghna",
+    "El_Kelaa_des_Sraghna",
   ],
   Egypt: [
     "Cairo",
     "Alexandria",
     "Giza",
-    "Port Said",
+    "Port_Said",
     "Suez",
     "Luxor",
     "Aswan",
     "Asyut",
-    "Beni Suef",
+    "Beni_Suef",
     "Fayoum",
     "Minya",
     "Qena",
     "Sohag",
     "Qalyubia",
-    "Kafr El Sheikh",
+    "Kafr_El_Sheikh",
     "Damietta",
     "Sharqia",
     "Gharbia",
@@ -201,14 +200,14 @@ const stateVilleMappings = {
     "Misrata",
     "Sabha",
     "Derna",
-    "Al-Bayda",
-    "Al-Jizah",
-    "Al-Jabal al Akhdar",
-    "Al-Jabal al Gharbi",
-    "Al-Jabal al Janubiyah",
-    "Al-Jabal al Shariqah",
-    "Al-Jabal al Wusta",
-    "Al-Jufrah",
+    "Al_Bayda",
+    "Al_Jizah",
+    "Al_Jabal_al_Akhdar",
+    "Al_Jabal_al_Gharbi",
+    "Al_Jabal_al_Janubiyah",
+    "Al_Jabal_al_Shariqah",
+    "Al_Jabal_al_Wusta",
+    "Al_Jufrah",
   ],
   Palestine: [
     "Gaza",
@@ -221,10 +220,10 @@ const stateVilleMappings = {
     "Enassr",
     "Baysan",
     "Aryha",
-    "Al-Quds",
-    "Bayt lahm",
-    "Al-khalil",
-    "Byr Sabaa",
+    "Al_Quds",
+    "Bayt_lahm",
+    "Al_khalil",
+    "Byr_Sabaa",
     "Naquab",
   ],
   Turkey: [
@@ -244,7 +243,7 @@ const stateVilleMappings = {
     "Birgu",
     "Senglea",
     "Gzira",
-    "St. Julian's",
+    "St_Julian_s",
     "Sliema",
     "Gzira",
     "Msida",
@@ -253,29 +252,27 @@ const stateVilleMappings = {
     "Marsaskala",
   ],
   Monaco: [
-    "Monte Carlo",
+    "Monte_Carlo",
     "Fontvieille",
-    "La Condamine",
-    "La Colle",
-    "La Condamine",
-    "La Gare",
-    "La Source",
-    "La Vague",
-    "Le Port",
+    "La_Condamine",
+    "La_Colle",
+    "La_Condamine",
+    "La_Gare",
+    "La_Source",
+    "La_Vague",
+    "Le_Port",
   ],
   Montenegro: [
     "Podgorica",
     "Nikšić",
     "Bar",
-    "Budva",
-    "Budva",
     "Herceg Novi",
     "Kotor",
     "Tivat",
     "Ulcinj",
     "Bar",
     "Budva",
-    "Herceg Novi",
+    "Herceg_Novi",
   ],
   Slovenia: [
     "Ljubljana",
@@ -283,20 +280,18 @@ const stateVilleMappings = {
     "Celje",
     "Kranj",
     "Koper",
-    "Nova Gorica",
+    "Nova_Gorica",
     "Ptuj",
-    "Nova Gorica",
+    "Nova_Gorica",
     "Ptuj",
-    "Novo Mesto",
-    "Slovenska Bistrica",
+    "Novo_Mesto",
+    "Slovenska_Bistrica",
   ],
-
-  // Add other countries similarly
 };
 
-
 const villeCountryMappings = {
-  "Sidi Bouzid": ["Rgueb", "Menzel_Bouzaiane"],
+  //ville Tunisia
+  Sidi_Bouzid: ["Rgueb", "Menzel_Bouzaiane"],
   Ariana: ["Ghazela", "Raoued"],
   Sousse: ["Erriadh", "Sahloul"],
   Jendouba: ["Nord", "Sud"],
@@ -305,13 +300,34 @@ const villeCountryMappings = {
   Gabes: ["Ga", "Bes"],
   Kairouan: ["Chrarda", "Al_Aala"],
   Kasserine: ["Tala", "Sabela"],
+  Tunis: ["Bab_El_Oued", "El_Harrach"],
+  Sfax: ["Bab_El_Oued", "El_Harrach"],
+  Kebili: ["Rgueb", "Menzel_Bouzaiane"],
+  Kef: ["Ghazela", "Raoued"],
+  Mahdiya: ["Erriadh", "Sahloul"],
+  Manouba: ["Nord", "Sud"],
+  Medenine: ["Chabiba", "Al_Aamra"],
+  Monastir: ["Tastour", "Tass"],
+  Nabeul: ["Ga", "Bes"],
+  Siliana: ["Chrarda", "Al_Aala"],
+  Tozeur: ["Tala", "Sabela"],
+  Zaghouan: ["Bab_El_Oued", "El_Harrach"],
 
+  //ville Algeria
   Algiers: ["Bab_El_Oued", "El_Harrach"],
   Annaba: ["Ann", "Aba"],
   Batna: ["Ba", "Tna"],
+  Bejaia: ["Be", "Jaia"],
+  Biskra: ["Bi", "Ska"],
+
+  //ville Marocco
+  Casablanca: ["Bab_El_Oued", "El_Harrach"],
+  Fes: ["Erriadh", "Sahloul"],
+  Marrakech: ["Nord", "Sud"],
+  Agadir: ["Chabiba", "Al_Aamra"],
+  Rabat: ["Tastour", "Tass"],
   // Add more cities with respective countries
 };
-
 
 const countryMappings = {
   Ghazela: ["Tunisia"],
@@ -364,7 +380,6 @@ const surveySchema = new Schema({
     required: true,
   },
 
-  // Ville, dependent on State
   ville: {
     type: String,
     required: true,
@@ -377,7 +392,6 @@ const surveySchema = new Schema({
     },
   },
 
-  // Country, dependent on Ville
   country: {
     type: String,
     required: true,
@@ -765,16 +779,16 @@ const surveySchema = new Schema({
     required: function () {
       return !["Prefer not to say", "Single"].includes(this.socialState);
     },
-    set: v => (v === "" ? undefined : v)
+    set: (v) => (v === "" ? undefined : v),
   },
   childrenNumber: {
     type: String,
-    enum: ["None","One", "Two", "Three", "Four", "Five", "More than five"],
+    enum: ["None", "One", "Two", "Three", "Four", "Five", "More than five"],
     default: "None",
     required: function () {
       return this.children === "Yes";
     },
-    set: v => (v === "" ? undefined : v)
+    set: (v) => (v === "" ? undefined : v),
   },
   diet: {
     type: String,
@@ -886,7 +900,7 @@ const surveySchema = new Schema({
     required: function () {
       return this.fruits[0] !== "None";
     },
-    set: v => (v === "" ? undefined : v)
+    set: (v) => (v === "" ? undefined : v),
   },
   vegetables: [
     {
@@ -950,7 +964,7 @@ const surveySchema = new Schema({
     required: function () {
       return this.vegetables[0] !== "None";
     },
-    set: v => (v === "" ? undefined : v)
+    set: (v) => (v === "" ? undefined : v),
   },
   religious: {
     type: String,
@@ -1137,13 +1151,19 @@ const surveySchema = new Schema({
         type: String,
         required: function () {
           // Ensure homeMade is defined and includes 'Other'
-          return Array.isArray(this.homeMade) && this.homeMade.some(item => item.name === "Other");
+          return (
+            Array.isArray(this.homeMade) &&
+            this.homeMade.some((item) => item.name === "Other")
+          );
         },
       },
     },
     required: function () {
       // Ensure homeMade is defined and includes 'Other'
-      return Array.isArray(this.homeMade) && this.homeMade.some(item => item.name === "Other");
+      return (
+        Array.isArray(this.homeMade) &&
+        this.homeMade.some((item) => item.name === "Other")
+      );
     },
   },
 
@@ -1204,13 +1224,19 @@ const surveySchema = new Schema({
         type: String,
         required: function () {
           // Ensure ordered is defined and includes 'Other'
-          return Array.isArray(this.ordered) && this.ordered.some(item => item.name === "Other");
+          return (
+            Array.isArray(this.ordered) &&
+            this.ordered.some((item) => item.name === "Other")
+          );
         },
       },
     },
     required: function () {
       // Ensure ordered is defined and includes 'Other'
-      return Array.isArray(this.ordered) && this.ordered.some(item => item.name === "Other");
+      return (
+        Array.isArray(this.ordered) &&
+        this.ordered.some((item) => item.name === "Other")
+      );
     },
   },
 
@@ -1338,7 +1364,7 @@ const surveySchema = new Schema({
   //     "More than 1000",
   // ],
   // },
-  
+
   traditionalEatingHabits: { type: Boolean },
   newEatingHabits: { type: Boolean },
   medicalHistory: [
