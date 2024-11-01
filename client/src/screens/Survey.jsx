@@ -4,6 +4,65 @@ import { useNavigate } from "react-router-dom";
 import { useCreateSurveyMutation } from "../slices/surveyApiSlice";
 
 const Survey = () => {
+  const homeMadeOptions = [
+    "Home Made Pizza",
+    "Shakshouka",
+    "Couscous",
+    "Moroccan Tagine",
+    "Musakhan",
+    "Harira",
+    "Horiatiki (Greek salad)",
+    "Moussaka",
+    "Spanakopita",
+    "Melomakarono",
+    "Manti",
+    "Borek",
+    "Kofte",
+    "Risotto",
+    "Timballo",
+    "Polenta",
+    "Baba Ghanoush",
+    "Hummus",
+    "Other",
+  ];
+
+  const consumptionOptions = [
+    "Every Day",
+    "2-3 Times a Week",
+    "1-2 Times a Week",
+    "1-2 Times a Month",
+    "Rarely",
+    "Never",
+  ];
+
+  const budgetOptions = [
+    "Less than 100",
+    "100-200",
+    "200-300",
+    "300-400",
+    "400-500",
+    "500-600",
+    "600-700",
+    "700-800",
+    "800-900",
+    "900-1000",
+    "More than 1000",
+  ];
+
+  const orderedOptions = [
+    "Pizza",
+    "Sandwiches",
+    "Burgers",
+    "Wraps",
+    "Paninis",
+    "Mlewi",
+    "Chappati",
+    "Manakish",
+    "Lahmacun",
+    "Koshari",
+    "Other",
+  ];
+
   const [formData, setFormData] = useState({
     name: "",
     gender: "",
@@ -43,19 +102,20 @@ const Survey = () => {
     oil: [],
     customOil: "",
     homeMade: [],
-    customHomeMade: "",
-    homeMadeConsumption: "",
-    homeMadeConsumptionBudget: "",
+    customHomeMade: { name: "" },
+    //customHomeMade: "",
+    //homeMadeConsumption: "",
+    //homeMadeConsumptionBudget: "",
     ordered: [],
-    customOrdered: "",
-    orderedConsumption: "",
-    orderedConsumptionBudget: "",
+    customOrdered: { name: "" },
+    //customOrdered: "",
+    //orderedConsumption: "",
+    //orderedConsumptionBudget: "",
     traditionalEatingHabits: false,
     newEatingHabits: false,
     medicalHistory: [],
     customMedicalHistory: "",
-    sportPractice: false,
-    noSportPractice: false,
+    physicalActivity: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -72,6 +132,12 @@ const Survey = () => {
         ...prevState,
         [name]: type === "checkbox" ? checked : value,
       };
+
+      if (Array.isArray(prevState[name])) {
+        updatedData[name] = checked
+          ? [...prevState[name], value]
+          : prevState[name].filter((item) => item !== value);
+      }
 
       if (name === "state") {
         updatedData.ville = "";
@@ -100,6 +166,9 @@ const Survey = () => {
       if (name === "children" && value !== "Yes") {
         updatedData.childrenNumber = "";
       }
+      // if (name === 'children' && (value === 'Single' || value === 'Prefer not to say')) {
+      //   updatedData.childrenNumber = 'none'; // Set `childrenNumber` to 'none' when children is "Single" or "Prefer not to say"
+      // }
 
       if (name === "diet" && value !== "Other") {
         updatedData.customDiet = "";
@@ -170,14 +239,54 @@ const Survey = () => {
   };
 
   const stateOptions = {
-    Tunisia: ["Ariana", "Beja", "Gabes"],
-    Lebanon: ["Akkar", "Mount_Lebanon", "Bekaa"],
+    Tunisia: ["Ariana", "Beja", "Ben_Arous"],
+    Algeria: ["Algiers", "Annaba", "Batna"],
   };
 
   const villeOptions = {
-    Ariana: ["Rgueb", "Menzel_Bouzaine"],
-    Beja: ["Kalaa_Kebira", "Hammam_Sousse"],
-    Akkar: ["Beirut", "Beirut"],
+    Ariana: ["Ghazela", "Raoued"],
+    Beja: ["Tastour", "Tass"],
+    Algiers: ["Bab_El_Oued", "El_Harrach"],
+  };
+
+  const countryOptions = {
+    Rgueb: ["Ghazela", "Raoued"],
+    Menzel_Bouzaine: ["Gafsa"],
+    Kalaa_Kebira: ["Soussa"],
+    Hammam_Sousse: ["Kantaoui"],
+    Bab_El_Oued: ["El_Djazair"],
+    El_Harrach: ["Cheraga"],
+  };
+
+  const toggleSelectionn = (category, item) => {
+    setFormData((prevData) => {
+      const currentItems = [...prevData[category]];
+      const itemIndex = currentItems.findIndex((i) => i.name === item);
+
+      if (itemIndex !== -1) {
+        return {
+          ...prevData,
+          [category]: currentItems.filter((i) => i.name !== item),
+        };
+      } else {
+        return {
+          ...prevData,
+          [category]: [
+            ...currentItems,
+            { name: item, consumption: "", budget: "" },
+          ],
+        };
+      }
+    });
+  };
+
+  const handleInputChange = (category, itemName, field, value) => {
+    setFormData((prevData) => {
+      const updatedItems = prevData[category].map((item) =>
+        item.name === itemName ? { ...item, [field]: value } : item
+      );
+      return { ...prevData, [category]: updatedItems };
+    });
   };
 
   const toggleSelection = (field, value) => {
@@ -187,109 +296,41 @@ const Survey = () => {
       let updatedSelection;
 
       if (value === "None") {
-        // If "None" is selected, clear all other selections and select only "None"
         updatedSelection = isCurrentlySelected ? [] : ["None"];
       } else {
-        // Remove "None" from selection if another item is chosen
         updatedSelection = isCurrentlySelected
           ? selectedValues.filter((item) => item !== value)
           : [...selectedValues.filter((item) => item !== "None"), value];
       }
 
-      // if (value === "Other" && !isCurrentlySelected) {
-      //   updatedSelection.push("Other");
-      // }
-
-      // if (selectedValues.includes(value)) {
-      // Unselect the value
-      //   return {
-      //    ...prevData,
-      //    [field]: selectedValues.filter((item) => item !== value),
-      //   };
-      //  } else {
-      // Select the value
       return {
         ...prevData,
-        // [field]: [...selectedValues, value],
         [field]: updatedSelection,
-        fruitUnitPerDay: updatedSelection.includes("None")
-          ? ""
-          : prevData.fruitUnitPerDay,
+        fruitUnitPerDay:
+          field === "fruits" && updatedSelection.includes("None")
+            ? ""
+            : prevData.fruitUnitPerDay,
+
+        vegetableUnitPerDay:
+          field === "vegetables" && updatedSelection.includes("None")
+            ? ""
+            : prevData.vegetableUnitPerDay,
 
         customMeat:
           field === "meat" && updatedSelection.includes("Other")
             ? prevData.customMeat
             : "",
 
-        // homeMadeConsumption: shouldShowCustomHomeMade
-        //   ? ""
-        //   : prevData.homeMadeConsumption,
-        // homeMadeConsumptionBudget: shouldShowCustomHomeMade
-        //   ? ""
-        //   : prevData.homeMadeConsumptionBudget,
-
-        customHomeMade: updatedSelection.includes("Other") ? "" : null,
-        customOrdered: updatedSelection.includes("Other") ? "" : null,
+        customHomeMade:
+          field === "homeMade" && updatedSelection.includes("Other")
+            ? ""
+            : prevData.customHomeMade,
+        customOrdered:
+          field === "ordered" && updatedSelection.includes("Other")
+            ? ""
+            : prevData.customOrdered,
       };
     });
-  };
-
-  // const handleFoodFrequencyChange = (index, field, value) => {
-  //   const updatedFoodFrequency = [...formData.foodConsumptionFrequency];
-  //   updatedFoodFrequency[index][field] = value;
-  //   setFormData((prevState) => ({
-  //     ...prevState,
-  //     foodConsumptionFrequency: updatedFoodFrequency,
-  //   }));
-  // };
-
-  const handleFoodFrequencyChange = (index, field, value) => {
-    const updatedHomeMade = [...formData.homeMade];
-    updatedHomeMade[index][field] = value;
-
-    setFormData((prevState) => ({
-      ...prevState,
-      homeMade: updatedHomeMade,
-      ordered: updatedHomeMade,
-    }));
-  };
-
-  const addFoodFrequency = () => {
-    setFormData((prevState) => ({
-      ...prevState,
-      homeMade: [
-        ...prevState.homeMade,
-        {
-          selectedDish: "",
-          homeMadeConsumption: "",
-          homeMadeConsumptionBudget: "",
-        },
-      ],
-
-      ordered: [
-        ...prevState.ordered,
-        {
-          selectedDish: "",
-          orderedConsumption: "",
-          orderedConsumptionBudget: "",
-        },
-      ],
-    }));
-  };
-
-  const removeFoodFrequency = (index) => {
-    const updatedFrequencies = formData.homeMade.filter(
-      (_, idx) => idx !== index
-    );
-    setFormData((prevState) => ({
-      ...prevState,
-      homeMade: updatedFrequencies,
-    }));
-    const updatedOrdered = formData.ordered.filter((_, idx) => idx !== index);
-    setFormData((prevState) => ({
-      ...prevState,
-      ordered: updatedOrdered,
-    }));
   };
 
   const validateForm = () => {
@@ -306,66 +347,60 @@ const Survey = () => {
     if (!formData.education) newErrors.education = "Education is required.";
     if (!formData.occupation) newErrors.occupation = "Occupation is required.";
     if (!formData.salary) newErrors.salary = "Salary is required.";
-    if (!formData.socialState) newErrors.socialState = "Social State is required.";
+    if (!formData.socialState)
+      newErrors.socialState = "Social State is required.";
+    if (formData.socialState !== "Single" && formData.children === "") {
+      newErrors.children = "Children field is required.";
+    }
+    if (formData.children === "Yes" && !formData.childrenNumber) {
+      newErrors.childrenNumber = "Children Number is required.";
+    }
     if (!formData.diet) newErrors.diet = "Diet is required.";
     if (!formData.fruits || formData.fruits.length === 0) {
-      errors.fruits = "Please select at least one fruit.";
-    }    if (!formData.vegetables) newErrors.vegetables = "Vegetables is required.";
-    if (!formData.homeMade) newErrors.homeMade = "Home Made Food is required.";
-    if (!formData.ordered) newErrors.ordered = "Ordered Food is required.";
-    if (!formData.medicalHistory) newErrors.medicalHistory = "Medical History Food is required.";
+      newErrors.fruits = "Please select at least one fruit.";
+    }
+    if (!formData.fruits.includes("None") && !formData.fruitUnitPerDay) {
+      newErrors.fruitUnitPerDay = "Please specify fruit units per day.";
+    }
+    if (!formData.vegetables || formData.vegetables.length === 0) {
+      newErrors.vegetables = "Please select at least one vegetable.";
+    }
+    if (
+      !formData.vegetables.includes("None") &&
+      !formData.vegetableUnitPerDay
+    ) {
+      newErrors.vegetableUnitPerDay = "Please specify vegetable units per day.";
+    }
+    if (!formData.homeMade.length)
+      newErrors.homeMade = "Home Made Food is required.";
+    if (!formData.ordered.length)
+      newErrors.ordered = "Ordered Food is required.";
+    if (
+      formData.homeMade.some((item) => item.name === "Other") &&
+      !formData.customHomeMade.name
+    ) {
+      newErrors.customHomeMade = "Please specify your custom home-made food.";
+    }
+
+    if (
+      formData.ordered.some((item) => item.name === "Other") &&
+      !formData.customOrdered.name
+    ) {
+      newErrors.customOrdered = "Please specify your custom ordered food.";
+    }
+    if (!formData.medicalHistory || formData.medicalHistory.length === 0) {
+      newErrors.medicalHistory = "Please select at least one item.";
+    }
     if (!formData.traditionalEatingHabits && !formData.newEatingHabits) {
       newErrors.eatingHabits =
         "You must select at least one option from Traditional or New Eating Habits.";
     }
-
-
-    // formData.foodConsumptionFrequency.forEach((item, index) => {
-    //   if (!item.dietDescription)
-    //     newErrors[`dietDescription-${index}`] = `Diet is required.`;
-    //   if (!item.period) newErrors[`period-${index}`] = `Period is required.`;
-    //   if (!item.unit) newErrors[`unit-${index}`] = `Unit is required.`;
-    //   if (!item.value) newErrors[`value-${index}`] = `Value is required.`;
-    // });
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   const updatedFormData = {
-  //     ...formData,
-  //     household: formData.household.length > 0 ? formData.household : [],
-  //     readyToEatFood:
-  //       formData.readyToEatFood.length > 0 ? formData.readyToEatFood : [],
-  //   };
-  //   console.log("Form submitted", formData);
-
-  //   if (!validateForm()) {
-  //     setIsError(true);
-  //     return;
-  //   }
-
-  //   try {
-  //     const res = await createSurvey(formData).unwrap();
-
-  //     console.log("Response: ", res);
-
-  //     if (res) {
-  //       toast.success("Survey submitted successfully!");
-  //       setTimeout(() => {
-  //         navigate("/");
-  //       }, 2000);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error caught: ", err);
-  //     toast.error(err?.data?.message || err.error || "Submission failed.");
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
+    console.log("Form Data:", formData);
     e.preventDefault();
     if (!validateForm()) {
       setIsError(true);
@@ -376,7 +411,15 @@ const Survey = () => {
       toast.success("Survey submitted successfully!");
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
-      toast.error("Submission failed.");
+      if (err && err.status) {
+        console.error("Error Status:", err.status);
+        console.error("Error Status Text:", err.statusText);
+        console.error("Error Data:", err.data);
+        toast.error(`Submission failed: ${err.statusText}`);
+      } else {
+        console.error("An unexpected error occurred:", err);
+        toast.error("Submission failed due to an unexpected error.");
+      }
     }
   };
 
@@ -445,7 +488,15 @@ const Survey = () => {
           <select
             name="state"
             value={formData.state}
-            onChange={handleChange}
+            onChange={(e) => {
+              const selectedState = e.target.value;
+              setFormData({
+                ...formData,
+                state: selectedState,
+                ville: "",
+                country: "",
+              });
+            }}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select a State...</option>
@@ -460,50 +511,56 @@ const Survey = () => {
 
         {/* Ville */}
         {formData.state && (
-          <label className="block">
+          <label className="block mt-4">
             <span className="font-bold">Ville:</span>
             <select
               name="ville"
               value={formData.ville}
-              onChange={handleChange}
+              onChange={(e) => {
+                const selectedVille = e.target.value;
+                setFormData({
+                  ...formData,
+                  ville: selectedVille,
+                  country: "",
+                });
+              }}
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             >
-              <option value="">Select Ville</option>
-              {stateOptions[formData.state]?.map((ville) => (
+              <option value="">Select a Ville...</option>
+              {(stateOptions[formData.state] || []).map((ville) => (
                 <option key={ville} value={ville}>
                   {ville}
                 </option>
               ))}
             </select>
             {errors.ville && (
-            <span className="text-red-500">{errors.ville}</span>
-          )}
+              <span className="text-red-500">{errors.ville}</span>
+            )}
           </label>
         )}
 
         {/* Country */}
         {formData.ville && (
-          <label>
-            Country:
+          <label className="block mt-4">
+            <span className="font-bold">Country:</span>
             <select
               name="country"
               value={formData.country}
               onChange={handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             >
-              <option value="">Select a country</option>
-              {villeOptions[formData.ville]?.map((country) => (
+              <option value="">Select a Country...</option>
+              {(villeOptions[formData.ville] || []).map((country) => (
                 <option key={country} value={country}>
                   {country}
                 </option>
               ))}
             </select>
             {errors.country && (
-            <span className="text-red-500">{errors.country}</span>
-          )}
+              <span className="text-red-500">{errors.country}</span>
+            )}
           </label>
         )}
-
         {/* Height */}
         <label className="block">
           <span className="font-bold">Height:</span>
@@ -602,7 +659,7 @@ const Survey = () => {
           >
             <option value="">Select...</option>
             <option value="Student">Student</option>
-            <option value="Employee">Employee</option>
+            <option value="Employed">Employed</option>
             <option value="Unemployed">Unemployed</option>
             <option value="Retired">Retired</option>
             <option value="Housewife">House Wife</option>
@@ -620,7 +677,7 @@ const Survey = () => {
             <input
               type="text"
               name="customOccupation"
-              value={formData.customOcccupation}
+              value={formData.customOccupation}
               placeholder="Please specify your occupation"
               onChange={handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
@@ -724,12 +781,19 @@ const Survey = () => {
                 name="children"
                 value={formData.children}
                 onChange={handleChange}
+                disabled={
+                  formData.socialState === "Single" ||
+                  formData.socialState === "Prefer not to say"
+                }
                 className="border border-gray-300 px-4 py-2 rounded-md"
               >
                 <option value="">Select...</option>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
+              {errors.children && (
+                <span className="text-red-500">{errors.children}</span>
+              )}
             </label>
           )}
 
@@ -741,9 +805,11 @@ const Survey = () => {
               name="childrenNumber"
               value={formData.childrenNumber}
               onChange={handleChange}
+              disabled={formData.children === "No"}
               className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
+              <option value="None">None</option>
               <option value="One">One</option>
               <option value="Two">Two</option>
               <option value="Three">Three</option>
@@ -751,6 +817,9 @@ const Survey = () => {
               <option value="Five">Five</option>
               <option value="More than five">More than five</option>
             </select>
+            {errors.childrenNumber && (
+              <span className="text-red-500">{errors.childrenNumber}</span>
+            )}
           </label>
         )}
 
@@ -935,7 +1004,6 @@ const Survey = () => {
                 {item}
               </button>
             ))}
-            
           </div>
           {errors.fruits && (
             <span className="text-red-500">{errors.fruits}</span>
@@ -958,7 +1026,6 @@ const Survey = () => {
         )}
 
         {/* Fruit Unit Per Day */}
-
         {!formData.fruits.includes("None") && (
           <label className="block">
             <span className="font-bold">How many fruits per day: </span>
@@ -969,6 +1036,7 @@ const Survey = () => {
               className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
+              <option value="None">None</option>
               <option value="1">1</option>
               <option value="Between 1-2">Between 1-2</option>
               <option value="Between 2-3">Between 2-3</option>
@@ -981,6 +1049,9 @@ const Survey = () => {
               <option value="Between 9-10">Between 9-10</option>
               <option value="Over 10">Over 10</option>
             </select>
+            {errors.fruitUnitPerDay && (
+              <span className="text-red-500">{errors.fruitUnitPerDay}</span>
+            )}
           </label>
         )}
 
@@ -1046,8 +1117,7 @@ const Survey = () => {
         )}
 
         {/* Vegetable Unit Per Day */}
-
-        {!formData.vegetables.includes("None") && (
+        {formData.vegetables[0] !== "None" && (
           <label className="block">
             <span className="font-bold">How many vegetables per day: </span>
             <select
@@ -1057,6 +1127,7 @@ const Survey = () => {
               className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
+              <option value="None">None</option>
               <option value="1">1</option>
               <option value="Between 1-2">Between 1-2</option>
               <option value="Between 2-3">Between 2-3</option>
@@ -1069,6 +1140,9 @@ const Survey = () => {
               <option value="Between 9-10">Between 9-10</option>
               <option value="Over 10">Over 10</option>
             </select>
+            {errors.vegetableUnitPerDay && (
+              <span className="text-red-500">{errors.vegetableUnitPerDay}</span>
+            )}
           </label>
         )}
 
@@ -1253,326 +1327,316 @@ const Survey = () => {
           Do you prefer Home made foods or Ready to eat foods? or Both?
         </h3>
 
-        {/* HomeMade */}
         <label className="block">
           <span className="font-bold mb-2 block">Household:</span>
           <div
             className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
             style={{ maxHeight: "200px" }}
           >
-            {[
-              "Shakshouka",
-              "Couscous",
-              "Moroccan Tagine",
-              "Musakhan",
-              "Harira",
-              "Horiatiki (Greek salad)",
-              "Moussaka",
-              "Spanakopita",
-              "Melomakarono",
-              "Manti",
-              "Borek",
-              "Kofte",
-              "Risotto",
-              "Timballo",
-              "Polenta",
-              "Baba Ghanoush",
-              "Hummus",
-              "Other",
-            ].map((item) => (
+            {homeMadeOptions.map((item) => (
               <button
                 key={item}
                 type="button"
                 className={`px-4 py-2 border rounded-md text-center ${
-                  formData.homeMade.includes(item)
+                  formData.homeMade.some((i) => i.name === item)
                     ? "bg-blue-500 text-white"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
                 }`}
-                onClick={() => toggleSelection("homeMade", item)}
+                onClick={() => toggleSelectionn("homeMade", item)}
               >
                 {item}
               </button>
             ))}
           </div>
-          {errors.homeMade && (
-            <span className="text-red-500">{errors.homeMade}</span>
-          )}
         </label>
-        {/* HomeMade consumption*/}
-        <div>
-          {formData.homeMade.map((item, index) => (
-            <div key={index} className="flex space-x-4 mb-4 items-end">
-              <div className="w-1/4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {item === "Other" ? formData.customHomeMade : item}{" "}
-                  Consumption
-                </label>
-                <select
-                  name="homeMadeConsumption"
-                  value={item.homeMadeConsumption}
-                  onChange={(e) =>
-                    handleFoodFrequencyChange(
-                      index,
-                      "homeMadeConsumption",
-                      e.target.value
-                    )
-                  }
-                  className="border border-gray-300 px-4 py-2 rounded-md w-full"
-                >
-                  <option value="">Select Period</option>
-                  <option value="Every Day">Every Day</option>
-                  <option value="2-3 Times a Week">2-3 Times a Week</option>
-                  <option value="1-2 Times a Week">1-2 Times a Week</option>
-                  <option value="1-2 Times a Month">1-2 Times a Month</option>
-                  <option value="Rarely">Rarely</option>
-                  <option value="Never">Never</option>
-                </select>
-                {errors[`homeMadeConsumption-${index}`] && (
-                  <span className="text-red-500">
-                    {errors[`homeMadeConsumption-${index}`]}
-                  </span>
-                )}
-              </div>
 
-              {/* Home Made Consumption Budget */}
-              {item.homeMadeConsumption !== "Other" && (
-                <div className="w-1/4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {item === "Other" ? formData.customHomeMade : item}{" "}
-                    Consumption Budget
-                  </label>
-                  <select
-                    name="homeMadeConsumptionBudget"
-                    value={item.homeMadeConsumptionBudget}
-                    onChange={(e) =>
-                      handleFoodFrequencyChange(
-                        index,
-                        "homeMadeConsumptionBudget",
-                        e.target.value
-                      )
-                    }
-                    className="border border-gray-300 px-4 py-2 rounded-md w-full"
-                  >
-                    <option value="">Select Budget</option>
-                    <option value="Less than 100">Less than 100</option>
-                    <option value="100-200">100-200</option>
-                    <option value="200-300">200-300</option>
-                    <option value="300-400">300-400</option>
-                    <option value="400-500">400-500</option>
-                    <option value="500-600">500-600</option>
-                    <option value="600-700">600-700</option>
-                    <option value="700-800">700-800</option>
-                    <option value="800-900">800-900</option>
-                    <option value="900-1000">900-1000</option>
-                    <option value="More than 1000">More than 1000</option>
-                  </select>
-                  {errors[`homeMadeConsumptionBudget-${index}`] && (
-                    <span className="text-red-500">
-                      {errors[`homeMadeConsumptionBudget-${index}`]}
-                    </span>
-                  )}
-                </div>
-              )}
+        {formData.homeMade.map((selectedItem) => (
+          <div key={selectedItem.name} className="mt-4">
+            <h4 className="font-semibold">{selectedItem.name}</h4>
 
-              <button
-                type="button"
-                onClick={() => removeFoodFrequency(index)}
-                className="text-red-500 hover:text-red-700 ml-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-          ))}
-
-          {/* Display custom input for "Other" */}
-          {formData.homeMade.includes("Other") && (
-            <div className="w-1/4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Custom Other
-              </label>
+            {/* {selectedItem.name === "Other" && (
               <input
                 type="text"
-                name="customHomeMade"
-                value={formData.customHomeMade}
+                placeholder="Custom Item"
+                className="border p-2 rounded-md w-full"
                 onChange={(e) =>
-                  setFormData({ ...formData, customHomeMade: e.target.value })
+                  handleInputChange("homeMade", "Other", "name", e.target.value)
                 }
-                placeholder="Enter custom item"
-                className="border border-gray-300 px-4 py-2 rounded-md w-full"
               />
-            </div>
-          )}
-        </div>
+            )} */}
 
-        {/* Ordered */}
-        <label className="block">
-          <span className="font-bold mb-2 block">Ordered:</span>
+            {selectedItem.name === "Other" && (
+              <input
+                type="text"
+                placeholder="Custom Item"
+                className="border p-2 rounded-md w-full"
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    customHomeMade: {
+                      ...prev.customHomeMade,
+                      name: e.target.value,
+                    },
+                  }))
+                }
+              />
+            )}
+
+            {/* Consumption Selection */}
+            <label className="block mt-2">
+              <span className="text-gray-700">Consumption</span>
+              <select
+                className="border p-2 rounded-md w-full"
+                value={selectedItem.consumption}
+                onChange={(e) =>
+                  handleInputChange(
+                    "homeMade",
+                    selectedItem.name,
+                    "consumption",
+                    e.target.value
+                  )
+                }
+              >
+                <option value="">Select consumption frequency</option>
+                {consumptionOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            {/* Budget Selection */}
+            <label className="block mt-2">
+              <span className="text-gray-700">Budget</span>
+              <select
+                className="border p-2 rounded-md w-full"
+                value={selectedItem.budget}
+                onChange={(e) =>
+                  handleInputChange(
+                    "homeMade",
+                    selectedItem.name,
+                    "budget",
+                    e.target.value
+                  )
+                }
+              >
+                <option value="">Select budget</option>
+                {budgetOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        ))}
+
+        {/* <label className="block mt-2">
+              <span className="text-gray-700">Consumption</span>
+              <select
+                className="border p-2 rounded-md w-full"
+                value={selectedItem.consumption}
+                onChange={(e) =>
+                  handleInputChange(
+                    "homeMade",
+                    selectedItem.name,
+                    "consumption",
+                    e.target.value
+                  )
+                }
+              >
+                <option value="">Select consumption frequency</option>
+                {consumptionOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="block mt-2">
+              <span className="text-gray-700">Budget</span>
+              <select
+                className="border p-2 rounded-md w-full"
+                value={selectedItem.budget}
+                onChange={(e) =>
+                  handleInputChange(
+                    "homeMade",
+                    selectedItem.name,
+                    "budget",
+                    e.target.value
+                  )
+                }
+              >
+                <option value="">Select budget</option>
+                {budgetOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        ))} */}
+
+        {/* Ordered Section (Similar structure to HomeMade) */}
+        <label className="block mt-6">
+          <span className="font-bold mb-2 block">Ordered Items:</span>
           <div
             className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
             style={{ maxHeight: "200px" }}
           >
-            {[
-              "Pizza",
-              "Sandiwches",
-              "Burgers",
-              "Wraps",
-              "Paniis",
-              "Mlewi",
-              "Chappati",
-              "Manakish",
-              "Lahmacun",
-              "Koshari",
-              "Other",
-            ].map((item) => (
+            {orderedOptions.map((item) => (
               <button
                 key={item}
                 type="button"
                 className={`px-4 py-2 border rounded-md text-center ${
-                  formData.ordered.includes(item)
+                  formData.ordered.some((i) => i.name === item)
                     ? "bg-blue-500 text-white"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
                 }`}
-                onClick={() => toggleSelection("ordered", item)}
+                onClick={() => toggleSelectionn("ordered", item)}
               >
                 {item}
               </button>
             ))}
           </div>
-          {errors.ordered && (
-            <span className="text-red-500">{errors.ordered}</span>
-          )}
         </label>
 
-        {/* Ordered consumption*/}
-        <div>
-          {formData.ordered.map((item, index) => (
-            <div key={index} className="flex space-x-4 mb-4 items-end">
-              <div className="w-1/4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {item === "Other" ? formData.customOrdered : item} Consumption
-                </label>
-                <select
-                  name="orederedConsumption"
-                  value={item.orederedConsumption}
-                  onChange={(e) =>
-                    handleFoodFrequencyChange(
-                      index,
-                      "orederedConsumption",
-                      e.target.value
-                    )
-                  }
-                  className="border border-gray-300 px-4 py-2 rounded-md w-full"
-                >
-                  <option value="">Select Period</option>
-                  <option value="Every Day">Every Day</option>
-                  <option value="2-3 Times a Week">2-3 Times a Week</option>
-                  <option value="1-2 Times a Week">1-2 Times a Week</option>
-                  <option value="1-2 Times a Month">1-2 Times a Month</option>
-                  <option value="Rarely">Rarely</option>
-                  <option value="Never">Never</option>
-                </select>
-                {errors[`orederedConsumption-${index}`] && (
-                  <span className="text-red-500">
-                    {errors[`orederedConsumption-${index}`]}
-                  </span>
-                )}
-              </div>
+        {formData.ordered.map((selectedItem) => (
+          <div key={selectedItem.name} className="mt-4">
+            <h4 className="font-semibold">{selectedItem.name}</h4>
 
-              {/* Ordered Consumption Budget */}
-              {item.orderedConsumption !== "Other" && (
-                <div className="w-1/4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {item === "Other" ? formData.customOrdered : item}{" "}
-                    Consumption Budget
-                  </label>
-                  <select
-                    name="orderedConsumptionBudget"
-                    value={item.orderedConsumptionBudget}
-                    onChange={(e) =>
-                      handleFoodFrequencyChange(
-                        index,
-                        "orderedConsumptionBudget",
-                        e.target.value
-                      )
-                    }
-                    className="border border-gray-300 px-4 py-2 rounded-md w-full"
-                  >
-                    <option value="">Select Budget</option>
-                    <option value="Less than 100">Less than 100</option>
-                    <option value="100-200">100-200</option>
-                    <option value="200-300">200-300</option>
-                    <option value="300-400">300-400</option>
-                    <option value="400-500">400-500</option>
-                    <option value="500-600">500-600</option>
-                    <option value="600-700">600-700</option>
-                    <option value="700-800">700-800</option>
-                    <option value="800-900">800-900</option>
-                    <option value="900-1000">900-1000</option>
-                    <option value="More than 1000">More than 1000</option>
-                  </select>
-                  {errors[`orderedConsumptionBudget-${index}`] && (
-                    <span className="text-red-500">
-                      {errors[`orderedConsumptionBudget-${index}`]}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={() => removeFoodFrequency(index)}
-                className="text-red-500 hover:text-red-700 ml-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-          ))}
-
-          {/* Display custom input for "Other" */}
-          {formData.ordered.includes("Other") && (
-            <div className="w-1/4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Custom Other
-              </label>
+            {selectedItem.name === "Other" && (
               <input
                 type="text"
-                name="customOrdered"
-                value={formData.customOrdered}
+                placeholder="Custom Item"
+                className="border p-2 rounded-md w-full"
                 onChange={(e) =>
-                  setFormData({ ...formData, customOrdered: e.target.value })
+                  setFormData((prev) => ({
+                    ...prev,
+                    customOrdered: {
+                      ...prev.customOrdered,
+                      name: e.target.value,
+                    },
+                  }))
                 }
-                placeholder="Enter custom item"
-                className="border border-gray-300 px-4 py-2 rounded-md w-full"
               />
-            </div>
-          )}
-        </div>
+            )}
+
+            {/* Consumption Selection */}
+            <label className="block mt-2">
+              <span className="text-gray-700">Consumption</span>
+              <select
+                className="border p-2 rounded-md w-full"
+                value={selectedItem.consumption}
+                onChange={(e) =>
+                  handleInputChange(
+                    "ordered",
+                    selectedItem.name,
+                    "consumption",
+                    e.target.value
+                  )
+                }
+              >
+                <option value="">Select consumption frequency</option>
+                {consumptionOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            {/* Budget Selection */}
+            <label className="block mt-2">
+              <span className="text-gray-700">Budget</span>
+              <select
+                className="border p-2 rounded-md w-full"
+                value={selectedItem.budget}
+                onChange={(e) =>
+                  handleInputChange(
+                    "ordered",
+                    selectedItem.name,
+                    "budget",
+                    e.target.value
+                  )
+                }
+              >
+                <option value="">Select budget</option>
+                {budgetOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        ))}
+
+        {/* {formData.ordered.map((selectedItem) => (
+          <div key={selectedItem.name} className="mt-4">
+            <h4 className="font-semibold">{selectedItem.name}</h4>
+
+            {selectedItem.name === "Other" && (
+              <input
+                type="text"
+                placeholder="Custom Item"
+                className="border p-2 rounded-md w-full"
+                onChange={(e) =>
+                  handleInputChange("ordered", "Other", "name", e.target.value)
+                }
+              />
+            )}
+
+            <label className="block mt-2">
+              <span className="text-gray-700">Consumption</span>
+              <select
+                className="border p-2 rounded-md w-full"
+                value={selectedItem.consumption}
+                onChange={(e) =>
+                  handleInputChange(
+                    "ordered",
+                    selectedItem.name,
+                    "consumption",
+                    e.target.value
+                  )
+                }
+              >
+                <option value="">Select consumption frequency</option>
+                {consumptionOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="block mt-2">
+              <span className="text-gray-700">Budget</span>
+              <select
+                className="border p-2 rounded-md w-full"
+                value={selectedItem.budget}
+                onChange={(e) =>
+                  handleInputChange(
+                    "ordered",
+                    selectedItem.name,
+                    "budget",
+                    e.target.value
+                  )
+                }
+              >
+                <option value="">Select budget</option>
+                {budgetOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        ))} */}
 
         {/* Medical History */}
         <label className="block">
@@ -1662,14 +1726,14 @@ const Survey = () => {
           <span className="text-red-500">{errors.eatingHabits}</span>
         )}
 
-
         <h3 className="text-lg font-semibold mt-4">Do you practice sports?</h3>
         {/* Physical Activity */}
         <label className="block">
           <input
-            type="checkbox"
-            name="sportPractice"
-            checked={formData.physicalActivity}
+            type="radio"
+            name="physicalActivity"
+            value="yes"
+            checked={formData.physicalActivity === "yes"}
             onChange={handleChange}
             className="mr-2"
           />
@@ -1677,9 +1741,10 @@ const Survey = () => {
         </label>
         <label className="block">
           <input
-            type="checkbox"
-            name="noSportPractice"
-            checked={formData.physicalActivity}
+            type="radio"
+            name="physicalActivity"
+            value="no"
+            checked={formData.physicalActivity === "no"}
             onChange={handleChange}
             className="mr-2"
           />

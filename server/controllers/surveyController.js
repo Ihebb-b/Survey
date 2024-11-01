@@ -1,10 +1,21 @@
 
 const Survey = require('../models/Survey');
 
+const filterEmptyStrings = (data) => {
+  Object.keys(data).forEach((key) => {
+    if (data[key] === "") {
+      delete data[key];
+    }
+  });
+  return data;
+};
+
 
 const createSurvey = async (req, res) => {
   try {
-    const newSurvey = await Survey.create(req.body);
+    const filteredData = filterEmptyStrings(req.body);
+    const newSurvey = await Survey.create(filteredData);
+    await newSurvey.save();
     res.status(201).json(newSurvey);
   } catch (error) {
     res.status(400).json({ error: error.message });
