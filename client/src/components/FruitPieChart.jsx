@@ -47,7 +47,6 @@ const FruitPieChart = () => {
 
   return (
     <div className="w-full flex flex-col items-center space-y-4">
-      <h2 className="text-lg font-semibold">Fruit Consumption by Country</h2>
 
       <label htmlFor="country-select" className="text-md font-medium">
         Select Country:
@@ -68,7 +67,7 @@ const FruitPieChart = () => {
 
       {selectedCountry && countryData && (
         <div className="w-1/2">
-          <Pie data={chartData} />
+          <Pie data={chartData} a day/>
         </div>
       )}
     </div>

@@ -1,40 +1,37 @@
+// HomeScreen.js
 import React from 'react';
 import Hero from '../components/Hero';
 import EatingHabitsChart from '../components/EatingHabitsChart';
 import MedicalHistoryChart from '../components/MedicalHistoryChart';
-import FruitPieChart from '../components/FruitPieChart'; 
+import FruitPieChart from '../components/FruitPieChart';
 
 const HomeScreen = () => {
   return (
     <>
       <Hero />
-      <div className="container mx-auto p-4 space-y-4">
+      <div className="container mx-auto px-4 py-6 space-y-6">
 
-         {/* Fruit Consumption Chart Section */}
-         <div className="flex flex-col items-center w-full bg-white border border-gray-200 rounded-lg shadow-md p-4 space-y-2">
-          <h1 className="text-center text-xl font-semibold mb-2">Fruit Consumption by Country</h1>
-          <p className="text-gray-600 text-sm text-center mb-2">
-            Overview of fruit types and units consumed by country. Select a country to see its specific distribution.
-          </p>
+        {/* Fruit Consumption Section */}
+        <div className="bg-gray-50 border border-gray-200 rounded-lg shadow-lg p-6 text-center space-y-4">
+          <h1 className="text-2xl font-bold text-gray-800">Fruit Consumption by Country</h1>
+          <p className="text-gray-700 text-md">Overview of fruit types and units consumed daily by country. Select a country for specific data.</p>
           <FruitPieChart />
         </div>
-        {/* Charts Wrapper with Responsive Layout */}
-        <div className="flex flex-col md:flex-row md:space-x-4 md:space-y-0 space-y-4 items-start justify-center">
+
+        {/* Grid for Eating Habits and Medical History Charts */}
+        <div className="grid gap-6 md:grid-cols-2">
+
           {/* Eating Habits Section */}
-          <div className="flex flex-col items-center w-full md:w-1/2 bg-white border border-gray-200 rounded-lg shadow-md p-4 space-y-2">
-            <h1 className="text-center text-xl font-semibold mb-2">Eating Habits</h1>
-            <p className="text-gray-600 text-sm text-center mb-2">
-              A breakdown comparison between traditional and new eating habits across various age groups in the Mediterranean.
-            </p>
+          <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 text-center space-y-4">
+            <h1 className="text-xl font-semibold text-gray-800">Eating Habits</h1>
+            <p className="text-gray-600 text-sm">A comparative analysis of traditional vs. modern eating habits across Mediterranean age groups.</p>
             <EatingHabitsChart />
           </div>
 
           {/* Medical History Section */}
-          <div className="flex flex-col items-center w-full md:w-1/2 bg-white border border-gray-200 rounded-lg shadow-md p-4 space-y-2">
-            <h1 className="text-center text-xl font-semibold mb-2">Medical History</h1>
-            <p className="text-gray-600 text-sm text-center mb-2">
-              Analysis of home made and ordered food consumption patterns with relative medical history.
-            </p>
+          <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 text-center space-y-4">
+            <h1 className="text-xl font-semibold text-gray-800">Medical History</h1>
+            <p className="text-gray-600 text-sm">Insights on food consumption and associated medical history across different demographics.</p>
             <MedicalHistoryChart />
           </div>
         </div>

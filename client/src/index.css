@@ -2,4 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Additional custom styles */
+.text-primary {
+    color: var(--color-primary);
+  }
+  .card:hover {
+    transform: scale(1.02);
+    transition: all 0.3s ease-in-out;
+  }
+  
+
 
