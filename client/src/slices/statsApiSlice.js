@@ -23,6 +23,11 @@ export const statsApiSlice = apiSlice.injectEndpoints({
       providesTags: ["MedicalHistoryHabitsSport"],
     }),
 
+    getFruitStatisticsByCountry: builder.query({
+      query: () =>  `${USERS_URL}/fruitStatsByCountry`,
+      providesTags: ["FruitStatistics"],
+    }),
+
 
   }),
 });
@@ -32,4 +37,5 @@ export const {
   useGetEatingHabitsByAgeQuery,
   useGetMedicalHistoryByFoodChoicesQuery,
   useGetMedicalHistoryByHabitsAndSportQuery,
+  useGetFruitStatisticsByCountryQuery,
   } = statsApiSlice;

@@ -9,6 +9,7 @@ const {
   getMedicalHistoryStatistics,
   getMedicalHistorySportStatistics,
   getMatchingSurveys,
+  getFruitStatisticsByCountry,
 } = require("../controllers/statisticsController");
 const { get } = require("mongoose");
 const router = express.Router();
@@ -22,4 +23,5 @@ router.get("/eatingHabits", getEatingHabitsStatistics);
 router.get("/medicalHistory", getMedicalHistoryStatistics);
 router.get("/medicalHistorySport", getMedicalHistorySportStatistics);
 router.get("/matchingSurveys", getMatchingSurveys);
+router.get("/fruitStatsByCountry", getFruitStatisticsByCountry);
 module.exports = router;

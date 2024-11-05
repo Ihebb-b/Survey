@@ -2,12 +2,22 @@ import React from 'react';
 import Hero from '../components/Hero';
 import EatingHabitsChart from '../components/EatingHabitsChart';
 import MedicalHistoryChart from '../components/MedicalHistoryChart';
+import FruitPieChart from '../components/FruitPieChart'; 
 
 const HomeScreen = () => {
   return (
     <>
       <Hero />
       <div className="container mx-auto p-4 space-y-4">
+
+         {/* Fruit Consumption Chart Section */}
+         <div className="flex flex-col items-center w-full bg-white border border-gray-200 rounded-lg shadow-md p-4 space-y-2">
+          <h1 className="text-center text-xl font-semibold mb-2">Fruit Consumption by Country</h1>
+          <p className="text-gray-600 text-sm text-center mb-2">
+            Overview of fruit types and units consumed by country. Select a country to see its specific distribution.
+          </p>
+          <FruitPieChart />
+        </div>
         {/* Charts Wrapper with Responsive Layout */}
         <div className="flex flex-col md:flex-row md:space-x-4 md:space-y-0 space-y-4 items-start justify-center">
           {/* Eating Habits Section */}

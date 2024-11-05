@@ -489,6 +489,57 @@ const getMedicalHistorySportStatistics = async (req, res) => {
   }
 };
 
+const getFruitStatisticsByCountry = async (req, res) => {
+  try {
+    const fruitStatisticsAggregation = [
+      {
+        $match: {
+          "fruits.0": { $exists: true },
+          country: { $exists: true },
+          fruitUnitPerDay: { $exists: true, $ne: "None" }
+        }
+      },
+      { $unwind: "$fruits" },
+      {
+        $group: {
+          _id: {
+            country: "$country",
+            fruitType: "$fruits",
+            fruitUnit: "$fruitUnitPerDay"
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.country",
+          fruitData: {
+            $push: {
+              fruitType: "$_id.fruitType",
+              fruitUnit: "$_id.fruitUnit",
+              count: "$count"
+            }
+          },
+          totalFruits: { $sum: "$count" }
+        }
+      },
+      {
+        $project: {
+          country: "$_id",
+          fruitData: 1,
+          totalFruits: 1
+        }
+      }
+    ];
+
+    const fruitStats = await Survey.aggregate(fruitStatisticsAggregation);
+    res.status(200).json(fruitStats);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 module.exports = {
   getStatistics,
   getDietDistribution,
@@ -499,4 +550,5 @@ module.exports = {
   getMedicalHistoryStatistics,
   getMedicalHistorySportStatistics,
   getMatchingSurveys,
+  getFruitStatisticsByCountry,
 };
