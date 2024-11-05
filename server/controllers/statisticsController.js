@@ -179,19 +179,20 @@ const getMatchingSurveys = async (req, res) => {
   }
 };
 
+
 // const getEatingHabitsStatistics = async (req, res) => {
 //   try {
 //     const eatingHabitsAggregation = [
 //       {
 //         $match: {
 //           traditionalEatingHabits: { $exists: true },
-//           ethnicity: { $exists: true }
+//           age: { $exists: true },
 //         },
 //       },
 //       {
 //         $group: {
 //           _id: {
-//             ethnicity: "$ethnicity",
+//             age: "$age",
 //             traditionalEatingHabits: "$traditionalEatingHabits",
 //           },
 //           count: { $sum: 1 },
@@ -199,27 +200,37 @@ const getMatchingSurveys = async (req, res) => {
 //       },
 //       {
 //         $group: {
-//           _id: "$_id.ethnicity",
+//           _id: "$_id.age",
 //           total: { $sum: "$count" },
 //           traditionalCount: {
 //             $sum: {
-//               $cond: [{ $eq: ["$_id.traditionalEatingHabits", 'true'] }, "$count", 0],
+//               $cond: [
+//                 { $eq: ["$_id.traditionalEatingHabits", true] },
+//                 "$count",
+//                 0,
+//               ],
 //             },
 //           },
 //           newEatingCount: {
 //             $sum: {
-//               $cond: [{ $eq: ["$_id.traditionalEatingHabits", 'false'] }, "$count", 0],
+//               $cond: [
+//                 { $eq: ["$_id.traditionalEatingHabits", false] },
+//                 "$count",
+//                 0,
+//               ],
 //             },
 //           },
 //         },
 //       },
 //       {
 //         $project: {
-//           ethnicity: "$_id",
+//           age: "$_id",
 //           traditionalPercentage: {
 //             $cond: [
 //               { $gt: ["$total", 0] },
-//               { $multiply: [{ $divide: ["$traditionalCount", "$total"] }, 100] },
+//               {
+//                 $multiply: [{ $divide: ["$traditionalCount", "$total"] }, 100],
+//               },
 //               0,
 //             ],
 //           },
@@ -240,6 +251,7 @@ const getMatchingSurveys = async (req, res) => {
 //     res.status(500).json({ error: error.message });
 //   }
 // };
+
 
 const getEatingHabitsStatistics = async (req, res) => {
   try {
@@ -304,6 +316,29 @@ const getEatingHabitsStatistics = async (req, res) => {
           },
         },
       },
+      // Sort by age based on the defined order
+      {
+        $addFields: {
+          ageOrder: {
+            $indexOfArray: [
+              [
+                "Between 1-10 years",
+                "Between 10-18 years",
+                "Between 19-25 years",
+                "Between 26-29 years",
+                "Between 30-39 years",
+                "Between 40-49 years",
+                "Between 50-59 years",
+                "Between 60-69 years",
+                "Over 70 years",
+              ],
+              "$age",
+            ],
+          },
+        },
+      },
+      { $sort: { ageOrder: 1 } },
+      { $project: { ageOrder: 0 } }, // Remove the ageOrder field from final output
     ];
 
     const stats = await Survey.aggregate(eatingHabitsAggregation);
@@ -313,47 +348,6 @@ const getEatingHabitsStatistics = async (req, res) => {
   }
 };
 
-// const getMedicalHistoryStatistics = async (req, res) => {
-//   try {
-//     const medicalHistoryAggregation = [
-//       { $unwind: "$homeMade" },
-//       { $unwind: "$ordered" },
-//       {
-//         $group: {
-//           _id: {
-//             medicalHistory: "$medicalHistory",
-//             homeMade: "$homeMade",
-//             ordered: "$ordered",
-//           },
-//           count: { $sum: 1 },
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: { medicalHistory: "$_id.medicalHistory" },
-//           total: { $sum: "$count" },
-//           homeMadeFoodCounts: {
-//             $push: {
-//               homeMade: "$_id.homeMade",
-//               count: "$count",
-//             },
-//           },
-//           orderedFoodCounts: {
-//             $push: {
-//               ordered: "$_id.ordered",
-//               count: "$count",
-//             },
-//           },
-//         },
-//       },
-//     ];
-
-//     const stats = await Survey.aggregate(medicalHistoryAggregation);
-//     res.status(200).json(stats);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 
 
 const getMedicalHistoryStatistics = async (req, res) => {
