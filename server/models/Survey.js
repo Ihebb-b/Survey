@@ -82,8 +82,6 @@ const stateVilleMappings = {
     "Madrid",
     "Barcelona",
     "Valencia",
-    "Seville",
-    "Valencia",
     "Malaga",
     "Seville",
     "Zaragoza",
@@ -108,8 +106,6 @@ const stateVilleMappings = {
   Herzegovina: [
     "Mostar",
     "Bijeljina",
-    "Prijedor",
-    "Trebinje",
     "Brcko",
     "Prijedor",
     "Trebinje",
@@ -265,7 +261,6 @@ const stateVilleMappings = {
   Montenegro: [
     "Podgorica",
     "Nikšić",
-    "Bar",
     "Herceg Novi",
     "Kotor",
     "Tivat",
@@ -291,65 +286,220 @@ const stateVilleMappings = {
 
 const villeCountryMappings = {
   //ville Tunisia
-  Sidi_Bouzid: ["Rgueb", "Menzel_Bouzaiane"],
-  Ariana: ["Ghazela", "Raoued"],
-  Sousse: ["Erriadh", "Sahloul"],
-  Jendouba: ["Nord", "Sud"],
-  Gafsa: ["Chabiba", "Al_Aamra"],
-  Beja: ["Tastour", "Tass"],
-  Gabes: ["Ga", "Bes"],
-  Kairouan: ["Chrarda", "Al_Aala"],
-  Kasserine: ["Tala", "Sabela"],
-  Tunis: ["Bab_El_Oued", "El_Harrach"],
-  Sfax: ["Bab_El_Oued", "El_Harrach"],
-  Kebili: ["Rgueb", "Menzel_Bouzaiane"],
-  Kef: ["Ghazela", "Raoued"],
-  Mahdiya: ["Erriadh", "Sahloul"],
-  Manouba: ["Nord", "Sud"],
-  Medenine: ["Chabiba", "Al_Aamra"],
-  Monastir: ["Tastour", "Tass"],
-  Nabeul: ["Ga", "Bes"],
-  Siliana: ["Chrarda", "Al_Aala"],
-  Tozeur: ["Tala", "Sabela"],
-  Zaghouan: ["Bab_El_Oued", "El_Harrach"],
-
-  //ville Algeria
-  Algiers: ["Bab_El_Oued", "El_Harrach"],
-  Annaba: ["Ann", "Aba"],
-  Batna: ["Ba", "Tna"],
-  Bejaia: ["Be", "Jaia"],
-  Biskra: ["Bi", "Ska"],
-
-  //ville Marocco
-  Casablanca: ["Bab_El_Oued", "El_Harrach"],
-  Fes: ["Erriadh", "Sahloul"],
-  Marrakech: ["Nord", "Sud"],
-  Agadir: ["Chabiba", "Al_Aamra"],
-  Rabat: ["Tastour", "Tass"],
-  // Add more cities with respective countries
+  Ariana: ["Ghazela", "Raoued", "Ettadhamen"],
+  Beja: ["Testour", "Tibar", "Medjez_El_Bab"],
+  Ben_Arous: ["Hammam_Lif", "Radès", "Mohamedia"],
+  Sidi_Bouzid: ["Regueb", "Menzel_Bouzaiane", "Sidi_Ali_Ben_Aoun"],
+  Tunis: ["Carthage", "La_Marsa", "Le_Kram", "El_Menzah", "Sidi_Hassine"],
+  Sousse: ["Kalaa_Kebira", "Hammam_Sousse", "Sidi_Bou_Ali"],
+  Gabes: ["El_Hamma", "Metouia", "Mareth"],
+  Kairouan: ["Nasrallah", "Haffouz", "Chebika"],
+  Bizerte: ["Menzel_Bourguiba", "Mateur", "Sejnane"],
+  Gafsa: ["El_Gtar", "Moulares", "Redeyef"],
+  Kasserine: ["Thala", "Sbiba", "Hassi_Ferid"],
+  Kef: ["Nebeur", "Sakiet_Sidi_Youssef", "Tajerouine"],
+  Mahdia: ["Ksour_Essef", "Chebba", "Bou_Meradess"],
+  Manouba: ["Douar_Hicher", "Mornaguia", "Tebourba"],
+  Medenine: ["Ben_Guerdane", "Beni_Khedache", "Zarzis"],
+  Monastir: ["Jemmal", "Ksar_Hellal", "Sahline"],
+  Nabeul: ["Hammamet", "Kelibia", "Menzel_Temime"],
+  Sfax: ["Kerkennah", "El_Amra", "Sakiet_Ezzit"],
+  Siliana: ["Bou_Arada", "El_Krib", "Makthar"],
+  Tataouine: ["Remada", "Bir_Lahmar", "Ghomrassen"],
+  Tozeur: ["Degache", "Hazoua", "Nefta"],
+  Zaghouan: ["El_Fahs", "Zriba", "Bir_Mcherga"],
+  Jendouba: ["Ain_Draham", "Tabarka", "Fernana"],
+  Algiers: ["Bab_El_Oued", "El_Harrach", "Bab_Ezzouar", "Hydra"],
+  Oran: ["Ain_El_Turck", "Es_Senia", "Bir_El_Djir"],
+  Constantine: ["El_Khroub", "Ain_Smara", "Didouche_Mourad"],
+  Annaba: ["El_Bouni", "Ain_Berda", "Seraidi"],
+  Batna: ["Tazoult", "N_Gaous", "El_Madher"],
+  Tlemcen: ["Maghnia", "Remchi", "Sabra"],
+  Tiaret: ["Ain_Bouchema", "Oued_Lill", "Frenda"],
+  Guelma: ["Bou_Hamra", "Bouchegouf", "Ain_Makhlouf"],
+  Biskra: ["Tolga", "El_Kantara", "Ouled_Djellal"],
+  Tebessa: ["Bir_El_Ater", "Negrine", "Cheria"],
+  Bejaia: ["Tichy", "Souk_El_Tenine", "Sidi_Aich"],
+  Mostaganem: ["Ain_Nouissy", "Kheir_Eddine", "Mesra"],
+  Paris: ["Montmartre", "Belleville", "Le_Marais", "La_Defense"],
+  Lyon: ["Croix-Rousse", "Confluence", "Vieux_Lyon"],
+  Marseille: ["La_Pointe_Rouge", "Le_Panier", "L'Estaque"],
+  Nice: ["Old_Town", "Cimiez", "Magnan"],
+  Toulouse: ["Capitole", "Saint-Cyprien", "Carmes"],
+  Nantes: ["Ile_de_Nantes", "Doulon", "Beaulieu"],
+  Strasbourg: ["Petite_France", "Robertsau", "Koenigshoffen"],
+  Montpellier: ["Comedie", "Antigone", "Aiguelongue"],
+  Rome: ["Trastevere", "Monti", "Campo_de'_Fiori"],
+  Milan: ["Navigli", "Brera", "Porta_Venezia"],
+  Naples: ["Vomero", "Chiaia", "Posillipo"],
+  Florence: ["San_Lorenzo", "Santa_Croce", "Oltrarno"],
+  Madrid: ["Chueca", "Malasaña", "La_Latina"],
+  Barcelona: ["Eixample", "Gothic_Quarter", "Gracia"],
+  Valencia: ["El_Carmen", "Ruzafa", "Benimaclet"],
+  Seville: ["Triana", "Macarena", "Santa_Cruz"],
+  Tirana: ["Kombinat", "Blloku", "Selitë"],
+  Durres: ["Plazh", "Shkozet", "Currila"],
+  Mostar: ["Old_Bridge", "Bisce_Poljé", "Donja_Mahala"],
+  Podgorica: ["Stara_Varoš", "Momišići", "Zagorič"],
+  Zagreb: ["Gornji_Grad", "Trnje", "Dubrava"],
+  Nicosia: ["Old_City", "Aglantzia", "Kaimakli"],
+  Athens: ["Plaka", "Monastiraki", "Kolonaki"],
+  Beirut: ["Achrafieh", "Hamra", "Verdun"],
+  Dimashq: ["Bab_Touma", "Baramkeh", "Mezzeh"],
+  Casablanca: ["Maarif", "Ain_Diab", "Bourgogne"],
+  Cairo: ["Heliopolis", "Nasr_City", "Giza"],
+  Tripoli: ["Ghout_Shaa", "Zawiyat_Dahmani", "Bustan_al-Ghiran"],
 };
 
 const countryMappings = {
+  // Tunisia
   Ghazela: ["Tunisia"],
   Raoued: ["Tunisia"],
-  Tastour: ["Tunisia"],
-  Tass: ["Tunisia"],
-  Rgueb: ["Tunisia"],
-  Menzel_Bouzaiane: ["Tunisia"],
-  Erriadh: ["Tunisia"],
-  Sahloul: ["Tunisia"],
-  Nord: ["Tunisia"],
-  Sud: ["Tunisia"],
-  Chabiba: ["Tunisia"],
-  Al_Aamra: ["Tunisia"],
-  Al_Aala: ["Tunisia"],
-  Tala: ["Tunisia"],
-  Sabela: ["Tunisia"],
+  Ettadhamen: ["Tunisia"],
+  Testour: ["Tunisia"],
+  Tibar: ["Tunisia"],
+  Medjez_El_Bab: ["Tunisia"],
+  Carthage: ["Tunisia"],
+  La_Marsa: ["Tunisia"],
+  Le_Kram: ["Tunisia"],
+  El_Menzah: ["Tunisia"],
+  Sidi_Hassine: ["Tunisia"],
+
+  // Algeria1
   Bab_El_Oued: ["Algeria"],
   El_Harrach: ["Algeria"],
-  Ann: ["Algeria"],
+  Bab_Ezzouar: ["Algeria"],
+  Hydra: ["Algeria"],
+  Ain_El_Turck: ["Algeria"],
+  Es_Senia: ["Algeria"],
+  Bir_El_Djir: ["Algeria"],
 
-  // Add more ville-to-country mappings as needed
+  // France
+  Montmartre: ["France"],
+  Belleville: ["France"],
+  Le_Marais: ["France"],
+  La_Defense: ["France"],
+  Marseille: ["France"],
+  Lyon: ["France"],
+
+  // Italy
+  Rome: ["Italy"],
+  Milan: ["Italy"],
+  Naples: ["Italy"],
+  Florence: ["Italy"],
+  Turin: ["Italy"],
+  Genoa: ["Italy"],
+
+  // Spain
+  Madrid: ["Spain"],
+  Barcelona: ["Spain"],
+  Valencia: ["Spain"],
+  Seville: ["Spain"],
+  Zaragoza: ["Spain"],
+  Málaga: ["Spain"],
+
+  // Albania
+  Tirana: ["Albania"],
+  Durres: ["Albania"],
+  Shkoder: ["Albania"],
+  Vlore: ["Albania"],
+  Elbasan: ["Albania"],
+
+  // Herzegovina
+  Mostar: ["Herzegovina"],
+  Bijeljina: ["Herzegovina"],
+  Prijedor: ["Herzegovina"],
+  Trebinje: ["Herzegovina"],
+  Banja_Luka: ["Herzegovina"],
+
+  // Croatia
+  Zagreb: ["Croatia"],
+  Split: ["Croatia"],
+  Rijeka: ["Croatia"],
+  Osijek: ["Croatia"],
+
+  // Cyprus
+  Nicosia: ["Cyprus"],
+  Limassol: ["Cyprus"],
+  Larnaca: ["Cyprus"],
+  Paphos: ["Cyprus"],
+
+  // Greece
+  Athens: ["Greece"],
+  Thessaloniki: ["Greece"],
+  Patras: ["Greece"],
+  Heraklion: ["Greece"],
+  Rhodes: ["Greece"],
+
+  // Lebanon
+  Beirut: ["Lebanon"],
+  Tripoli: ["Lebanon"],
+  Sidon: ["Lebanon"],
+  Zahle: ["Lebanon"],
+
+  // Syria
+  Damascus: ["Syria"],
+  Aleppo: ["Syria"],
+  Homs: ["Syria"],
+  Latakia: ["Syria"],
+  Deir_ez_Zor: ["Syria"],
+
+  // Morocco
+  Casablanca: ["Morocco"],
+  Rabat: ["Morocco"],
+  Marrakech: ["Morocco"],
+  Agadir: ["Morocco"],
+  Tangier: ["Morocco"],
+
+  // Egypt
+  Cairo: ["Egypt"],
+  Alexandria: ["Egypt"],
+  Giza: ["Egypt"],
+  Luxor: ["Egypt"],
+  Aswan: ["Egypt"],
+
+  // Libya
+  Benghazi: ["Libya"],
+  Misrata: ["Libya"],
+  Sabha: ["Libya"],
+  Derna: ["Libya"],
+
+  // Palestine
+  Gaza: ["Palestine"],
+  Nablus: ["Palestine"],
+  Ramallah: ["Palestine"],
+  Bayt_lahm: ["Palestine"],
+  Aaka: ["Palestine"],
+
+  // Turkey
+  Istanbul: ["Turkey"],
+  Ankara: ["Turkey"],
+  Izmir: ["Turkey"],
+  Bursa: ["Turkey"],
+  Antalya: ["Turkey"],
+
+  // Malta
+  Valletta: ["Malta"],
+  Birgu: ["Malta"],
+  Senglea: ["Malta"],
+  Sliema: ["Malta"],
+
+  // Monaco
+  Monte_Carlo: ["Monaco"],
+  Fontvieille: ["Monaco"],
+  La_Condamine: ["Monaco"],
+
+  // Montenegro
+  Podgorica: ["Montenegro"],
+  Nikšić: ["Montenegro"],
+  Bar: ["Montenegro"],
+  Kotor: ["Montenegro"],
+
+  // Slovenia
+  Ljubljana: ["Slovenia"],
+  Maribor: ["Slovenia"],
+  Celje: ["Slovenia"],
+  Kranj: ["Slovenia"],
 };
 
 const getVillesForState = (state) => stateVilleMappings[state] || [];
@@ -403,264 +553,6 @@ const surveySchema = new Schema({
         `Invalid country: ${props.value} for ville: ${props.instance.ville}`,
     },
   },
-
-  // state: {
-  //   type: String,
-  //   enum: [
-  //     "Algeria","Egypt","Morocco","Tunisia","Libya",
-  //     "Lebanon","Palestine","Syria","Turkey",
-  //     "Albania","Herzegovina","Croatia",
-  //     "Cyprus","France", "Greece","Italy",
-  //     "Malta","Monaco","Montenegro","Slovenia","Spain",
-  //   ],
-  //   required: true,
-  // },
-
-  // ville: {
-  //   type: String,
-  //   enum: function () {
-  // Conditional list of cities (villes) based on selected state
-  //     if (this.state === "Tunisia") return ["Ariana", "Beja", "Ben_Arous","Sidi Bouzid",
-  //       "Tunis", "Sousse", "Gabes", "Kairouan", "Bizerte", "Gafsa", "Kasserine", "Kef",
-  //       "Mahdia", "Manouba", "Medenine", "Monastir", "Nabeul", "Sfax", "Sidi Bouzid",
-  //       "Siliana", "Tataouine", "Tozeur", "Zaghouan", "Jendouba"
-  //     ];
-  //     if (this.state === "Morocco") return ["Casablanca", "Rabat", "Fes", "Marrakech"
-  //       , "Agadir", "Tangier", "Kenitra", "Oujda", "Safi", "El Jadida", "Settat",
-  //        "El Kelaa des Sraghna"
-  //     ];
-  //     if (this.state === "Algeria") return ["Algiers", "Oran", "Constantine", "Annaba"
-  //       , "Batna", "Tlemcen", "Tiaret", "Guelma", "Biskra", "Tebessa", "Bejaia",
-  //        "Mostaganem", "Tissemsilt", "El Oued", "Laghouat", "M'Sila", "Mascara",
-  //     ];
-  //     if (this.state === "France") return ["Paris", "Lyon", "Marseille", "Nice"
-  //       , "Toulouse", "Nantes", "Strasbourg", "Montpellier", "Bordeaux", "Lille",
-  //       "Rennes", "Reims", "Le Havre", "Saint-Etienne", "Toulon", "Grenoble", "Dijon",
-  //     ];
-  //     if (this.state === "Italy") return ["Rome", "Milan", "Naples", "Florence"
-  //       , "Turin", "Palermo", "Genoa", "Bologna", "Bari", "Catania", "Messina"
-  //     ];
-  //     if (this.state === "Spain") return ["Madrid", "Barcelona", "Valencia", "Seville"
-  //       , "Valencia", "Malaga", "Seville", "Zaragoza", "Málaga", "Murcia", "Palma de Mallorca"
-  //     ];
-  //     if (this.state === "Albania") return ["Tirana", "Durres", "Shkoder", "Vlore"
-  //       , "Elbasan", "Fier", "Korce", "Vlore", "Kukes", "Gjirokaster", "Lezhe", "Korce"
-  //     ];
-  //     if (this.state === "Herzegovina") return ["Mostar", "Bijeljina", "Prijedor", "Trebinje"
-  //       , "Brcko", "Prijedor", "Trebinje", "Banja Luka", "Zenica", "Sarajevo"
-  //     ];
-  //     if (this.state === "Croatia") return ["Zagreb", "Split", "Rijeka", "Osijek"
-  //     ];
-  //     if (this.state === "Cyprus") return ["Nicosia", "Limassol", "Larnaca", "Paphos"
-  //     ];
-  //     if(this.state === "Greece") return ["Athens", "Thessaloniki", "Patras", "Larissa"
-  //       , "Heraklion", "Rhodes", "Chania", "Kavala", "Kastoria", "Kilkis", "Kozani"
-  //     ];
-  //     if (this.state === "Lebanon") return ["Akkar","Beirut", "Bekaa",
-  //       "Baalbek-Hermel",  "Mount_Lebanon", "North Lebanon", "Nabatiyeh", "South Lebanon"
-  //     ];
-  //     if (this.state === "Syria") return ["Dimashq", "Aleppo", "Homs", "Hama",
-  //       "Halab", "Daraa", "Idlib", "Quneitra", "Rif Dimashq", "Tartus", "Deir ez-Zor",
-  //       "Latakia", "Raqqa", "Suwayda", "Hasakah"
-  //     ];
-  //     if (this.state === "Turkey") return ["Istanbul", "Ankara", "Izmir", "Bursa",
-  //        "Antalya", "Gaziantep", "Kayseri", "Konya","Adana", "Mersin",
-  //     ];
-  //     if (this.state === "Malta") return ["Valletta", "Birgu", "Senglea", "Gzira"
-  //       , "St. Julian's", "Sliema", "Gzira", "Msida", "Paola", "Marsa", "Marsaskala"
-  //     ];
-  //     if (this.state === "Monaco") return ["Monte Carlo", "Fontvieille", "La Condamine"
-  //       , "La Colle", "La Condamine", "La Gare", "La Source", "La Vague", "Le Port"
-  //     ];
-  //     if (this.state === "Montenegro") return ["Podgorica", "Nikšić", "Bar", "Budva"
-  //       , "Budva", "Herceg Novi", "Kotor", "Tivat", "Ulcinj", "Bar", "Budva", "Herceg Novi"
-  //     ];
-  //     if (this.state === "Slovenia") return ["Ljubljana", "Maribor", "Celje", "Kranj"
-  //       , "Koper", "Nova Gorica", "Ptuj", "Nova Gorica", "Ptuj", "Novo Mesto",
-  //       "Slovenska Bistrica"
-  //     ];
-  //     if (this.state === "Palestine") return ["Gaza", "Aaka", "Nablus", "Ramallah",
-  //       "Safad", "Hayfa", "Jenin", "Enassr", "Baysan", "Aryha", "Al-Quds", "Bayt lahm",
-  //       "Al-khalil", "Byr Sabaa", "Naquab"
-  //     ];
-  //     if (this.state === "Libya") return ["Tripoli", "Benghazi", "Misrata", "Sabha"
-  //       , "Derna", "Al-Bayda", "Al-Jizah", "Al-Jabal al Akhdar", "Al-Jabal al Gharbi",
-  //       "Al-Jabal al Janubiyah", "Al-Jabal al Shariqah", "Al-Jabal al Wusta", "Al-Jufrah",
-  //     ];
-  //     if (this.state === "Egypt") return ["Cairo", "Alexandria", "Giza", "Port Said"
-  //       , "Suez", "Luxor", "Aswan", "Asyut", "Beni Suef", "Fayoum", "Minya", "Qena",
-  //       "Sohag", "Qalyubia", "Kafr El Sheikh", "Damietta", "Sharqia", "Gharbia",
-  //     ];
-  //     return [];
-  //   },
-  //   required: function () {
-  //     return !!this.state;
-  //   },
-  // },
-  // country: {
-  //   type: String,
-  //   enum: function () {
-  //     // Conditional list of countries based on selected city (ville)
-  //     //ville tunis
-  //     if (this.ville === "Sidi Bouzid") return ["Rgueb", "Menzel_Bouzaiane"];
-  //     if (this.ville === "Ariana") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Sfax") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Sousse") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Jendouba") return ["La Marsa", "La_Soukra"]
-  //     if (this.ville === "Gafsa") return ["Carthage", "La_Marsa"];
-  //     if (this.ville === "Beja") return ["Kalaa_Kebira", "Hammam_Sousse"];
-  //     if (this.ville === "Gabes") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Kairouan") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Kasserine") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Kebili") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Kef") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Mahdiya") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Manouba") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Medenine") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Monastir") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Nabeul") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Siliana") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Tozeur") return ["La Marsa", "La Soukra"];
-  //     if (this.ville === "Zaghouan") return ["La Marsa", "La Soukra"];
-
-  //     //ville algeria
-  //     if (this.ville === "Algiers") return ["Bab El Oued", "El Harrach"];
-  //     if (this.ville === "Annaba") return ["Bab El Oued", "El Harrach"];
-  //     if (this.ville === "Batna") return ["Bab El Oued", "El Harrach"];
-  //     if (this.ville === "Bejaia") return ["Bab El Oued", "El Harrach"];
-  //     if (this.ville === "Biskra") return ["Bab El Oued", "El Harrach"];
-
-  //     //ville  maroc
-  //     if (this.ville === "Casablanca") return ["Bab El Oued", "El Harrach"];
-  //     if (this.ville === "Rabat") return ["Bab El Oued", "El Harrach"];
-  //     if (this.ville === "Fes") return ["Bab El Oued", "El Harrach"];
-  //     if (this.ville === "Marrakech") return ["Bab El Oued", "El Harrach"];
-  //     if (this.ville === "Agadir") return ["Bab El Oued", "El Harrach"];
-  //     //ville italy
-  //     if (this.ville === "Rome") return ["Lazio"];
-  //     if (this.ville === "Milan") return ["Lazio"];
-  //     if (this.ville === "Naples") return ["Lazio"];
-  //     if (this.ville === "Turin") return ["Lazio"];
-  //     if (this.ville === "Genoa") return ["Lazio"];
-  //     if (this.ville === "Bologna") return ["Lazio"];
-
-  //     //ville france
-  //     if (this.ville === "Paris") return ["Ile-de-France"];
-  //     if (this.ville === "Marseille") return ["Ile-de-France"];
-  //     if (this.ville === "Lyon") return ["Ile-de-France"];
-  //     if (this.ville === "Toulouse") return ["Ile-de-France"];
-  //     if (this.ville === "Nice") return ["Ile-de-France"];
-  //     if (this.ville === "Nantes") return ["Ile-de-France"];
-
-  //     //ville spain
-  //     if (this.ville === "Madrid") return ["Madrid"];
-  //     if (this.ville === "Barcelona") return ["Madrid"];
-  //     if (this.ville === "Valencia") return ["Madrid"];
-  //     if (this.ville === "Seville") return ["Madrid"];
-  //     if (this.ville === "Malaga") return ["Madrid"];
-
-  //     //ville albania
-  //     if (this.ville === "Tirana") return ["Tirana"];
-  //     if (this.ville === "Durres") return ["Tirana"];
-  //     if (this.ville === "Vlore") return ["Tirana"];
-  //     if (this.ville === "Elbasan") return ["Tirana"];
-  //     if (this.ville === "Shkoder") return ["Tirana"];
-  //     if (this.ville === "Korce") return ["Tirana"];
-
-  //     //ville Herzegovina
-  //     if (this.ville === "Sarajevo") return ["Sarajevo"];
-  //     if (this.ville === "Banja Luka") return ["Sarajevo"];
-  //     if (this.ville === "Zenica") return ["Sarajevo"];
-  //     if (this.ville === "Mostar") return ["Sarajevo"];
-
-  //     //ville croitia
-  //     if (this.ville === "Zagreb") return ["Zagreb"];
-  //     if (this.ville === "Split") return ["Zagreb"];
-  //     if (this.ville === "Rijeka") return ["Zagreb"];
-  //     if (this.ville === "Osijek") return ["Zagreb"];
-
-  //     //ville cyprus
-  //     if (this.ville === "Nicosia") return ["Nicosia"];
-  //     if (this.ville === "Limassol") return ["Nicosia"];
-  //     if (this.ville === "Larnaca") return ["Nicosia"];
-  //     if (this.ville === "Paphos") return ["Nicosia"];
-
-  //     //ville greece
-  //     if (this.ville === "Athens") return ["Athens"];
-  //     if (this.ville === "Thessaloniki") return ["Athens"];
-  //     if (this.ville === "Patra") return ["Athens"];
-  //     if (this.ville === "Larissa") return ["Athens"];
-  //     if (this.ville ===  "Heraklion") return ["Athens"];
-  //     if (this.ville === "Rhodes") return ["Athens"];
-
-  //     //ville lebanon
-  //     if (this.ville === "Beirut") return ["Beirut"];
-  //     if (this.ville === "Akkar") return ["Beirut"];
-  //     if (this.ville === "Bekaa") return ["Beirut"];
-  //     if (this.ville === "Nabatiyeh") return ["Beirut"];
-  //     if (this.ville === "North Lebanon") return ["Beirut"];
-
-  //     //ville syria
-  //     if (this.ville === "Dimashq") return ["Dimashq"];
-  //     if (this.ville === "Homs") return ["Dimashq"];
-  //     if (this.ville === "Aleppo") return ["Dimashq"];
-  //     if (this.ville === "Hama") return ["Dimashq"];
-  //     if (this.ville === "Latakia") return ["Dimashq"];
-  //     if (this.ville === "Deir ez-Zor") return ["Dimashq"];
-
-  //     //ville turkey
-  //     if (this.ville === "Istanbul") return ["Istanbul"];
-  //     if (this.ville === "Ankara") return ["Istanbul"];
-  //     if (this.ville === "Izmir") return ["Istanbul"];
-  //     if (this.ville === "Bursa") return ["Istanbul"];
-
-  //     //ville malta
-  //     if (this.ville === "Valletta") return ["Valletta"];
-  //     if (this.ville === "Sliema") return ["Valletta"];
-  //     if (this.ville === "Gzira") return ["Valletta"];
-  //     if (this.ville === "St. Julian's") return ["Valletta"];
-
-  //     //ville monaco
-  //     if (this.ville === "Monte Carlo") return ["Monte Carlo"];
-  //     if (this.ville === "Fontvieille") return ["Monte Carlo"];
-  //     if (this.ville === "La Condamine") return ["Monte Carlo"];
-
-  //     //ville montengro
-  //     if (this.ville === "Podgorica") return ["Podgorica"];
-  //     if (this.ville === "Budva") return ["Podgorica"];
-  //     if (this.ville === "Kotor") return ["Podgorica"];
-  //     if (this.ville === "Herceg Novi") return ["Podgorica"];
-
-  //     //ville slovenia
-  //     if (this.ville === "Ljubljana") return ["Ljubljana"];
-  //     if (this.ville === "Maribor") return ["Ljubljana"];
-  //     if (this.ville === "Celje") return ["Ljubljana"];
-  //     if (this.ville === "Kranj") return ["Ljubljana"];
-
-  //     //ville palestine
-  //     if (this.ville === "Gaza") return ["Gaza"];
-  //     if (this.ville === "Baysan") return ["Baysan"];
-  //     if (this.ville === "Enassr") return ["Enassr"];
-  //     if (this.ville === "Nablus") return ["Nablus"];
-
-  //     //ville libya
-  //     if (this.ville === "Tripoli") return ["Tripoli"];
-  //     if (this.ville === "Benghazi") return ["Tripoli"];
-  //     if (this.ville === "Misrata") return ["Tripoli"];
-  //     if (this.ville === "Derna") return ["Tripoli"];
-
-  //     //ville egypt
-  //     if (this.ville === "Cairo") return ["Cairo"];
-  //     if (this.ville === "Alexandria") return ["Cairo"];
-  //     if (this.ville === "Giza") return ["Cairo"];
-  //     if (this.ville === "Suez") return ["Cairo"];
-
-  //     return [];
-  //   },
-  //   required: function () {
-  //     return !!this.ville;
-  //   },
-  // },
 
   height: {
     type: String,
@@ -738,7 +630,9 @@ const surveySchema = new Schema({
       "Between 4000-5000",
       "Over 5000",
     ],
-    required: true,
+    required: function () {
+      return !["Student", "Unemployed", "Housewife"].includes(this.occupation);
+    },
   },
   currency: {
     type: String,
@@ -758,7 +652,11 @@ const surveySchema = new Schema({
       "Other",
     ],
     required: function () {
-      return this.salary !== "Prefer not to say";
+      return (
+        this.salary &&
+        this.salary !== "Prefer not to say" &&
+        !["Student", "Unemployed", "Housewife"].includes(this.occupation)
+      );
     },
   },
   customCurrency: {
@@ -844,9 +742,9 @@ const surveySchema = new Schema({
   },
   fruits: [
     {
+      //   name:{
       type: String,
       enum: [
-        "None",
         "Apple",
         "Avocados",
         "Banana",
@@ -871,15 +769,30 @@ const surveySchema = new Schema({
         "Tangerine",
         "Other",
       ],
-      required: true,
+      //     },
+      // frequency: {
+      //   type: String,
+      //   enum: [
+      //     "1",
+      //     "Between 1-2",
+      //     "Between 2-3",
+      //     "Between 3-4",
+      //     "Between 4-5",
+      //     "Between 5-6",
+      //     "Between 6-7",
+      //     "Between 7-8",
+      //     "Between 8-9",
+      //     "Between 9-10",
+      //     "Over 10",
+      //   ],
+      //   required: function () {
+      //     return this.fruits[0] !== "None";
+      //   },
+      //   set: (v) => (v === "" ? undefined : v),
+      // },
     },
   ],
-  customFruits: {
-    type: String,
-    required: function () {
-      return this.fruits.includes("Other");
-    },
-  },
+
   fruitUnitPerDay: {
     type: String,
     enum: [
@@ -902,11 +815,39 @@ const surveySchema = new Schema({
     },
     set: (v) => (v === "" ? undefined : v),
   },
+
+  //customFruits: {
+  //   type: {
+  //     name: {
+  //       type: String,
+  //       required: function () {
+  //         return (
+  //           Array.isArray(this.fruits) &&
+  //           this.fruits.some((item) => item.name === "Other")
+  //         );
+  //       },
+  //     },
+  //   },
+  //   required: function () {
+  //     return (
+  //       Array.isArray(this.fruits) &&
+  //       this.fruits.some((item) => item.name === "Other")
+  //     );
+  //   },
+  // },
+
+  customFruits: {
+    type: String,
+    required: function () {
+      return this.fruits.includes("Other");
+    },
+  },
+
   vegetables: [
     {
+      //name: {
       type: String,
       enum: [
-        "None",
         "Carrot",
         "Potato",
         "Tomato",
@@ -937,13 +878,31 @@ const surveySchema = new Schema({
         "Other",
       ],
     },
+    // frequency: {
+    //   type: String,
+    //   enum: [
+    //     "1",
+    //     "Between 1-2",
+    //     "Between 2-3",
+    //     "Between 3-4",
+    //     "Between 4-5",
+    //     "Between 5-6",
+    //     "Between 6-7",
+    //     "Between 7-8",
+    //     "Between 8-9",
+    //     "Between 9-10",
+    //     "Over 10",
+    //   ],
+    //   default: "None",
+    //   required: function () {
+    //     return this.vegetables[0] !== "None";
+    //   },
+    //   set: (v) => (v === "" ? undefined : v),
+    // },
+
+    // },
   ],
-  customVegetables: {
-    type: String,
-    required: function () {
-      return this.vegetables.includes("Other");
-    },
-  },
+
   vegetableUnitPerDay: {
     type: String,
     enum: [
@@ -966,6 +925,34 @@ const surveySchema = new Schema({
     },
     set: (v) => (v === "" ? undefined : v),
   },
+
+  // customVegetables: {
+  //   type: {
+  //     name: {
+  //       type: String,
+  //       required: function () {
+  //         return (
+  //           Array.isArray(this.vegetables) &&
+  //           this.vegetables.some((item) => item.name === "Other")
+  //         );
+  //       },
+  //     },
+  //   },
+  //   required: function () {
+  //     return (
+  //       Array.isArray(this.vegetables) &&
+  //       this.vegetables.some((item) => item.name === "Other")
+  //     );
+  //   },
+  // },
+
+  customVegetables: {
+    type: String,
+    required: function () {
+      return this.vegetables.includes("Other");
+    },
+  },
+
   religious: {
     type: String,
     enum: ["Prefer Not to say", "Muslim", "Christian", "Jewish", "Other"],
@@ -1077,6 +1064,7 @@ const surveySchema = new Schema({
       name: {
         type: String,
         enum: [
+          "None",
           "Home Made Pizza",
           "Shakshouka",
           "Couscous",
@@ -1109,7 +1097,13 @@ const surveySchema = new Schema({
           "Rarely",
           "Never",
         ],
-        required: true,
+        validate: {
+          validator: function (value) {
+            return this.name === "None" || value;
+          },
+          message:
+            "Consumption is required unless 'None' is selected for food name.",
+        },
       },
       budget: {
         type: String,
@@ -1126,7 +1120,13 @@ const surveySchema = new Schema({
           "900-1000",
           "More than 1000",
         ],
-        required: true,
+        validate: {
+          validator: function (value) {
+            return this.name === "None" || value;
+          },
+          message:
+            "Budget is required unless 'None' is selected for food name.",
+        },
       },
     },
   ],
@@ -1172,6 +1172,7 @@ const surveySchema = new Schema({
       name: {
         type: String,
         enum: [
+          "None",
           "Pizza",
           "Sandwiches",
           "Burgers",
@@ -1196,7 +1197,13 @@ const surveySchema = new Schema({
           "Rarely",
           "Never",
         ],
-        required: true,
+        validate: {
+          validator: function (value) {
+            return this.name !== "None" || value;
+          },
+          message:
+            "Consumption is required unless 'None' is selected for food name.",
+        },
       },
       budget: {
         type: String,
@@ -1213,7 +1220,13 @@ const surveySchema = new Schema({
           "900-1000",
           "More than 1000",
         ],
-        required: true,
+        validate: {
+          validator: function (value) {
+            return this.name !== "None" || value;
+          },
+          message:
+            "Budget is required unless 'None' is selected for food name.",
+        },
       },
     },
   ],
@@ -1366,7 +1379,9 @@ const surveySchema = new Schema({
   // },
 
   traditionalEatingHabits: { type: Boolean },
+
   newEatingHabits: { type: Boolean },
+
   medicalHistory: [
     {
       type: String,
@@ -1391,12 +1406,14 @@ const surveySchema = new Schema({
       required: false,
     },
   ],
+
   medicalHistoryCustom: {
     type: String,
     required: function () {
       return this.medicalHistory === "Other";
     },
   },
+
   physicalActivity: { type: String, enum: ["yes", "no"] },
 });
 
@@ -1455,14 +1472,8 @@ surveySchema.index({
   fish: "text",
   dairy: "text",
   oil: "text",
-  HomeMade: "text",
-  //HomeMadeConsumption: "text",
-  //HomeMadeConsumptionBudget: "text",
-  Ordered: "text",
-  //OrderedConsumption: "text",
-  //OrderedConsumptionBudget: "text",
-  traditionalEatingHabits: "text",
-  newEatingHabits: "text",
+  homeMade: "text",
+  ordered: "text",
   medicalHistory: "text",
   physicalActivity: "text",
 });

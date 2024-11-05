@@ -1,12 +1,12 @@
 import React from 'react';
-import { useGetEatingHabitsByEthnicityAndAgeQuery } from '../slices/statsApiSlice';
+import { useGetEatingHabitsByAgeQuery } from '../slices/statsApiSlice';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const EatingHabitsChart = () => {
-  const { data, error, isLoading } = useGetEatingHabitsByEthnicityAndAgeQuery();
+  const { data, error, isLoading } = useGetEatingHabitsByAgeQuery();
 
   // Chart.js options
   const options = {
@@ -14,13 +14,13 @@ const EatingHabitsChart = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: { position: 'top' },
-      title: { display: true, text: 'Eating Habits by Ethnicity' }, 
+      title: { display: true, text: 'Eating Habits by Age' }, 
     },
   };
 
   
   const chartData = {
-    labels: data?.map(item => item.ethnicity) || [], 
+    labels: data?.map(item => item.age) || [], 
     datasets: [
       {
         label: 'Traditional Eating',

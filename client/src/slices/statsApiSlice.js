@@ -8,7 +8,7 @@ export const statsApiSlice = apiSlice.injectEndpoints({
       providesTags: ["Statistics"],
     }),
 
-    getEatingHabitsByEthnicityAndAge: builder.query({
+    getEatingHabitsByAge: builder.query({
       query: () => `${USERS_URL}/eatingHabits`,
       providesTags: ["EatingHabits"],
     }),
@@ -29,7 +29,7 @@ export const statsApiSlice = apiSlice.injectEndpoints({
 
 export const { 
   useGetStatisticsQuery,
-  useGetEatingHabitsByEthnicityAndAgeQuery,
+  useGetEatingHabitsByAgeQuery,
   useGetMedicalHistoryByFoodChoicesQuery,
   useGetMedicalHistoryByHabitsAndSportQuery,
   } = statsApiSlice;

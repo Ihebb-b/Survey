@@ -169,65 +169,138 @@ const getAllSuggestions = async (req, res) => {
 };
 
 const getMatchingSurveys = async (req, res) => {
-
   try {
-    const mismatchedSurveys = await Survey.find({ traditionalEatingHabits: { $exists: true, $nin: [true, false] } });
+    const mismatchedSurveys = await Survey.find({
+      traditionalEatingHabits: { $exists: true, $nin: [true, false] },
+    });
     res.status(200).json(mismatchedSurveys);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+// const getEatingHabitsStatistics = async (req, res) => {
+//   try {
+//     const eatingHabitsAggregation = [
+//       {
+//         $match: {
+//           traditionalEatingHabits: { $exists: true },
+//           ethnicity: { $exists: true }
+//         },
+//       },
+//       {
+//         $group: {
+//           _id: {
+//             ethnicity: "$ethnicity",
+//             traditionalEatingHabits: "$traditionalEatingHabits",
+//           },
+//           count: { $sum: 1 },
+//         },
+//       },
+//       {
+//         $group: {
+//           _id: "$_id.ethnicity",
+//           total: { $sum: "$count" },
+//           traditionalCount: {
+//             $sum: {
+//               $cond: [{ $eq: ["$_id.traditionalEatingHabits", 'true'] }, "$count", 0],
+//             },
+//           },
+//           newEatingCount: {
+//             $sum: {
+//               $cond: [{ $eq: ["$_id.traditionalEatingHabits", 'false'] }, "$count", 0],
+//             },
+//           },
+//         },
+//       },
+//       {
+//         $project: {
+//           ethnicity: "$_id",
+//           traditionalPercentage: {
+//             $cond: [
+//               { $gt: ["$total", 0] },
+//               { $multiply: [{ $divide: ["$traditionalCount", "$total"] }, 100] },
+//               0,
+//             ],
+//           },
+//           newEatingPercentage: {
+//             $cond: [
+//               { $gt: ["$total", 0] },
+//               { $multiply: [{ $divide: ["$newEatingCount", "$total"] }, 100] },
+//               0,
+//             ],
+//           },
+//         },
+//       },
+//     ];
+
+//     const stats = await Survey.aggregate(eatingHabitsAggregation);
+//     res.status(200).json(stats);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
 const getEatingHabitsStatistics = async (req, res) => {
   try {
     const eatingHabitsAggregation = [
       {
         $match: {
-          traditionalEatingHabits: { $exists: true }, 
-          ethnicity: { $exists: true } 
+          traditionalEatingHabits: { $exists: true },
+          age: { $exists: true },
         },
       },
       {
         $group: {
           _id: {
-            ethnicity: "$ethnicity", 
+            age: "$age",
             traditionalEatingHabits: "$traditionalEatingHabits",
           },
-          count: { $sum: 1 }, 
+          count: { $sum: 1 },
         },
       },
       {
         $group: {
-          _id: "$_id.ethnicity", 
-          total: { $sum: "$count" }, 
+          _id: "$_id.age",
+          total: { $sum: "$count" },
           traditionalCount: {
             $sum: {
-              $cond: [{ $eq: ["$_id.traditionalEatingHabits", 'true'] }, "$count", 0], 
+              $cond: [
+                { $eq: ["$_id.traditionalEatingHabits", true] },
+                "$count",
+                0,
+              ],
             },
           },
           newEatingCount: {
             $sum: {
-              $cond: [{ $eq: ["$_id.traditionalEatingHabits", 'false'] }, "$count", 0], 
+              $cond: [
+                { $eq: ["$_id.traditionalEatingHabits", false] },
+                "$count",
+                0,
+              ],
             },
           },
         },
       },
       {
         $project: {
-          ethnicity: "$_id", 
+          age: "$_id",
           traditionalPercentage: {
             $cond: [
               { $gt: ["$total", 0] },
-              { $multiply: [{ $divide: ["$traditionalCount", "$total"] }, 100] },
+              {
+                $multiply: [{ $divide: ["$traditionalCount", "$total"] }, 100],
+              },
               0,
-            ], 
+            ],
           },
           newEatingPercentage: {
             $cond: [
               { $gt: ["$total", 0] },
               { $multiply: [{ $divide: ["$newEatingCount", "$total"] }, 100] },
               0,
-            ], 
+            ],
           },
         },
       },
@@ -240,35 +313,106 @@ const getEatingHabitsStatistics = async (req, res) => {
   }
 };
 
+// const getMedicalHistoryStatistics = async (req, res) => {
+//   try {
+//     const medicalHistoryAggregation = [
+//       { $unwind: "$homeMade" },
+//       { $unwind: "$ordered" },
+//       {
+//         $group: {
+//           _id: {
+//             medicalHistory: "$medicalHistory",
+//             homeMade: "$homeMade",
+//             ordered: "$ordered",
+//           },
+//           count: { $sum: 1 },
+//         },
+//       },
+//       {
+//         $group: {
+//           _id: { medicalHistory: "$_id.medicalHistory" },
+//           total: { $sum: "$count" },
+//           homeMadeFoodCounts: {
+//             $push: {
+//               homeMade: "$_id.homeMade",
+//               count: "$count",
+//             },
+//           },
+//           orderedFoodCounts: {
+//             $push: {
+//               ordered: "$_id.ordered",
+//               count: "$count",
+//             },
+//           },
+//         },
+//       },
+//     ];
+
+//     const stats = await Survey.aggregate(medicalHistoryAggregation);
+//     res.status(200).json(stats);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+
 const getMedicalHistoryStatistics = async (req, res) => {
   try {
     const medicalHistoryAggregation = [
-      { $unwind: "$household" },
-      { $unwind: "$readyToEatFood" },
+      // Unwind both arrays for accurate grouping
+      { $unwind: "$medicalHistory" },
+      { $unwind: "$homeMade" },
+      { $unwind: "$ordered" },
+      
+      // Combine `homeMade` and `ordered` fields into one field for flexibility
       {
-        $group: {
-          _id: {
-            medicalHistory: "$medicalHistory",
-            household: "$household",
-            readyToEatFood: "$readyToEatFood",
-          },
-          count: { $sum: 1 },
+        $facet: {
+          homeMadeStats: [
+            {
+              $group: {
+                _id: {
+                  medicalHistory: "$medicalHistory",
+                  foodType: "homemade",
+                  foodName: "$homeMade.name",
+                  consumption: "$homeMade.consumption"
+                },
+                count: { $sum: 1 },
+              },
+            },
+          ],
+          orderedStats: [
+            {
+              $group: {
+                _id: {
+                  medicalHistory: "$medicalHistory",
+                  foodType: "ordered",
+                  foodName: "$ordered.name",
+                  consumption: "$ordered.consumption"
+                },
+                count: { $sum: 1 },
+              },
+            },
+          ],
         },
       },
       {
+        $project: {
+          combinedStats: { $concatArrays: ["$homeMadeStats", "$orderedStats"] },
+        },
+      },
+      { $unwind: "$combinedStats" },
+      
+      // Final grouping by medical history and summarizing food stats
+      {
         $group: {
-          _id: { medicalHistory: "$_id.medicalHistory" },
-          total: { $sum: "$count" },
-          householdFoodCounts: {
+          _id: "$combinedStats._id.medicalHistory",
+          total: { $sum: "$combinedStats.count" },
+          foodStatistics: {
             $push: {
-              household: "$_id.household",
-              count: "$count",
-            },
-          },
-          readyToEatFoodCounts: {
-            $push: {
-              readyToEatFood: "$_id.readyToEatFood",
-              count: "$count",
+              foodType: "$combinedStats._id.foodType",
+              foodName: "$combinedStats._id.foodName",
+              consumption: "$combinedStats._id.consumption",
+              count: "$combinedStats.count",
             },
           },
         },
@@ -281,6 +425,7 @@ const getMedicalHistoryStatistics = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const getMedicalHistorySportStatistics = async (req, res) => {
   try {

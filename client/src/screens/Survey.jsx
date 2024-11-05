@@ -5,6 +5,7 @@ import { useCreateSurveyMutation } from "../slices/surveyApiSlice";
 
 const Survey = () => {
   const homeMadeOptions = [
+    //"None",
     "Home Made Pizza",
     "Shakshouka",
     "Couscous",
@@ -50,6 +51,7 @@ const Survey = () => {
   ];
 
   const orderedOptions = [
+    // "None",
     "Pizza",
     "Sandwiches",
     "Burgers",
@@ -75,10 +77,10 @@ const Survey = () => {
     education: "",
     customEducation: "",
     occupation: "",
-    customOcccupation: "",
+    customOccupation: "",
     salary: "",
     currency: "",
-    customCurrecny: "",
+    customCurrency: "",
     socialState: "",
     children: "",
     childrenNumber: "",
@@ -156,6 +158,15 @@ const Survey = () => {
       }
 
       if (
+        name === "occupation" &&
+        ["Student", "Unemployed", "Housewife"].includes(value)
+      ) {
+        updatedData.salary = "";
+        updatedData.currency = "";
+        updatedData.customCurrency = "";
+      }
+
+      if (
         name === "socialState" &&
         (value === "Prefer not to say" || value === "Single")
       ) {
@@ -166,9 +177,6 @@ const Survey = () => {
       if (name === "children" && value !== "Yes") {
         updatedData.childrenNumber = "";
       }
-      // if (name === 'children' && (value === 'Single' || value === 'Prefer not to say')) {
-      //   updatedData.childrenNumber = 'none'; // Set `childrenNumber` to 'none' when children is "Single" or "Prefer not to say"
-      // }
 
       if (name === "diet" && value !== "Other") {
         updatedData.customDiet = "";
@@ -234,28 +242,523 @@ const Survey = () => {
         updatedData.customOrdered = "";
       }
 
+      if (name === "homeMade") {
+        updatedData.consumption.homeMade =
+          value === "None" ? "" : prevState.homeMadeConsumption;
+        updatedData.homeMadeBudget =
+          value === "None" ? "" : prevState.homeMadeBudget;
+      }
+
+      if (name === "ordered") {
+        updatedData.orderedConsumption =
+          value === "None" ? "" : prevState.orderedConsumption;
+        updatedData.orderedBudget =
+          value === "None" ? "" : prevState.orderedBudget;
+      }
+
       return updatedData;
     });
   };
 
   const stateOptions = {
-    Tunisia: ["Ariana", "Beja", "Ben_Arous"],
-    Algeria: ["Algiers", "Annaba", "Batna"],
+    Algeria: [
+      "Algiers",
+      "Oran",
+      "Constantine",
+      "Annaba",
+      "Batna",
+      "Tlemcen",
+      "Tiaret",
+      "Guelma",
+      "Biskra",
+      "Tebessa",
+      "Bejaia",
+      "Mostaganem",
+      "Tissemsilt",
+      "El_Oued",
+      "Laghouat",
+      "M_Sila",
+      "Mascara",
+    ],
+    Tunisia: [
+      "Ariana",
+      "Beja",
+      "Ben_Arous",
+      "Sidi_Bouzid",
+      "Tunis",
+      "Sousse",
+      "Gabes",
+      "Kairouan",
+      "Bizerte",
+      "Gafsa",
+      "Kasserine",
+      "Kef",
+      "Mahdia",
+      "Manouba",
+      "Medenine",
+      "Monastir",
+      "Nabeul",
+      "Sfax",
+      "Siliana",
+      "Tataouine",
+      "Tozeur",
+      "Zaghouan",
+      "Jendouba",
+    ],
+    France: [
+      "Paris",
+      "Lyon",
+      "Marseille",
+      "Nice",
+      "Toulouse",
+      "Nantes",
+      "Strasbourg",
+      "Montpellier",
+      "Bordeaux",
+      "Lille",
+      "Rennes",
+      "Reims",
+      "Le_Havre",
+      "Saint_Etienne",
+      "Toulon",
+      "Grenoble",
+      "Dijon",
+    ],
+    Italy: [
+      "Rome",
+      "Milan",
+      "Naples",
+      "Florence",
+      "Turin",
+      "Palermo",
+      "Genoa",
+      "Bologna",
+      "Bari",
+      "Catania",
+      "Messina",
+    ],
+    Spain: [
+      "Madrid",
+      "Barcelona",
+      "Valencia",
+      "Malaga",
+      "Seville",
+      "Zaragoza",
+      "Málaga",
+      "Murcia",
+      "Palma_de_Mallorca",
+    ],
+    Albania: [
+      "Tirana",
+      "Durres",
+      "Shkoder",
+      "Vlore",
+      "Elbasan",
+      "Fier",
+      "Korce",
+      "Vlore",
+      "Kukes",
+      "Gjirokaster",
+      "Lezhe",
+      "Korce",
+    ],
+    Herzegovina: [
+      "Mostar",
+      "Bijeljina",
+      "Brcko",
+      "Prijedor",
+      "Trebinje",
+      "Banja_Luka",
+      "Zenica",
+      "Sarajevo",
+    ],
+    Croatia: ["Zagreb", "Split", "Rijeka", "Osijek"],
+    Cyprus: ["Nicosia", "Limassol", "Larnaca", "Paphos"],
+    Greece: [
+      "Athens",
+      "Thessaloniki",
+      "Patras",
+      "Larissa",
+      "Heraklion",
+      "Rhodes",
+      "Chania",
+      "Kavala",
+      "Kastoria",
+      "Kilkis",
+      "Kozani",
+    ],
+    Lebanon: [
+      "Akkar",
+      "Beirut",
+      "Bekaa",
+      "Baalbek_Hermel",
+      "Mount_Lebanon",
+      "North_Lebanon",
+      "Nabatiyeh",
+      "South_Lebanon",
+    ],
+    Syria: [
+      "Dimashq",
+      "Aleppo",
+      "Homs",
+      "Hama",
+      "Halab",
+      "Daraa",
+      "Idlib",
+      "Quneitra",
+      "Rif_Dimashq",
+      "Tartus",
+      "Deir_ez_Zor",
+      "Latakia",
+      "Raqqa",
+      "Suwayda",
+      "Hasakah",
+    ],
+    Morocco: [
+      "Casablanca",
+      "Rabat",
+      "Fes",
+      "Marrakech",
+      "Agadir",
+      "Tangier",
+      "Kenitra",
+      "Oujda",
+      "Safi",
+      "El_Jadida",
+      "Settat",
+      "El_Kelaa_des_Sraghna",
+    ],
+    Egypt: [
+      "Cairo",
+      "Alexandria",
+      "Giza",
+      "Port_Said",
+      "Suez",
+      "Luxor",
+      "Aswan",
+      "Asyut",
+      "Beni_Suef",
+      "Fayoum",
+      "Minya",
+      "Qena",
+      "Sohag",
+      "Qalyubia",
+      "Kafr_El_Sheikh",
+      "Damietta",
+      "Sharqia",
+      "Gharbia",
+    ],
+
+    Libya: [
+      "Tripoli",
+      "Benghazi",
+      "Misrata",
+      "Sabha",
+      "Derna",
+      "Al_Bayda",
+      "Al_Jizah",
+      "Al_Jabal_al_Akhdar",
+      "Al_Jabal_al_Gharbi",
+      "Al_Jabal_al_Janubiyah",
+      "Al_Jabal_al_Shariqah",
+      "Al_Jabal_al_Wusta",
+      "Al_Jufrah",
+    ],
+    Palestine: [
+      "Gaza",
+      "Aaka",
+      "Nablus",
+      "Ramallah",
+      "Safad",
+      "Hayfa",
+      "Jenin",
+      "Enassr",
+      "Baysan",
+      "Aryha",
+      "Al_Quds",
+      "Bayt_lahm",
+      "Al_khalil",
+      "Byr_Sabaa",
+      "Naquab",
+    ],
+    Turkey: [
+      "Istanbul",
+      "Ankara",
+      "Izmir",
+      "Bursa",
+      "Antalya",
+      "Gaziantep",
+      "Kayseri",
+      "Konya",
+      "Adana",
+      "Mersin",
+    ],
+    Malta: [
+      "Valletta",
+      "Birgu",
+      "Senglea",
+      "Gzira",
+      "St_Julian_s",
+      "Sliema",
+      "Gzira",
+      "Msida",
+      "Paola",
+      "Marsa",
+      "Marsaskala",
+    ],
+    Monaco: [
+      "Monte_Carlo",
+      "Fontvieille",
+      "La_Condamine",
+      "La_Colle",
+      "La_Condamine",
+      "La_Gare",
+      "La_Source",
+      "La_Vague",
+      "Le_Port",
+    ],
+    Montenegro: [
+      "Podgorica",
+      "Nikšić",
+      "Bar",
+      "Herceg Novi",
+      "Kotor",
+      "Tivat",
+      "Ulcinj",
+      "Bar",
+      "Budva",
+      "Herceg_Novi",
+    ],
+    Slovenia: [
+      "Ljubljana",
+      "Maribor",
+      "Celje",
+      "Kranj",
+      "Koper",
+      "Nova_Gorica",
+      "Ptuj",
+      "Nova_Gorica",
+      "Ptuj",
+      "Novo_Mesto",
+      "Slovenska_Bistrica",
+    ],
   };
 
   const villeOptions = {
-    Ariana: ["Ghazela", "Raoued"],
-    Beja: ["Tastour", "Tass"],
-    Algiers: ["Bab_El_Oued", "El_Harrach"],
+    Ariana: ["Ghazela", "Raoued", "Ettadhamen"],
+    Beja: ["Testour", "Tibar", "Medjez_El_Bab"],
+    Ben_Arous: ["Hammam_Lif", "Radès", "Mohamedia"],
+    Sidi_Bouzid: ["Regueb", "Menzel_Bouzaiane", "Sidi_Ali_Ben_Aoun"],
+    Tunis: ["Carthage", "La_Marsa", "Le_Kram", "El_Menzah", "Sidi_Hassine"],
+    Sousse: ["Kalaa_Kebira", "Hammam_Sousse", "Sidi_Bou_Ali"],
+    Gabes: ["El_Hamma", "Metouia", "Mareth"],
+    Kairouan: ["Nasrallah", "Haffouz", "Chebika"],
+    Bizerte: ["Menzel_Bourguiba", "Mateur", "Sejnane"],
+    Gafsa: ["El_Gtar", "Moulares", "Redeyef"],
+    Kasserine: ["Thala", "Sbiba", "Hassi_Ferid"],
+    Kef: ["Nebeur", "Sakiet_Sidi_Youssef", "Tajerouine"],
+    Mahdia: ["Ksour_Essef", "Chebba", "Bou_Meradess"],
+    Manouba: ["Douar_Hicher", "Mornaguia", "Tebourba"],
+    Medenine: ["Ben_Guerdane", "Beni_Khedache", "Zarzis"],
+    Monastir: ["Jemmal", "Ksar_Hellal", "Sahline"],
+    Nabeul: ["Hammamet", "Kelibia", "Menzel_Temime"],
+    Sfax: ["Kerkennah", "El_Amra", "Sakiet_Ezzit"],
+    Siliana: ["Bou_Arada", "El_Krib", "Makthar"],
+    Tataouine: ["Remada", "Bir_Lahmar", "Ghomrassen"],
+    Tozeur: ["Degache", "Hazoua", "Nefta"],
+    Zaghouan: ["El_Fahs", "Zriba", "Bir_Mcherga"],
+    Jendouba: ["Ain_Draham", "Tabarka", "Fernana"],
+    Algiers: ["Bab_El_Oued", "El_Harrach", "Bab_Ezzouar", "Hydra"],
+    Oran: ["Ain_El_Turck", "Es_Senia", "Bir_El_Djir"],
+    Constantine: ["El_Khroub", "Ain_Smara", "Didouche_Mourad"],
+    Annaba: ["El_Bouni", "Ain_Berda", "Seraidi"],
+    Batna: ["Tazoult", "N_Gaous", "El_Madher"],
+    Tlemcen: ["Maghnia", "Remchi", "Sabra"],
+    Tiaret: ["Ain_Bouchema", "Oued_Lill", "Frenda"],
+    Guelma: ["Bou_Hamra", "Bouchegouf", "Ain_Makhlouf"],
+    Biskra: ["Tolga", "El_Kantara", "Ouled_Djellal"],
+    Tebessa: ["Bir_El_Ater", "Negrine", "Cheria"],
+    Bejaia: ["Tichy", "Souk_El_Tenine", "Sidi_Aich"],
+    Mostaganem: ["Ain_Nouissy", "Kheir_Eddine", "Mesra"],
+    Paris: ["Montmartre", "Belleville", "Le_Marais", "La_Defense"],
+    Lyon: ["Croix-Rousse", "Confluence", "Vieux_Lyon"],
+    Marseille: ["La_Pointe_Rouge", "Le_Panier", "L'Estaque"],
+    Nice: ["Old_Town", "Cimiez", "Magnan"],
+    Toulouse: ["Capitole", "Saint-Cyprien", "Carmes"],
+    Nantes: ["Ile_de_Nantes", "Doulon", "Beaulieu"],
+    Strasbourg: ["Petite_France", "Robertsau", "Koenigshoffen"],
+    Montpellier: ["Comedie", "Antigone", "Aiguelongue"],
+    Rome: ["Trastevere", "Monti", "Campo_de'_Fiori"],
+    Milan: ["Navigli", "Brera", "Porta_Venezia"],
+    Naples: ["Vomero", "Chiaia", "Posillipo"],
+    Florence: ["San_Lorenzo", "Santa_Croce", "Oltrarno"],
+    Madrid: ["Chueca", "Malasaña", "La_Latina"],
+    Barcelona: ["Eixample", "Gothic_Quarter", "Gracia"],
+    Valencia: ["El_Carmen", "Ruzafa", "Benimaclet"],
+    Seville: ["Triana", "Macarena", "Santa_Cruz"],
+    Tirana: ["Kombinat", "Blloku", "Selitë"],
+    Durres: ["Plazh", "Shkozet", "Currila"],
+    Mostar: ["Old_Bridge", "Bisce_Poljé", "Donja_Mahala"],
+    Podgorica: ["Stara_Varoš", "Momišići", "Zagorič"],
+    Zagreb: ["Gornji_Grad", "Trnje", "Dubrava"],
+    Nicosia: ["Old_City", "Aglantzia", "Kaimakli"],
+    Athens: ["Plaka", "Monastiraki", "Kolonaki"],
+    Beirut: ["Achrafieh", "Hamra", "Verdun"],
+    Dimashq: ["Bab_Touma", "Baramkeh", "Mezzeh"],
+    Casablanca: ["Maarif", "Ain_Diab", "Bourgogne"],
+    Cairo: ["Heliopolis", "Nasr_City", "Giza"],
+    Tripoli: ["Ghout_Shaa", "Zawiyat_Dahmani", "Bustan_al-Ghiran"],
   };
 
   const countryOptions = {
-    Rgueb: ["Ghazela", "Raoued"],
-    Menzel_Bouzaine: ["Gafsa"],
-    Kalaa_Kebira: ["Soussa"],
-    Hammam_Sousse: ["Kantaoui"],
-    Bab_El_Oued: ["El_Djazair"],
-    El_Harrach: ["Cheraga"],
+    // Tunisia
+    Ghazela: ["Tunisia"],
+    Raoued: ["Tunisia"],
+    Ettadhamen: ["Tunisia"],
+    Testour: ["Tunisia"],
+    Tibar: ["Tunisia"],
+    Medjez_El_Bab: ["Tunisia"],
+    Carthage: ["Tunisia"],
+    La_Marsa: ["Tunisia"],
+    Le_Kram: ["Tunisia"],
+    El_Menzah: ["Tunisia"],
+    Sidi_Hassine: ["Tunisia"],
+
+    // Algeria1
+    Bab_El_Oued: ["Algeria"],
+    El_Harrach: ["Algeria"],
+    Bab_Ezzouar: ["Algeria"],
+    Hydra: ["Algeria"],
+    Ain_El_Turck: ["Algeria"],
+    Es_Senia: ["Algeria"],
+    Bir_El_Djir: ["Algeria"],
+
+    // France
+    Montmartre: ["France"],
+    Belleville: ["France"],
+    Le_Marais: ["France"],
+    La_Defense: ["France"],
+    Marseille: ["France"],
+    Lyon: ["France"],
+
+    // Italy
+    Rome: ["Italy"],
+    Milan: ["Italy"],
+    Naples: ["Italy"],
+    Florence: ["Italy"],
+    Turin: ["Italy"],
+    Genoa: ["Italy"],
+
+    // Spain
+    Madrid: ["Spain"],
+    Barcelona: ["Spain"],
+    Valencia: ["Spain"],
+    Seville: ["Spain"],
+    Zaragoza: ["Spain"],
+    Málaga: ["Spain"],
+
+    // Albania
+    Tirana: ["Albania"],
+    Durres: ["Albania"],
+    Shkoder: ["Albania"],
+    Vlore: ["Albania"],
+    Elbasan: ["Albania"],
+
+    // Herzegovina
+    Mostar: ["Herzegovina"],
+    Bijeljina: ["Herzegovina"],
+    Prijedor: ["Herzegovina"],
+    Trebinje: ["Herzegovina"],
+    Banja_Luka: ["Herzegovina"],
+
+    // Croatia
+    Zagreb: ["Croatia"],
+    Split: ["Croatia"],
+    Rijeka: ["Croatia"],
+    Osijek: ["Croatia"],
+
+    // Cyprus
+    Nicosia: ["Cyprus"],
+    Limassol: ["Cyprus"],
+    Larnaca: ["Cyprus"],
+    Paphos: ["Cyprus"],
+
+    // Greece
+    Athens: ["Greece"],
+    Thessaloniki: ["Greece"],
+    Patras: ["Greece"],
+    Heraklion: ["Greece"],
+    Rhodes: ["Greece"],
+
+    // Lebanon
+    Beirut: ["Lebanon"],
+    Tripoli: ["Lebanon"],
+    Sidon: ["Lebanon"],
+    Zahle: ["Lebanon"],
+
+    // Syria
+    Damascus: ["Syria"],
+    Aleppo: ["Syria"],
+    Homs: ["Syria"],
+    Latakia: ["Syria"],
+    Deir_ez_Zor: ["Syria"],
+
+    // Morocco
+    Casablanca: ["Morocco"],
+    Rabat: ["Morocco"],
+    Marrakech: ["Morocco"],
+    Agadir: ["Morocco"],
+    Tangier: ["Morocco"],
+
+    // Egypt
+    Cairo: ["Egypt"],
+    Alexandria: ["Egypt"],
+    Giza: ["Egypt"],
+    Luxor: ["Egypt"],
+    Aswan: ["Egypt"],
+
+    // Libya
+    Benghazi: ["Libya"],
+    Misrata: ["Libya"],
+    Sabha: ["Libya"],
+    Derna: ["Libya"],
+
+    // Palestine
+    Gaza: ["Palestine"],
+    Nablus: ["Palestine"],
+    Ramallah: ["Palestine"],
+    Bayt_lahm: ["Palestine"],
+    Aaka: ["Palestine"],
+
+    // Turkey
+    Istanbul: ["Turkey"],
+    Ankara: ["Turkey"],
+    Izmir: ["Turkey"],
+    Bursa: ["Turkey"],
+    Antalya: ["Turkey"],
+
+    // Malta
+    Valletta: ["Malta"],
+    Birgu: ["Malta"],
+    Senglea: ["Malta"],
+    Sliema: ["Malta"],
+
+    // Monaco
+    Monte_Carlo: ["Monaco"],
+    Fontvieille: ["Monaco"],
+    La_Condamine: ["Monaco"],
+
+    // Montenegro
+    Podgorica: ["Montenegro"],
+    Nikšić: ["Montenegro"],
+    Bar: ["Montenegro"],
+    Kotor: ["Montenegro"],
+
+    // Slovenia
+    Ljubljana: ["Slovenia"],
+    Maribor: ["Slovenia"],
+    Celje: ["Slovenia"],
+    Kranj: ["Slovenia"],
   };
 
   const toggleSelectionn = (category, item) => {
@@ -283,7 +786,9 @@ const Survey = () => {
   const handleInputChange = (category, itemName, field, value) => {
     setFormData((prevData) => {
       const updatedItems = prevData[category].map((item) =>
-        item.name === itemName ? { ...item, [field]: value } : item
+        item.name === itemName
+          ? { ...item, [field]: itemName !== "None" ? value : "" }
+          : item
       );
       return { ...prevData, [category]: updatedItems };
     });
@@ -346,10 +851,20 @@ const Survey = () => {
     if (!formData.weight) newErrors.weight = "Weight is required.";
     if (!formData.education) newErrors.education = "Education is required.";
     if (!formData.occupation) newErrors.occupation = "Occupation is required.";
-    if (!formData.salary) newErrors.salary = "Salary is required.";
+    const occupationsWithoutSalary = ["Student", "Unemployed", "Housewife"];
+    if (
+      !occupationsWithoutSalary.includes(formData.occupation) &&
+      !formData.salary
+    ) {
+      newErrors.salary = "Salary is required.";
+    }
     if (!formData.socialState)
       newErrors.socialState = "Social State is required.";
-    if (formData.socialState !== "Single" && formData.children === "") {
+    if (
+      formData.children === "" &&
+      formData.socialState !== "Prefer not to say" &&
+      formData.socialState !== "Single"
+    ) {
       newErrors.children = "Children field is required.";
     }
     if (formData.children === "Yes" && !formData.childrenNumber) {
@@ -371,10 +886,37 @@ const Survey = () => {
     ) {
       newErrors.vegetableUnitPerDay = "Please specify vegetable units per day.";
     }
-    if (!formData.homeMade.length)
-      newErrors.homeMade = "Home Made Food is required.";
-    if (!formData.ordered.length)
-      newErrors.ordered = "Ordered Food is required.";
+    // if (!formData.homeMade.length)
+    //   newErrors.homeMade = "Home Made Food is required.";
+    // if (!formData.ordered.length)
+    //   newErrors.ordered = "Ordered Food is required.";
+
+    formData.homeMade.forEach((item, index) => {
+      if (item.name !== "None") {
+        if (!item.consumption) {
+          newErrors[`homeMadeConsumption${index}`] =
+            "Consumption is required for selected home-made item.";
+        }
+        if (!item.budget) {
+          newErrors[`homeMadeBudget${index}`] =
+            "Budget is required for selected home-made item.";
+        }
+      }
+    });
+
+    formData.ordered.forEach((item, index) => {
+      if (item.name !== "None") {
+        if (!item.consumption) {
+          newErrors[`orderedConsumption${index}`] =
+            "Consumption is required for selected ordered item.";
+        }
+        if (!item.budget) {
+          newErrors[`orderedBudget${index}`] =
+            "Budget is required for selected ordered item.";
+        }
+      }
+    });
+
     if (
       formData.homeMade.some((item) => item.name === "Other") &&
       !formData.customHomeMade.name
@@ -649,6 +1191,7 @@ const Survey = () => {
         )}
 
         {/* Occupation */}
+
         <label className="block">
           <span className="font-bold">Occupation:</span>
           <select
@@ -686,30 +1229,34 @@ const Survey = () => {
         )}
 
         {/* Salary */}
-        <label className="block">
-          <span className="font-bold">Salary:</span>
-          <select
-            name="salary"
-            value={formData.salary}
-            onChange={handleChange}
-            className="border border-gray-300 px-4 py-2 rounded-md w-full"
-          >
-            <option value="">Select...</option>
-            <option value="Prefer not to say">Prefer not to say</option>
-            <option value="Less than 1000">Less than 1000</option>
-            <option value="Between 1000-2000">Between 1000-2000</option>
-            <option value="Between 2000-3000">Between 2000-3000</option>
-            <option value="Between 3000-4000">Between 3000-4000</option>
-            <option value="Between 4000-5000">Between 4000-5000</option>
-            <option value="Over 5000">Over 5000</option>
-          </select>
-          {errors.salary && (
-            <span className="text-red-500">{errors.salary}</span>
+        {formData.occupation !== "Student" &&
+          formData.occupation !== "Unemployed" &&
+          formData.occupation !== "Housewife" && (
+            <label className="block">
+              <span className="font-bold">Salary:</span>
+              <select
+                name="salary"
+                value={formData.salary}
+                onChange={handleChange}
+                className="border border-gray-300 px-4 py-2 rounded-md w-full"
+              >
+                <option value="">Select...</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+                <option value="Less than 1000">Less than 1000</option>
+                <option value="Between 1000-2000">Between 1000-2000</option>
+                <option value="Between 2000-3000">Between 2000-3000</option>
+                <option value="Between 3000-4000">Between 3000-4000</option>
+                <option value="Between 4000-5000">Between 4000-5000</option>
+                <option value="Over 5000">Over 5000</option>
+              </select>
+              {errors.salary && (
+                <span className="text-red-500">{errors.salary}</span>
+              )}
+            </label>
           )}
-        </label>
 
         {/* Currency */}
-        {formData.salary !== "Prefer not to say" && (
+        {formData.salary && formData.salary !== "Prefer not to say" && (
           <label className="block">
             <span className="font-bold"> Currency: </span>
             <select
@@ -730,7 +1277,7 @@ const Survey = () => {
               <option value="LBP">LBP</option>
               <option value="PLP">PLP</option>
               <option value="SYP">SYP</option>
-              <option value="ALL">ALL</option>
+              <option value="AL">AL</option>
               <option value="Other">Other</option>
             </select>
           </label>
@@ -1327,6 +1874,7 @@ const Survey = () => {
           Do you prefer Home made foods or Ready to eat foods? or Both?
         </h3>
 
+        {/*  Home Made */}
         <label className="block">
           <span className="font-bold mb-2 block">Household:</span>
           <div
@@ -1350,20 +1898,11 @@ const Survey = () => {
           </div>
         </label>
 
+        {/* Custom HomeMade */}
+
         {formData.homeMade.map((selectedItem) => (
           <div key={selectedItem.name} className="mt-4">
             <h4 className="font-semibold">{selectedItem.name}</h4>
-
-            {/* {selectedItem.name === "Other" && (
-              <input
-                type="text"
-                placeholder="Custom Item"
-                className="border p-2 rounded-md w-full"
-                onChange={(e) =>
-                  handleInputChange("homeMade", "Other", "name", e.target.value)
-                }
-              />
-            )} */}
 
             {selectedItem.name === "Other" && (
               <input
@@ -1382,105 +1921,61 @@ const Survey = () => {
               />
             )}
 
-            {/* Consumption Selection */}
-            <label className="block mt-2">
-              <span className="text-gray-700">Consumption</span>
-              <select
-                className="border p-2 rounded-md w-full"
-                value={selectedItem.consumption}
-                onChange={(e) =>
-                  handleInputChange(
-                    "homeMade",
-                    selectedItem.name,
-                    "consumption",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="">Select consumption frequency</option>
-                {consumptionOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
+            {selectedItem.name !== "None" && (
+              <>
+                {/* Consumption Selection */}
+                <label className="block mt-2">
+                  <span className="text-gray-700">Consumption</span>
+                  <select
+                    className="border p-2 rounded-md w-full"
+                    value={selectedItem.consumption}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "homeMade",
+                        selectedItem.name,
+                        "consumption",
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option value="">Select consumption frequency</option>
+                    {consumptionOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-            {/* Budget Selection */}
-            <label className="block mt-2">
-              <span className="text-gray-700">Budget</span>
-              <select
-                className="border p-2 rounded-md w-full"
-                value={selectedItem.budget}
-                onChange={(e) =>
-                  handleInputChange(
-                    "homeMade",
-                    selectedItem.name,
-                    "budget",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="">Select budget</option>
-                {budgetOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
+                {/* Budget Selection */}
+                <label className="block mt-2">
+                  <span className="text-gray-700">Budget</span>
+                  <select
+                    className="border p-2 rounded-md w-full"
+                    value={selectedItem.budget}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "homeMade",
+                        selectedItem.name,
+                        "budget",
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option value="">Select budget</option>
+                    {budgetOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </>
+            )}
           </div>
         ))}
 
-        {/* <label className="block mt-2">
-              <span className="text-gray-700">Consumption</span>
-              <select
-                className="border p-2 rounded-md w-full"
-                value={selectedItem.consumption}
-                onChange={(e) =>
-                  handleInputChange(
-                    "homeMade",
-                    selectedItem.name,
-                    "consumption",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="">Select consumption frequency</option>
-                {consumptionOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="block mt-2">
-              <span className="text-gray-700">Budget</span>
-              <select
-                className="border p-2 rounded-md w-full"
-                value={selectedItem.budget}
-                onChange={(e) =>
-                  handleInputChange(
-                    "homeMade",
-                    selectedItem.name,
-                    "budget",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="">Select budget</option>
-                {budgetOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        ))} */}
-
-        {/* Ordered Section (Similar structure to HomeMade) */}
+        {/* Ordered */}
         <label className="block mt-6">
           <span className="font-bold mb-2 block">Ordered Items:</span>
           <div
@@ -1504,6 +1999,7 @@ const Survey = () => {
           </div>
         </label>
 
+        {/* Custom Ordered */}
         {formData.ordered.map((selectedItem) => (
           <div key={selectedItem.name} className="mt-4">
             <h4 className="font-semibold">{selectedItem.name}</h4>
@@ -1525,118 +2021,59 @@ const Survey = () => {
               />
             )}
 
-            {/* Consumption Selection */}
-            <label className="block mt-2">
-              <span className="text-gray-700">Consumption</span>
-              <select
-                className="border p-2 rounded-md w-full"
-                value={selectedItem.consumption}
-                onChange={(e) =>
-                  handleInputChange(
-                    "ordered",
-                    selectedItem.name,
-                    "consumption",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="">Select consumption frequency</option>
-                {consumptionOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
+            {selectedItem.name !== "None" && (
+              <>
+                {/* Consumption Selection */}
+                <label className="block mt-2">
+                  <span className="text-gray-700">Consumption</span>
+                  <select
+                    className="border p-2 rounded-md w-full"
+                    value={selectedItem.consumption}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "ordered",
+                        selectedItem.name,
+                        "consumption",
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option value="">Select consumption frequency</option>
+                    {consumptionOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-            {/* Budget Selection */}
-            <label className="block mt-2">
-              <span className="text-gray-700">Budget</span>
-              <select
-                className="border p-2 rounded-md w-full"
-                value={selectedItem.budget}
-                onChange={(e) =>
-                  handleInputChange(
-                    "ordered",
-                    selectedItem.name,
-                    "budget",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="">Select budget</option>
-                {budgetOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
+                {/* Budget Selection */}
+                <label className="block mt-2">
+                  <span className="text-gray-700">Budget</span>
+                  <select
+                    className="border p-2 rounded-md w-full"
+                    value={selectedItem.budget}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "ordered",
+                        selectedItem.name,
+                        "budget",
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option value="">Select budget</option>
+                    {budgetOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </>
+            )}
           </div>
         ))}
-
-        {/* {formData.ordered.map((selectedItem) => (
-          <div key={selectedItem.name} className="mt-4">
-            <h4 className="font-semibold">{selectedItem.name}</h4>
-
-            {selectedItem.name === "Other" && (
-              <input
-                type="text"
-                placeholder="Custom Item"
-                className="border p-2 rounded-md w-full"
-                onChange={(e) =>
-                  handleInputChange("ordered", "Other", "name", e.target.value)
-                }
-              />
-            )}
-
-            <label className="block mt-2">
-              <span className="text-gray-700">Consumption</span>
-              <select
-                className="border p-2 rounded-md w-full"
-                value={selectedItem.consumption}
-                onChange={(e) =>
-                  handleInputChange(
-                    "ordered",
-                    selectedItem.name,
-                    "consumption",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="">Select consumption frequency</option>
-                {consumptionOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="block mt-2">
-              <span className="text-gray-700">Budget</span>
-              <select
-                className="border p-2 rounded-md w-full"
-                value={selectedItem.budget}
-                onChange={(e) =>
-                  handleInputChange(
-                    "ordered",
-                    selectedItem.name,
-                    "budget",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="">Select budget</option>
-                {budgetOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        ))} */}
 
         {/* Medical History */}
         <label className="block">
@@ -1698,6 +2135,7 @@ const Survey = () => {
         )}
 
         <h3 className="text-lg font-semibold mt-4">What do you prefer?</h3>
+
         {/* Traditional Eating Habits */}
         <label className="block">
           <input
@@ -1757,6 +2195,7 @@ const Survey = () => {
             There was an error submitting the form. Please fill all fields.
           </p>
         )}
+
         {/* Submit Button */}
         <button
           type="submit"
