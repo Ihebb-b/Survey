@@ -179,80 +179,6 @@ const getMatchingSurveys = async (req, res) => {
   }
 };
 
-
-// const getEatingHabitsStatistics = async (req, res) => {
-//   try {
-//     const eatingHabitsAggregation = [
-//       {
-//         $match: {
-//           traditionalEatingHabits: { $exists: true },
-//           age: { $exists: true },
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: {
-//             age: "$age",
-//             traditionalEatingHabits: "$traditionalEatingHabits",
-//           },
-//           count: { $sum: 1 },
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: "$_id.age",
-//           total: { $sum: "$count" },
-//           traditionalCount: {
-//             $sum: {
-//               $cond: [
-//                 { $eq: ["$_id.traditionalEatingHabits", true] },
-//                 "$count",
-//                 0,
-//               ],
-//             },
-//           },
-//           newEatingCount: {
-//             $sum: {
-//               $cond: [
-//                 { $eq: ["$_id.traditionalEatingHabits", false] },
-//                 "$count",
-//                 0,
-//               ],
-//             },
-//           },
-//         },
-//       },
-//       {
-//         $project: {
-//           age: "$_id",
-//           traditionalPercentage: {
-//             $cond: [
-//               { $gt: ["$total", 0] },
-//               {
-//                 $multiply: [{ $divide: ["$traditionalCount", "$total"] }, 100],
-//               },
-//               0,
-//             ],
-//           },
-//           newEatingPercentage: {
-//             $cond: [
-//               { $gt: ["$total", 0] },
-//               { $multiply: [{ $divide: ["$newEatingCount", "$total"] }, 100] },
-//               0,
-//             ],
-//           },
-//         },
-//       },
-//     ];
-
-//     const stats = await Survey.aggregate(eatingHabitsAggregation);
-//     res.status(200).json(stats);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
-
 const getEatingHabitsStatistics = async (req, res) => {
   try {
     const eatingHabitsAggregation = [
@@ -539,6 +465,38 @@ const getFruitStatisticsByCountry = async (req, res) => {
   }
 };
 
+const getGenderStatistics = async (req, res) => {
+  try {
+    const totalSurveys = await Survey.countDocuments();
+
+    // Count males and females
+    const maleCount = await Survey.countDocuments({ gender: 'Male' });
+    const femaleCount = await Survey.countDocuments({ gender: 'Female' });
+
+    // Calculate percentages
+    const malePercentage = ((maleCount / totalSurveys) * 100).toFixed(2);
+    const femalePercentage = ((femaleCount / totalSurveys) * 100).toFixed(2);
+
+    res.status(200).json({
+      totalSurveys,
+      male: {
+        count: maleCount,
+        percentage: malePercentage,
+      },
+      female: {
+        count: femaleCount,
+        percentage: femalePercentage,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
+
 
 module.exports = {
   getStatistics,
@@ -551,4 +509,5 @@ module.exports = {
   getMedicalHistorySportStatistics,
   getMatchingSurveys,
   getFruitStatisticsByCountry,
+  getGenderStatistics,
 };

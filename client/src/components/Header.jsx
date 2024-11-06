@@ -1,5 +1,5 @@
-import { Navbar, Nav, Container, NavDropdown, Badge } from "react-bootstrap";
-import { FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
+import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
+import { FaSignInAlt } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { LinkContainer } from "react-router-bootstrap";
 import { useLogoutMutation } from "../slices/userApiSlice";
@@ -8,9 +8,9 @@ import { logout } from "../slices/authSlice";
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [logoutApiCall] = useLogoutMutation();
 
   const logoutHandler = async () => {
@@ -25,54 +25,66 @@ const Header = () => {
 
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
 
-
   return (
     <header>
-      <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect style={{  margin: '0 auto', maxHeight: '55px' }}>
-        <Container>
+      <Navbar bg="dark" variant="dark" className="mx-auto px-4 md:px-6 lg:px-8 py-2 lg:py-3 max-h-[55px]">
+        <Container fluid className="flex items-center justify-between">
           <LinkContainer to="/">
-            <Navbar.Brand>Statistics observatory</Navbar.Brand>
+            <Navbar.Brand className="text-lg sm:text-xl md:text-2xl">Statistics Observatory</Navbar.Brand>
           </LinkContainer>
-          {!isAuthPage && (
-            <>
-              <Navbar.Toggle aria-controls="basic-navbar-nav" />
-              <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="mx-auto">
-                  <LinkContainer to="/statistics">
-                    <Nav.Link className="me-4">Statistics</Nav.Link>
-                  </LinkContainer>
-                  <LinkContainer to="/reports">
-                    <Nav.Link className="me-4">Reports</Nav.Link>
-                  </LinkContainer>
-                  <LinkContainer to="/about">
-                    <Nav.Link className="me-4">About</Nav.Link>
-                  </LinkContainer>
-                </Nav>
 
-                <Nav className="ms-auto">
-                  {userInfo ? (
-                    <NavDropdown title={userInfo.name} id="username">
-                      <LinkContainer to="/profile">
-                        <NavDropdown.Item>Profile</NavDropdown.Item>
-                      </LinkContainer>
-                      <NavDropdown.Item onClick={logoutHandler}>
-                        Logout
-                      </NavDropdown.Item>
-                    </NavDropdown>
-                  ) : (
-                    <LinkContainer to="/login">
-                      <Nav.Link>
-                        <FaSignInAlt /> Sign In
-                      </Nav.Link>
-                    </LinkContainer>
-                  )}
-                </Nav>
-              </Navbar.Collapse>
-            </>
+          {!isAuthPage && (
+            <Nav className="flex items-center space-x-2 sm:space-x-4 md:space-x-6 lg:space-x-8 mx-auto">
+              <div className="relative group hidden sm:block">
+                <Nav.Link className="text-white">Statistics</Nav.Link>
+                <div className="absolute hidden group-hover:block bg-white shadow-lg rounded-md p-2 mt-1 w-64 sm:w-72 md:w-80 lg:w-96 z-50">
+                  <LinkContainer to="/statistics/demographic-statistics">
+                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">Demographic Statistics</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/statistics/health-diet">
+                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">Health and Diet-Related Statistics</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/statistics/economic-and-social">
+                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">Economic and Social Statistics</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/statistics/dietary-preferences">
+                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">Dietary Preferences and Frequency</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/statistics/nutritional-insights">
+                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">Nutritional Insights</NavDropdown.Item>
+                  </LinkContainer>
+                </div>
+              </div>
+
+              <LinkContainer to="/reports">
+                <Nav.Link className="text-white hidden sm:inline">Reports</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/about">
+                <Nav.Link className="text-white hidden md:inline">About</Nav.Link>
+              </LinkContainer>
+            </Nav>
           )}
+
+          <Nav className="flex items-center space-x-4">
+            {userInfo ? (
+              <NavDropdown title={userInfo.name} id="username" className="hidden sm:inline">
+                <LinkContainer to="/profile">
+                  <NavDropdown.Item>Profile</NavDropdown.Item>
+                </LinkContainer>
+                <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
+              </NavDropdown>
+            ) : (
+              <LinkContainer to="/login">
+                <Nav.Link className="text-white">
+                  <FaSignInAlt className="inline-block mr-1" /> Sign In
+                </Nav.Link>
+              </LinkContainer>
+            )}
+          </Nav>
         </Container>
       </Navbar>
     </header>
   );
 };
+
 export default Header;

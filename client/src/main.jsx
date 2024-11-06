@@ -19,6 +19,12 @@ import Survey from "./screens/Survey.jsx";
 import ReactDOM from "react-dom/client"
 import ProfileScreen from "./screens/ProfileScreen.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
+import DemographicStatistics from "./screens/statistics/DemographicStatistics.jsx";
+import DietaryPreferences from "./screens/statistics/DietaryPreferences.jsx";
+import EconomicAndSocial from "./screens/statistics/EconomicAndSocial.jsx";
+import HealthAndDiet from "./screens/statistics/HealthAndDiet.jsx";
+import NutritionalInsights from "./screens/statistics/NutritionalInsights.jsx";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,6 +35,11 @@ const router = createBrowserRouter(
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/register" element={<RegisterScreen />} />
       <Route path="/survey" element={<Survey />} />
+      <Route path="/statistics/demographic-statistics" element={<DemographicStatistics />} />
+      <Route path="/statistics/dietary-preferences" element={<DietaryPreferences />} />
+      <Route path="/statistics/economic-and-social" element={<EconomicAndSocial />} />
+      <Route path="/statistics/health-and-diet" element={<HealthAndDiet />} />
+      <Route path="/statistics/nutritional-insights" element={<NutritionalInsights />} />
       {/* Private Routes */}
       <Route path='' element={<PrivateRoute/>}>
       <Route path="/profile" element={<ProfileScreen />} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useGetMedicalHistoryByFoodChoicesQuery } from '../slices/statsApiSlice';
+import { useGetMedicalHistoryByFoodChoicesQuery } from '../../slices/statsApiSlice';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 const MedicalHistoryChart = () => {
@@ -45,7 +45,7 @@ const MedicalHistoryChart = () => {
   if (error) return <p>Error loading data</p>;
 
   return (
-    <ResponsiveContainer width="100%" height={500}>
+    <ResponsiveContainer width="100%" maxHeight={500}>
       <BarChart data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="medicalHistory" />

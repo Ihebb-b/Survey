@@ -1,9 +1,9 @@
 // HomeScreen.js
 import React from 'react';
 import Hero from '../components/Hero';
-import EatingHabitsChart from '../components/EatingHabitsChart';
-import MedicalHistoryChart from '../components/MedicalHistoryChart';
-import FruitPieChart from '../components/FruitPieChart';
+import EatingHabitsChart from '../components/charts/EatingHabitsChart';
+import MedicalHistoryChart from '../components/charts/MedicalHistoryChart';
+import FruitPieChart from '../components/charts/FruitPieChart';
 
 const HomeScreen = () => {
   return (

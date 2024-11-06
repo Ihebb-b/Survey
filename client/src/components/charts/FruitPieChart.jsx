@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useGetFruitStatisticsByCountryQuery } from '../slices/statsApiSlice';
+import { useGetFruitStatisticsByCountryQuery } from '../../slices/statsApiSlice';
 import { Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -67,7 +67,7 @@ const FruitPieChart = () => {
 
       {selectedCountry && countryData && (
         <div className="w-1/2">
-          <Pie data={chartData} a day/>
+          <Pie data={chartData} />
         </div>
       )}
     </div>

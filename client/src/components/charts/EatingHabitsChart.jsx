@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetEatingHabitsByAgeQuery } from '../slices/statsApiSlice';
+import { useGetEatingHabitsByAgeQuery } from '../../slices/statsApiSlice';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
@@ -39,7 +39,7 @@ const EatingHabitsChart = () => {
   if (error) return <p>Error loading data</p>;
 
   return (
-    <div style={{ width: '600px', height: '500px' }}> 
+    <div style={{ minHeight: '500px' }}> 
       <Bar options={options} data={chartData} />
     </div>
   );
