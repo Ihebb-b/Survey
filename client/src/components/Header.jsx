@@ -23,14 +23,21 @@ const Header = () => {
     }
   };
 
-  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/register";
 
   return (
     <header>
-      <Navbar bg="dark" variant="dark" className="mx-auto px-4 md:px-6 lg:px-8 py-2 lg:py-3 max-h-[55px]">
+      <Navbar
+        bg="dark"
+        variant="dark"
+        className="mx-auto px-4 md:px-6 lg:px-8 py-2 lg:py-3 max-h-[55px]"
+      >
         <Container fluid className="flex items-center justify-between">
           <LinkContainer to="/">
-            <Navbar.Brand className="text-lg sm:text-xl md:text-2xl">Statistics Observatory</Navbar.Brand>
+            <Navbar.Brand className="text-lg sm:text-xl md:text-2xl">
+              Statistics Observatory
+            </Navbar.Brand>
           </LinkContainer>
 
           {!isAuthPage && (
@@ -39,39 +46,59 @@ const Header = () => {
                 <Nav.Link className="text-white">Statistics</Nav.Link>
                 <div className="absolute hidden group-hover:block bg-white shadow-lg rounded-md p-2 mt-1 w-64 sm:w-72 md:w-80 lg:w-96 z-50">
                   <LinkContainer to="/statistics/demographic-statistics">
-                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">Demographic Statistics</NavDropdown.Item>
+                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">
+                      Demographic Statistics
+                    </NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to="/statistics/health-diet">
-                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">Health and Diet-Related Statistics</NavDropdown.Item>
+                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">
+                      Health and Diet-Related Statistics
+                    </NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to="/statistics/economic-and-social">
-                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">Economic and Social Statistics</NavDropdown.Item>
+                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">
+                      Economic and Social Statistics
+                    </NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to="/statistics/dietary-preferences">
-                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">Dietary Preferences and Frequency</NavDropdown.Item>
+                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">
+                      Dietary Preferences and Frequency
+                    </NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to="/statistics/nutritional-insights">
-                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">Nutritional Insights</NavDropdown.Item>
+                    <NavDropdown.Item className="p-2 hover:bg-gray-100 rounded">
+                      Nutritional Insights
+                    </NavDropdown.Item>
                   </LinkContainer>
                 </div>
               </div>
 
               <LinkContainer to="/reports">
-                <Nav.Link className="text-white hidden sm:inline">Reports</Nav.Link>
+                <Nav.Link className="text-white hidden sm:inline">
+                  Reports
+                </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/about">
-                <Nav.Link className="text-white hidden md:inline">About</Nav.Link>
+                <Nav.Link className="text-white hidden md:inline">
+                  About
+                </Nav.Link>
               </LinkContainer>
             </Nav>
           )}
 
           <Nav className="flex items-center space-x-4">
             {userInfo ? (
-              <NavDropdown title={userInfo.name} id="username" className="hidden sm:inline">
+              <NavDropdown
+                title={userInfo.name}
+                id="username"
+                className="hidden sm:inline"
+              >
                 <LinkContainer to="/profile">
                   <NavDropdown.Item>Profile</NavDropdown.Item>
                 </LinkContainer>
-                <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
+                <NavDropdown.Item onClick={logoutHandler}>
+                  Logout
+                </NavDropdown.Item>
               </NavDropdown>
             ) : (
               <LinkContainer to="/login">

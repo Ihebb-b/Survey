@@ -24,41 +24,40 @@ export const statsApiSlice = apiSlice.injectEndpoints({
     }),
 
     getFruitStatisticsByCountry: builder.query({
-      query: () =>  `${USERS_URL}/fruitStatsByCountry`,
+      query: () => `${USERS_URL}/fruitStatsByCountry`,
       providesTags: ["FruitStatistics"],
     }),
 
     // Demographic Statistics
 
     getGenderStatistics: builder.query({
-      query: () =>  `${USERS_URL}/genderStats`,
+      query: () => `${USERS_URL}/genderStats`,
       providesTags: ["GenderStatistics"],
     }),
 
     getAgeGroupDistribution: builder.query({
-      query: () =>  `${USERS_URL}/age-group`,
+      query: () => `${USERS_URL}/age-group`,
       providesTags: ["AgeGroupDistribution"],
     }),
 
     getCountryRepresentation: builder.query({
-      query: () =>  `${USERS_URL}/countryRepresentation`,
+      query: () => `${USERS_URL}/countryRepresentation`,
       providesTags: ["CountryRepresentation"],
     }),
 
     getSocialStatus: builder.query({
-      query: () =>  `${USERS_URL}/socialStatus`,
+      query: () => `${USERS_URL}/socialStatus`,
       providesTags: ["SocialStatus"],
     }),
 
     getAverageChildrenStatistics: builder.query({
-      query: () =>  `${USERS_URL}/averageChildren`,
+      query: () => `${USERS_URL}/averageChildren`,
       providesTags: ["AverageChildrenStatistics"],
     }),
-
   }),
 });
 
-export const { 
+export const {
   useGetStatisticsQuery,
   useGetEatingHabitsByAgeQuery,
   useGetMedicalHistoryByFoodChoicesQuery,
@@ -69,4 +68,4 @@ export const {
   useGetCountryRepresentationQuery,
   useGetSocialStatusQuery,
   useGetAverageChildrenStatisticsQuery,
-  } = statsApiSlice;
+} = statsApiSlice;

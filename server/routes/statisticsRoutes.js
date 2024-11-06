@@ -14,7 +14,7 @@ const {
   getAgeGroupDistribution,
   getCountryRepresentation,
   getSocialStatus,
-  getAverageChildrenStatistics
+  getAverageChildrenStatistics,
 } = require("../controllers/statisticsController");
 const { get } = require("mongoose");
 const router = express.Router();

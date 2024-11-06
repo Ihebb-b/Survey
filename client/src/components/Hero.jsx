@@ -7,7 +7,11 @@ import { FaSearch, FaTimes } from "react-icons/fa";
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const { data: allSuggestions, isLoading, error } = useGetAllSuggestionsQuery();
+  const {
+    data: allSuggestions,
+    isLoading,
+    error,
+  } = useGetAllSuggestionsQuery();
   const navigate = useNavigate();
   const inputRef = useRef();
 
@@ -59,8 +63,13 @@ const Hero = () => {
     <div className="py-12 bg-gray-100">
       <div className="container mx-auto flex justify-center">
         <div className="p-10 bg-white shadow-xl rounded-lg w-full md:w-2/3 lg:w-2/3">
-          <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">Statistics Observatory</h1>
-          <p className="text-center text-gray-600 mb-6">Search and explore diet-related statistics across various demographics.</p>
+          <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">
+            Statistics Observatory
+          </h1>
+          <p className="text-center text-gray-600 mb-6">
+            Search and explore diet-related statistics across various
+            demographics.
+          </p>
 
           <div className="flex justify-center mb-4">
             <div className="relative w-full max-w-lg">
@@ -105,8 +114,18 @@ const Hero = () => {
           </div>
 
           <div className="mt-6 flex flex-wrap justify-center gap-2">
-            {["Sport practicing", "Healthiest foods", "Pizza consumed", "Weather and foods", "Stay slim", "Or not"].map((filter, index) => (
-              <button key={index} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition duration-300">
+            {[
+              "Sport practicing",
+              "Healthiest foods",
+              "Pizza consumed",
+              "Weather and foods",
+              "Stay slim",
+              "Or not",
+            ].map((filter, index) => (
+              <button
+                key={index}
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition duration-300"
+              >
                 {filter}
               </button>
             ))}

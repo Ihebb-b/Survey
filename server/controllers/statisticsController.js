@@ -283,7 +283,7 @@ const getMedicalHistoryStatistics = async (req, res) => {
       { $unwind: "$medicalHistory" },
       { $unwind: "$homeMade" },
       { $unwind: "$ordered" },
-      
+
       // Combine `homeMade` and `ordered` fields into one field for flexibility
       {
         $facet: {
@@ -294,7 +294,7 @@ const getMedicalHistoryStatistics = async (req, res) => {
                   medicalHistory: "$medicalHistory",
                   foodType: "homemade",
                   foodName: "$homeMade.name",
-                  consumption: "$homeMade.consumption"
+                  consumption: "$homeMade.consumption",
                 },
                 count: { $sum: 1 },
               },
@@ -307,7 +307,7 @@ const getMedicalHistoryStatistics = async (req, res) => {
                   medicalHistory: "$medicalHistory",
                   foodType: "ordered",
                   foodName: "$ordered.name",
-                  consumption: "$ordered.consumption"
+                  consumption: "$ordered.consumption",
                 },
                 count: { $sum: 1 },
               },
@@ -321,7 +321,7 @@ const getMedicalHistoryStatistics = async (req, res) => {
         },
       },
       { $unwind: "$combinedStats" },
-      
+
       // Final grouping by medical history and summarizing food stats
       {
         $group: {
@@ -421,8 +421,8 @@ const getFruitStatisticsByCountry = async (req, res) => {
         $match: {
           "fruits.0": { $exists: true },
           country: { $exists: true },
-          fruitUnitPerDay: { $exists: true, $ne: "None" }
-        }
+          fruitUnitPerDay: { $exists: true, $ne: "None" },
+        },
       },
       { $unwind: "$fruits" },
       {
@@ -430,10 +430,10 @@ const getFruitStatisticsByCountry = async (req, res) => {
           _id: {
             country: "$country",
             fruitType: "$fruits",
-            fruitUnit: "$fruitUnitPerDay"
+            fruitUnit: "$fruitUnitPerDay",
           },
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
       {
         $group: {
@@ -442,19 +442,19 @@ const getFruitStatisticsByCountry = async (req, res) => {
             $push: {
               fruitType: "$_id.fruitType",
               fruitUnit: "$_id.fruitUnit",
-              count: "$count"
-            }
+              count: "$count",
+            },
           },
-          totalFruits: { $sum: "$count" }
-        }
+          totalFruits: { $sum: "$count" },
+        },
       },
       {
         $project: {
           country: "$_id",
           fruitData: 1,
-          totalFruits: 1
-        }
-      }
+          totalFruits: 1,
+        },
+      },
     ];
 
     const fruitStats = await Survey.aggregate(fruitStatisticsAggregation);
@@ -471,8 +471,8 @@ const getGenderStatistics = async (req, res) => {
     const totalSurveys = await Survey.countDocuments();
 
     // Count males and females
-    const maleCount = await Survey.countDocuments({ gender: 'Male' });
-    const femaleCount = await Survey.countDocuments({ gender: 'Female' });
+    const maleCount = await Survey.countDocuments({ gender: "Male" });
+    const femaleCount = await Survey.countDocuments({ gender: "Female" });
 
     // Calculate percentages
     const malePercentage = ((maleCount / totalSurveys) * 100).toFixed(2);
@@ -491,7 +491,7 @@ const getGenderStatistics = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -510,17 +510,19 @@ const getAgeGroupDistribution = async (req, res) => {
         $project: {
           ageGroup: "$_id",
           count: 1,
-          percentage: { $multiply: [{ $divide: ["$count", totalSurveys] }, 100] },
+          percentage: {
+            $multiply: [{ $divide: ["$count", totalSurveys] }, 100],
+          },
         },
       },
       {
-        $sort: { ageGroup: 1 } // Sort age groups for consistent ordering
-      }
+        $sort: { ageGroup: 1 }, // Sort age groups for consistent ordering
+      },
     ]);
 
     res.json({
       totalSurveys,
-      ageGroups: ageGroupData
+      ageGroups: ageGroupData,
     });
   } catch (error) {
     console.error("Error fetching age group distribution:", error);
@@ -543,17 +545,19 @@ const getCountryRepresentation = async (req, res) => {
         $project: {
           country: "$_id",
           count: 1,
-          percentage: { $multiply: [{ $divide: ["$count", totalSurveys] }, 100] },
+          percentage: {
+            $multiply: [{ $divide: ["$count", totalSurveys] }, 100],
+          },
         },
       },
       {
-        $sort: { country: 1 } 
-      }
+        $sort: { country: 1 },
+      },
     ]);
 
     res.json({
       totalSurveys,
-      countries: countryData
+      countries: countryData,
     });
   } catch (error) {
     console.error("Error fetching country representation:", error);
@@ -562,7 +566,6 @@ const getCountryRepresentation = async (req, res) => {
 };
 
 const getSocialStatus = async (req, res) => {
-
   try {
     const totalSurveys = await Survey.countDocuments();
 
@@ -577,17 +580,19 @@ const getSocialStatus = async (req, res) => {
         $project: {
           socialState: "$_id",
           count: 1,
-          percentage: { $multiply: [{ $divide: ["$count", totalSurveys] }, 100] },
+          percentage: {
+            $multiply: [{ $divide: ["$count", totalSurveys] }, 100],
+          },
         },
       },
       {
-        $sort: { socialState: 1 } 
-      }
+        $sort: { socialState: 1 },
+      },
     ]);
 
     res.json({
       totalSurveys,
-      socialStates: socialStateData
+      socialStates: socialStateData,
     });
   } catch (error) {
     console.error("Error fetching social state distribution:", error);
@@ -596,13 +601,13 @@ const getSocialStatus = async (req, res) => {
 };
 
 const mapChildrenNumberToValue = {
-  "None": 0,
-  "One": 1,
-  "Two": 2,
-  "Three": 3,
-  "Four": 4,
-  "Five": 5,
-  "More than five": 6
+  None: 0,
+  One: 1,
+  Two: 2,
+  Three: 3,
+  Four: 4,
+  Five: 5,
+  "More than five": 6,
 };
 
 const getAverageChildrenStatistics = async (req, res) => {
@@ -611,8 +616,18 @@ const getAverageChildrenStatistics = async (req, res) => {
       {
         $match: {
           children: "Yes",
-          childrenNumber: { $in: ["None", "One", "Two", "Three", "Four", "Five", "More than five"] }
-        }
+          childrenNumber: {
+            $in: [
+              "None",
+              "One",
+              "Two",
+              "Three",
+              "Four",
+              "Five",
+              "More than five",
+            ],
+          },
+        },
       },
       {
         $addFields: {
@@ -625,32 +640,35 @@ const getAverageChildrenStatistics = async (req, res) => {
                 { case: { $eq: ["$childrenNumber", "Three"] }, then: 3 },
                 { case: { $eq: ["$childrenNumber", "Four"] }, then: 4 },
                 { case: { $eq: ["$childrenNumber", "Five"] }, then: 5 },
-                { case: { $eq: ["$childrenNumber", "More than five"] }, then: 6 }
+                {
+                  case: { $eq: ["$childrenNumber", "More than five"] },
+                  then: 6,
+                },
               ],
-              default: 0
-            }
-          }
-        }
+              default: 0,
+            },
+          },
+        },
       },
       {
         $group: {
           _id: null,
           totalChildren: { $sum: "$mappedChildrenNumber" },
-          totalHouseholds: { $sum: 1 }
-        }
+          totalHouseholds: { $sum: 1 },
+        },
       },
       {
         $project: {
           _id: 0,
-          averageChildren: { 
-            $cond: { 
-              if: { $eq: ["$totalHouseholds", 0] }, 
-              then: 0, 
-              else: { $divide: ["$totalChildren", "$totalHouseholds"] } 
-            } 
-          }
-        }
-      }
+          averageChildren: {
+            $cond: {
+              if: { $eq: ["$totalHouseholds", 0] },
+              then: 0,
+              else: { $divide: ["$totalChildren", "$totalHouseholds"] },
+            },
+          },
+        },
+      },
     ]);
 
     const result = validChildrenData[0] || { averageChildren: 0 };
@@ -661,9 +679,6 @@ const getAverageChildrenStatistics = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
-
 
 module.exports = {
   getStatistics,
