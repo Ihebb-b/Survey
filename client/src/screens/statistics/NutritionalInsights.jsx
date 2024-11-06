@@ -1,11 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
-export class NutritionalInsights extends Component {
+export default class NutritionalInsights extends Component {
   render() {
     return (
-      <>Hi</>
+      <div>NutritionalInsights</div>
     )
   }
 }
-
-export default NutritionalInsights

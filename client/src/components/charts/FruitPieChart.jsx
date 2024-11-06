@@ -14,18 +14,15 @@ const FruitPieChart = () => {
   const { data, error, isLoading } = useGetFruitStatisticsByCountryQuery();
   const [selectedCountry, setSelectedCountry] = useState("");
 
-  // Event handler to update the selected country
+  
   const handleCountryChange = (e) => {
     setSelectedCountry(e.target.value);
   };
 
-  // Extract list of countries for dropdown selection
   const countries = data?.map(item => item.country) || [];
 
-  // Find data for the selected country
   const countryData = data?.find(item => item.country === selectedCountry);
 
-  // Format data for Chart.js pie chart
   const chartData = {
     labels: countryData?.fruitData.map(item => `${item.fruitType} (${item.fruitUnit})`) || [],
     datasets: [

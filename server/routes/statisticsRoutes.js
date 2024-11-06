@@ -11,6 +11,10 @@ const {
   getMatchingSurveys,
   getFruitStatisticsByCountry,
   getGenderStatistics,
+  getAgeGroupDistribution,
+  getCountryRepresentation,
+  getSocialStatus,
+  getAverageChildrenStatistics
 } = require("../controllers/statisticsController");
 const { get } = require("mongoose");
 const router = express.Router();
@@ -26,5 +30,9 @@ router.get("/medicalHistorySport", getMedicalHistorySportStatistics);
 router.get("/matchingSurveys", getMatchingSurveys);
 router.get("/fruitStatsByCountry", getFruitStatisticsByCountry);
 router.get("/genderStats", getGenderStatistics);
+router.get("/age-group", getAgeGroupDistribution);
+router.get("/countryRepresentation", getCountryRepresentation);
+router.get("/socialStatus", getSocialStatus);
+router.get("/averageChildren", getAverageChildrenStatistics);
 
 module.exports = router;

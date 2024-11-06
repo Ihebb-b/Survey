@@ -179,6 +179,8 @@ const getMatchingSurveys = async (req, res) => {
   }
 };
 
+// General statistics
+
 const getEatingHabitsStatistics = async (req, res) => {
   try {
     const eatingHabitsAggregation = [
@@ -274,8 +276,6 @@ const getEatingHabitsStatistics = async (req, res) => {
   }
 };
 
-
-
 const getMedicalHistoryStatistics = async (req, res) => {
   try {
     const medicalHistoryAggregation = [
@@ -345,7 +345,6 @@ const getMedicalHistoryStatistics = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 const getMedicalHistorySportStatistics = async (req, res) => {
   try {
@@ -465,6 +464,8 @@ const getFruitStatisticsByCountry = async (req, res) => {
   }
 };
 
+// Demographic statistics
+
 const getGenderStatistics = async (req, res) => {
   try {
     const totalSurveys = await Survey.countDocuments();
@@ -494,6 +495,172 @@ const getGenderStatistics = async (req, res) => {
   }
 };
 
+const getAgeGroupDistribution = async (req, res) => {
+  try {
+    const totalSurveys = await Survey.countDocuments();
+
+    const ageGroupData = await Survey.aggregate([
+      {
+        $group: {
+          _id: "$age",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          ageGroup: "$_id",
+          count: 1,
+          percentage: { $multiply: [{ $divide: ["$count", totalSurveys] }, 100] },
+        },
+      },
+      {
+        $sort: { ageGroup: 1 } // Sort age groups for consistent ordering
+      }
+    ]);
+
+    res.json({
+      totalSurveys,
+      ageGroups: ageGroupData
+    });
+  } catch (error) {
+    console.error("Error fetching age group distribution:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getCountryRepresentation = async (req, res) => {
+  try {
+    const totalSurveys = await Survey.countDocuments();
+
+    const countryData = await Survey.aggregate([
+      {
+        $group: {
+          _id: "$country",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          country: "$_id",
+          count: 1,
+          percentage: { $multiply: [{ $divide: ["$count", totalSurveys] }, 100] },
+        },
+      },
+      {
+        $sort: { country: 1 } 
+      }
+    ]);
+
+    res.json({
+      totalSurveys,
+      countries: countryData
+    });
+  } catch (error) {
+    console.error("Error fetching country representation:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getSocialStatus = async (req, res) => {
+
+  try {
+    const totalSurveys = await Survey.countDocuments();
+
+    const socialStateData = await Survey.aggregate([
+      {
+        $group: {
+          _id: "$socialState",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          socialState: "$_id",
+          count: 1,
+          percentage: { $multiply: [{ $divide: ["$count", totalSurveys] }, 100] },
+        },
+      },
+      {
+        $sort: { socialState: 1 } 
+      }
+    ]);
+
+    res.json({
+      totalSurveys,
+      socialStates: socialStateData
+    });
+  } catch (error) {
+    console.error("Error fetching social state distribution:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const mapChildrenNumberToValue = {
+  "None": 0,
+  "One": 1,
+  "Two": 2,
+  "Three": 3,
+  "Four": 4,
+  "Five": 5,
+  "More than five": 6
+};
+
+const getAverageChildrenStatistics = async (req, res) => {
+  try {
+    const validChildrenData = await Survey.aggregate([
+      {
+        $match: {
+          children: "Yes",
+          childrenNumber: { $in: ["None", "One", "Two", "Three", "Four", "Five", "More than five"] }
+        }
+      },
+      {
+        $addFields: {
+          mappedChildrenNumber: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$childrenNumber", "None"] }, then: 0 },
+                { case: { $eq: ["$childrenNumber", "One"] }, then: 1 },
+                { case: { $eq: ["$childrenNumber", "Two"] }, then: 2 },
+                { case: { $eq: ["$childrenNumber", "Three"] }, then: 3 },
+                { case: { $eq: ["$childrenNumber", "Four"] }, then: 4 },
+                { case: { $eq: ["$childrenNumber", "Five"] }, then: 5 },
+                { case: { $eq: ["$childrenNumber", "More than five"] }, then: 6 }
+              ],
+              default: 0
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalChildren: { $sum: "$mappedChildrenNumber" },
+          totalHouseholds: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          averageChildren: { 
+            $cond: { 
+              if: { $eq: ["$totalHouseholds", 0] }, 
+              then: 0, 
+              else: { $divide: ["$totalChildren", "$totalHouseholds"] } 
+            } 
+          }
+        }
+      }
+    ]);
+
+    const result = validChildrenData[0] || { averageChildren: 0 };
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error calculating average children per household:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 
 
@@ -510,4 +677,8 @@ module.exports = {
   getMatchingSurveys,
   getFruitStatisticsByCountry,
   getGenderStatistics,
+  getAgeGroupDistribution,
+  getCountryRepresentation,
+  getSocialStatus,
+  getAverageChildrenStatistics,
 };
