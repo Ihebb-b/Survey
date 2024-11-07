@@ -33,7 +33,7 @@ const SocialStatusChart = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center space-y-4">
+    <div className="w-full h-full flex flex-col items-center">
       <h2 className="text-lg font-semibold text-center mb-2">
         Social Status Distribution
       </h2>
@@ -41,19 +41,19 @@ const SocialStatusChart = () => {
         This chart shows the percentage distribution of survey participants
         based on their social status.
       </p>
-      <div className="w-full md:w-3/4 lg:w-1/3 flex justify-center">
-        <Pie
-          data={chartData}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: "top",
+      <div className="w-full h-64 justify-center">
+          <Pie
+            data={chartData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "top",
+                },
               },
-            },
-          }}
-        />
+            }}
+          />
       </div>
     </div>
   );

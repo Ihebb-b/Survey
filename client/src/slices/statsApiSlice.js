@@ -3,6 +3,8 @@ const USERS_URL = "/api/statistics";
 
 export const statsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+
+    // General Statistics
     getStatistics: builder.query({
       query: () => `${USERS_URL}/stats`,
       providesTags: ["Statistics"],
@@ -13,20 +15,6 @@ export const statsApiSlice = apiSlice.injectEndpoints({
       providesTags: ["EatingHabits"],
     }),
 
-    getMedicalHistoryByFoodChoices: builder.query({
-      query: () => `${USERS_URL}/medicalHistory`,
-      providesTags: ["MedicalHistory"],
-    }),
-
-    getMedicalHistoryByHabitsAndSport: builder.query({
-      query: () => `${USERS_URL}/medicalHistorySport`,
-      providesTags: ["MedicalHistoryHabitsSport"],
-    }),
-
-    getFruitStatisticsByCountry: builder.query({
-      query: () => `${USERS_URL}/fruitStatsByCountry`,
-      providesTags: ["FruitStatistics"],
-    }),
 
     // Demographic Statistics
 
@@ -54,6 +42,44 @@ export const statsApiSlice = apiSlice.injectEndpoints({
       query: () => `${USERS_URL}/averageChildren`,
       providesTags: ["AverageChildrenStatistics"],
     }),
+
+    // Health and diet statistics
+
+    getFruitStatisticsByCountry: builder.query({
+      query: () => `${USERS_URL}/fruitStatsByCountry`,
+      providesTags: ["FruitStatisticsByCountry"],
+    }),
+
+    getStatisticsDiet: builder.query({
+      query: () => `${USERS_URL}/statisticsDiet`,
+      providesTags: ["StatisticsDiet"],
+    }),
+
+    getStatisticsAverageFruitIntake: builder.query({
+      query: () => `${USERS_URL}/statisticsAverageFruitIntake`,
+      providesTags: ["StatisticsAverageFruitIntake"],
+    }),
+
+    getStatisticsAverageVegetableIntake: builder.query({
+      query: () => `${USERS_URL}/statisticsAverageVegetableIntake`,
+      providesTags: ["StatisticsAverageVegetableIntake"],
+    }),
+
+    getStatisticsVegetarianVeganPercentage: builder.query({
+      query: () => `${USERS_URL}/statisticsVegetarianVeganPercentage`,
+      providesTags: ["StatisticsVegetarianVeganPercentage"],
+    }),
+    getMedicalHistoryByFoodChoices: builder.query({
+      query: () => `${USERS_URL}/medicalHistory`,
+      providesTags: ["MedicalHistory"],
+    }),
+
+    getMedicalHistoryByHabitsAndSport: builder.query({
+      query: () => `${USERS_URL}/medicalHistorySport`,
+      providesTags: ["MedicalHistoryHabitsSport"],
+    }),
+
+
   }),
 });
 
@@ -68,4 +94,8 @@ export const {
   useGetCountryRepresentationQuery,
   useGetSocialStatusQuery,
   useGetAverageChildrenStatisticsQuery,
+  useGetStatisticsDietQuery,
+  useGetStatisticsAverageFruitIntakeQuery,
+  useGetStatisticsAverageVegetableIntakeQuery,
+  useGetStatisticsVegetarianVeganPercentageQuery,
 } = statsApiSlice;
