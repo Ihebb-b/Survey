@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useGetFruitStatisticsByCountryQuery } from "../../slices/statsApiSlice";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { ResponsiveContainer } from "recharts";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -17,14 +18,19 @@ const FruitPieChart = () => {
 
   const countryData = data?.find((item) => item.country === selectedCountry);
 
+  const sortedFruitData = countryData
+  ? [...countryData.fruitData].sort((a, b) => a.fruitType.localeCompare(b.fruitType))
+  : [];
+  
+  
   const chartData = {
     labels:
-      countryData?.fruitData.map(
+    sortedFruitData.map(
         (item) => `${item.fruitType} (${item.fruitUnit})`
       ) || [],
     datasets: [
       {
-        data: countryData?.fruitData.map((item) => item.count) || [],
+        data: sortedFruitData.map((item) => item.count) || [],
         backgroundColor: [
           "#FF6384",
           "#36A2EB",
@@ -76,8 +82,10 @@ const FruitPieChart = () => {
       </select>
 
       {selectedCountry && countryData && (
-        <div className="w-1/2">
-          <Pie data={chartData} />
+        <div className="flex justify-center w-full">
+          <div className="w-1/2 md:w-3/3 lg:w-1/4">
+            <Pie data={chartData} options={{ maintainAspectRatio: true }} />
+          </div>
         </div>
       )}
     </div>

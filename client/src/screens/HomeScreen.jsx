@@ -11,8 +11,8 @@ const HomeScreen = () => {
       <Hero />
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Fruit Consumption Section */}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg shadow-lg p-6 text-center space-y-4">
-          <h1 className="text-2xl font-bold text-gray-800">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg shadow-lg p-6 flex flex-col items-center space-y-4 text-center">
+        <h1 className="text-2xl font-bold text-gray-800">
             Fruit Consumption by Country
           </h1>
           <p className="text-gray-700 text-md">

@@ -19,13 +19,16 @@ const CountryRepresentationChart = () => {
 
       if (countryData) {
         setChartData({
-          labels: ["Selected Country", "Other Countries"],
+          labels: [
+            `${selectedCountry} (${countryData.percentage.toFixed(2)}%)`,
+            `Other Countries (${(100 - countryData.percentage).toFixed(2)}%)`,
+          ],
           datasets: [
             {
               label: "Country Representation",
               data: [countryData.percentage, 100 - countryData.percentage],
-              backgroundColor: ["#4CAF50", "#d3d3d3"],
-              borderColor: ["#4CAF50", "#d3d3d3"],
+              backgroundColor: ["#FF5733", "#DCDCDC"],
+              borderColor: ["#FF5733", "#DCDCDC"],
               borderWidth: 1,
             },
           ],
@@ -44,8 +47,9 @@ const CountryRepresentationChart = () => {
         Country Representation
       </h2>
       <p className="text-sm text-gray-600 text-center mb-4">
-            This chart shows the distribution of participants across various countries in the Mediterranean.
-          </p>
+        This chart shows the distribution of participants across various
+        countries in the Mediterranean.
+      </p>
       {isLoading ? (
         <p>Loading country data...</p>
       ) : error ? (
@@ -73,7 +77,21 @@ const CountryRepresentationChart = () => {
             <div className="w-full h-64">
               <Pie
                 data={chartData}
-                options={{ responsive: true, maintainAspectRatio: false }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: (tooltipItem) => {
+                          const label = tooltipItem.label || "";
+                          const value = tooltipItem.raw || 0;
+                          return `${label}: ${value.toFixed(2)}%`;
+                        },
+                      },
+                    },
+                  },
+                }}
               />
             </div>
           ) : (
