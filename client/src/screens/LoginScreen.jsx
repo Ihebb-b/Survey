@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import FormContainer from "../components/FormContainer";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,17 +13,21 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation(); 
+
   const dispatch = useDispatch();
 
   const [login, { isLoading }] = useLoginMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
 
+  const from = location.state?.from?.pathname || "/";
+
   useEffect(() => {
     if (userInfo) {
-      navigate("/");
+      navigate(from); 
     }
-  }, [navigate, userInfo]);
+  }, [navigate, userInfo, from]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
