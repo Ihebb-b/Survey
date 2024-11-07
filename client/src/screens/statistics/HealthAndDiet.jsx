@@ -3,6 +3,7 @@ import DietDistributionChart from "../../components/charts/healthAndDiet/DietDis
 import AverageFruitIntakeChart from "../../components/charts/healthAndDiet/AverageFruitItakeChart";
 import AverageVegetableIntakeChart from "../../components/charts/healthAndDiet/AverageVegetableIntakeChart";
 import VegetarianVeganPercentageChart from "../../components/charts/healthAndDiet/VegetarianVeganPercentageChart";
+import PhysicalActivityRatioChart from "../../components/charts/healthAndDiet/PhysicalActivityRatioChart";
 
 const HealthAndDiet = () => {
   return (
@@ -33,10 +34,10 @@ const HealthAndDiet = () => {
         </div>
 
 
-        {/* Average Children Stats Chart */}
-        {/* <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4">
-          <AverageChildrenChart />
-        </div> */}
+        {/* Physical Activity Ratio Chart */}
+        <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4">
+          <PhysicalActivityRatioChart />
+        </div>
 
         
 

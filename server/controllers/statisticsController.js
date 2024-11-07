@@ -101,17 +101,7 @@ const getPopularFoodChoices = async (req, res) => {
   }
 };
 
-const getPhysicalActivityRatio = async (req, res) => {
-  try {
-    const total = await Survey.countDocuments();
-    const active = await Survey.countDocuments({ physicalActivity: true });
-    const ratio = ((active / total) * 100).toFixed(2);
 
-    res.status(200).json({ active, total, ratio });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
 
 const getSurveyStatistics = async (req, res) => {
   try {
@@ -804,6 +794,28 @@ const getStatisticsVegetarianVeganPercentage = async (req, res) => {
     });
   } catch (error) {
     console.error("Error calculating vegetarian/vegan percentage:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getPhysicalActivityRatio = async (req, res) => {
+  try {
+    const totalCount = await Survey.countDocuments();
+
+    const yesCount = await Survey.countDocuments({ physicalActivity: "yes" });
+    const noCount = await Survey.countDocuments({ physicalActivity: "no" });
+
+    const yesPercentage = totalCount > 0 ? (yesCount / totalCount) * 100 : 0;
+    const noPercentage = totalCount > 0 ? (noCount / totalCount) * 100 : 0;
+
+    res.json({
+      physicalActivityRatio: {
+        yes: yesPercentage.toFixed(2),
+        no: noPercentage.toFixed(2),
+      },
+    });
+  } catch (error) {
+    console.error("Error calculating physical activity ratio:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

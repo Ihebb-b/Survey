@@ -69,7 +69,7 @@ export const statsApiSlice = apiSlice.injectEndpoints({
       query: () => `${USERS_URL}/statisticsVegetarianVeganPercentage`,
       providesTags: ["StatisticsVegetarianVeganPercentage"],
     }),
-    
+
     getMedicalHistoryByFoodChoices: builder.query({
       query: () => `${USERS_URL}/medicalHistory`,
       providesTags: ["MedicalHistory"],
@@ -79,6 +79,12 @@ export const statsApiSlice = apiSlice.injectEndpoints({
       query: () => `${USERS_URL}/medicalHistorySport`,
       providesTags: ["MedicalHistoryHabitsSport"],
     }),
+
+    getPhysicalActivityRatio: builder.query({
+      query: () => `${USERS_URL}/physicalRatio`,
+      providesTags: ["PhysicalActivityRatio"],
+    }),
+
 
 
   }),
@@ -99,4 +105,5 @@ export const {
   useGetStatisticsAverageFruitIntakeQuery,
   useGetStatisticsAverageVegetableIntakeQuery,
   useGetStatisticsVegetarianVeganPercentageQuery,
+  useGetPhysicalActivityRatioQuery,
 } = statsApiSlice;

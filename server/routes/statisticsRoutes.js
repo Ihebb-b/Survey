@@ -26,7 +26,6 @@ const router = express.Router();
 router.get("/stats", getStatistics);
 router.get("/dietDistribution", getDietDistribution);
 router.get("/popularFoodChoices", getPopularFoodChoices);
-router.get("/physicalRatio", getPhysicalActivityRatio);
 router.get("/surveyStats", getSurveyStatistics);
 router.get("/matchingSurveys", getMatchingSurveys);
 // Demographic statistics
@@ -44,6 +43,7 @@ router.get("/statisticsAverageVegetableIntake", getStatisticsAverageVegetableInt
 router.get("/statisticsVegetarianVeganPercentage", getStatisticsVegetarianVeganPercentage);
 router.get("/medicalHistory", getMedicalHistoryStatistics);
 router.get("/medicalHistorySport", getMedicalHistorySportStatistics);
+router.get("/physicalRatio", getPhysicalActivityRatio);
 
 
 module.exports = router;

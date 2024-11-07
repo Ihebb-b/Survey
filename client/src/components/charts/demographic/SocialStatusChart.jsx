@@ -33,6 +33,13 @@ const SocialStatusChart = () => {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    scales: {
+        r: {
+          ticks: {
+            display: false,
+          },
+        },
+      },
     plugins: {
       legend: {
         position: "top",
@@ -43,7 +50,7 @@ const SocialStatusChart = () => {
           weight: "bold",
           size: 12,
         },
-        formatter: (value) => `${value}%`, // Display values as percentages
+        formatter: (value) => `${value}%`, 
         anchor: "end",
         align: "start",
         offset: 10,

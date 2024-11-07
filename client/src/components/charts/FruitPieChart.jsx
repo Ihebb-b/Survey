@@ -63,7 +63,14 @@ const FruitPieChart = () => {
   if (error) return <p>Error loading data</p>;
 
   return (
-    <div className="w-full flex flex-col items-center space-y-4">
+    <div className="w-full h-full flex flex-col items-center">
+      <h1 className="text-2xl font-bold text-gray-800">
+            Fruit Consumption by Country
+          </h1>
+          <p className="text-gray-700 text-md">
+            Overview of fruit types and units consumed daily by country. Select
+            a country for specific data.
+          </p>
       <label htmlFor="country-select" className="text-md font-medium">
         Select Country:
       </label>

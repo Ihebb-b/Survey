@@ -10,48 +10,28 @@ const HomeScreen = () => {
     <>
       <Hero />
 
-
       <div className="container mx-auto px-4 py-6 space-y-6">
-      <h1 className="text-4xl font-bold text-left text-gray-800 mb-6">
-        General Statistics
-      </h1>
+        <h1 className="text-4xl font-bold text-left text-gray-800 mb-6">
+          General Statistics
+        </h1>
         {/* Fruit Consumption Section */}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg shadow-lg p-6 flex flex-col items-center space-y-4 text-center">
-        <h1 className="text-2xl font-bold text-gray-800">
-            Fruit Consumption by Country
-          </h1>
-          <p className="text-gray-700 text-md">
-            Overview of fruit types and units consumed daily by country. Select
-            a country for specific data.
-          </p>
+        <div className="w-full md:w-2/2 lg:w-3/3 bg-white shadow-lg rounded-lg p-4">
           <FruitPieChart />
         </div>
 
         {/* Grid for Eating Habits and Medical History Charts */}
         <div className="grid gap-6 md:grid-cols-2">
+
           {/* Eating Habits Section */}
-          <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 text-center space-y-4">
-            <h1 className="text-xl font-semibold text-gray-800">
-              Eating Habits
-            </h1>
-            <p className="text-gray-600 text-sm">
-              A comparative analysis of traditional vs. modern eating habits
-              across Mediterranean age groups.
-            </p>
+          <div className="w-full md:w-2/2 lg:w-3/3 bg-white shadow-lg rounded-lg p-4">
             <EatingHabitsChart />
           </div>
 
           {/* Medical History Section */}
-          <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 text-center space-y-4">
-            <h1 className="text-xl font-semibold text-gray-800">
-              Medical History
-            </h1>
-            <p className="text-gray-600 text-sm">
-              Insights on food consumption and associated medical history across
-              different demographics.
-            </p>
+          <div className="w-full md:w-2/2 lg:w-3/3 bg-white shadow-lg rounded-lg p-4">
             <MedicalHistoryChart />
           </div>
+          
         </div>
       </div>
     </>

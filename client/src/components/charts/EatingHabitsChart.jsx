@@ -53,8 +53,20 @@ const EatingHabitsChart = () => {
   if (error) return <p>Error loading data</p>;
 
   return (
-    <div style={{ minHeight: "500px" }}>
+    <div className="w-full h-f flex flex-col items-center">
+
+    <h1 className="text-xl font-semibold text-gray-800">
+              Eating Habits
+            </h1>
+            <p className="text-gray-600 text-sm">
+              A comparative analysis of traditional vs. modern eating habits
+              across Mediterranean age groups.
+            </p>
+    
+    <div style={{ width:"100%", minHeight: "500px" }}>
+      
       <Bar options={options} data={chartData} />
+    </div>
     </div>
   );
 };

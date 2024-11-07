@@ -54,6 +54,15 @@ const MedicalHistoryChart = () => {
   if (error) return <p>Error loading data</p>;
 
   return (
+    <div className="w-full h-full flex flex-col items-center">
+            <h1 className="text-lg font-semibold text-center mb-2">
+              Medical History Relative to Food Consumption
+            </h1>
+            <p className="text-sm text-gray-600 text-center mb-4">
+              Insights on food consumption and associated medical history across
+              different demographics.
+            </p>
+    
     <ResponsiveContainer width="100%" maxHeight={500}>
       <BarChart data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
@@ -113,6 +122,7 @@ const MedicalHistoryChart = () => {
         <Bar dataKey="ordered_Never" fill="#ff3333" name="Ordered - Never" />
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 };
 
