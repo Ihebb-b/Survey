@@ -1,9 +1,7 @@
 import React from "react";
 import { useGetSocialStatusQuery } from "../../../slices/statsApiSlice";
-import { Pie } from "react-chartjs-2";
+import { PolarArea } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-
-ChartJS.register(ArcElement, Tooltip, Legend);
 
 const SocialStatusChart = () => {
   const { data, error, isLoading } = useGetSocialStatusQuery();
@@ -32,6 +30,27 @@ const SocialStatusChart = () => {
     ],
   };
 
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      datalabels: {
+        color: "#000",
+        font: {
+          weight: "bold",
+          size: 12,
+        },
+        formatter: (value) => `${value}%`, // Display values as percentages
+        anchor: "end",
+        align: "start",
+        offset: 10,
+      },
+    },
+  };
+
   return (
     <div className="w-full h-full flex flex-col items-center">
       <h2 className="text-lg font-semibold text-center mb-2">
@@ -41,19 +60,8 @@ const SocialStatusChart = () => {
         This chart shows the percentage distribution of survey participants
         based on their social status.
       </p>
-      <div className="w-full h-64 justify-center">
-          <Pie
-            data={chartData}
-            options={{
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  position: "top",
-                },
-              },
-            }}
-          />
+      <div className="w-full h-64">
+        <PolarArea data={chartData} options={chartOptions} />
       </div>
     </div>
   );

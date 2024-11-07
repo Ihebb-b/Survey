@@ -9,7 +9,12 @@ const HomeScreen = () => {
   return (
     <>
       <Hero />
+
+
       <div className="container mx-auto px-4 py-6 space-y-6">
+      <h1 className="text-4xl font-bold text-left text-gray-800 mb-6">
+        General Statistics
+      </h1>
         {/* Fruit Consumption Section */}
         <div className="bg-gray-50 border border-gray-200 rounded-lg shadow-lg p-6 flex flex-col items-center space-y-4 text-center">
         <h1 className="text-2xl font-bold text-gray-800">

@@ -3,6 +3,7 @@ import GenderStatisticsChart from "../../components/charts/demographic/GenderSta
 import AgeGroupDistributionChart from "../../components/charts/demographic/AgeGroupDistributionChart";
 import CountryRepresentationChart from "../../components/charts/demographic/CountryRepresentationChart";
 import SocialStatusChart from "../../components/charts/demographic/SocialStatusChart";
+import AverageChildrenChart from "../../components/charts/demographic/AverageChildrenChart";
 
 const DemographicStatistics = () => {
   return (
@@ -27,9 +28,14 @@ const DemographicStatistics = () => {
           <CountryRepresentationChart />
         </div>
 
-        {/* Country Representation Chart */}
+        {/* Social Status Representation Chart */}
         <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4">
           <SocialStatusChart />
+        </div>
+
+        {/* Average Children Stats Chart */}
+        <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4">
+          <AverageChildrenChart />
         </div>
 
         

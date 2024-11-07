@@ -35,11 +35,13 @@ const router = createBrowserRouter(
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/register" element={<RegisterScreen />} />
       <Route path="/survey" element={<Survey />} />
+       {/* Stats Routes */}
       <Route path="/statistics/demographic-statistics" element={<DemographicStatistics />} />
       <Route path="/statistics/dietary-preferences" element={<DietaryPreferences />} />
       <Route path="/statistics/economic-and-social" element={<EconomicAndSocial />} />
-      <Route path="/statistics/health-and-diet" element={<HealthAndDiet />} />
+      <Route path="/statistics/health-diet" element={<HealthAndDiet />} />
       <Route path="/statistics/nutritional-insights" element={<NutritionalInsights />} />
+
       {/* Private Routes */}
       <Route path='' element={<PrivateRoute/>}>
       <Route path="/profile" element={<ProfileScreen />} />

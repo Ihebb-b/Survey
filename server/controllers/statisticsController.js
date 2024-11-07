@@ -746,7 +746,7 @@ const mapUnitToNumber = (unit) => {
     "Between 7-8": 7.5,
     "Between 8-9": 8.5,
     "Between 9-10": 9.5,
-    "Over 10": 11, // Assuming an approximation for "Over 10"
+    "Over 10": 11, 
   };
   return mapping[unit] || 0;
 };
