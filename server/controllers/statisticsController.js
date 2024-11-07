@@ -680,6 +680,140 @@ const getAverageChildrenStatistics = async (req, res) => {
   }
 };
 
+// Health and Diet-Related Statistics
+
+const getStatisticsDiet = async (req, res) => {
+  try {
+    const dietDistribution = await Survey.aggregate([
+      {
+        $group: {
+          _id: "$diet",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $facet: {
+          dietStats: [{ $project: { diet: "$_id", count: 1, _id: 0 } }],
+          totalCount: [{ $group: { _id: null, total: { $sum: "$count" } } }],
+        },
+      },
+      {
+        $project: {
+          dietStats: {
+            $map: {
+              input: "$dietStats",
+              as: "dietStat",
+              in: {
+                diet: "$$dietStat.diet",
+                count: "$$dietStat.count",
+                percentage: {
+                  $multiply: [
+                    {
+                      $divide: [
+                        "$$dietStat.count",
+                        { $arrayElemAt: ["$totalCount.total", 0] },
+                      ],
+                    },
+                    100,
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+      { $unwind: "$dietStats" },
+      { $replaceRoot: { newRoot: "$dietStats" } },
+    ]);
+
+    res.json(dietDistribution);
+  } catch (error) {
+    console.error("Error calculating diet distribution:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const mapUnitToNumber = (unit) => {
+  const mapping = {
+    None: 0,
+    1: 1,
+    "Between 1-2": 1.5,
+    "Between 2-3": 2.5,
+    "Between 3-4": 3.5,
+    "Between 4-5": 4.5,
+    "Between 5-6": 5.5,
+    "Between 6-7": 6.5,
+    "Between 7-8": 7.5,
+    "Between 8-9": 8.5,
+    "Between 9-10": 9.5,
+    "Over 10": 11, // Assuming an approximation for "Over 10"
+  };
+  return mapping[unit] || 0;
+};
+
+const getStatisticsAverageFruitIntake = async (req, res) => {
+  try {
+    const surveys = await Survey.find(
+      { fruitUnitPerDay: { $ne: "None" } },
+      { fruitUnitPerDay: 1 }
+    );
+
+    const totalUnits = surveys.reduce(
+      (sum, survey) => sum + mapUnitToNumber(survey.fruitUnitPerDay),
+      0
+    );
+    const averageUnits = surveys.length > 0 ? totalUnits / surveys.length : 0;
+
+    res.json({ averageFruitIntakePerDay: averageUnits });
+  } catch (error) {
+    console.error("Error calculating average fruit intake:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getStatisticsAverageVegetableIntake = async (req, res) => {
+  try {
+    const surveys = await Survey.find(
+      { vegetableUnitPerDay: { $ne: "None" } },
+      { vegetableUnitPerDay: 1 }
+    );
+
+    const totalUnits = surveys.reduce(
+      (sum, survey) => sum + mapUnitToNumber(survey.vegetableUnitPerDay),
+      0
+    );
+    const averageUnits = surveys.length > 0 ? totalUnits / surveys.length : 0;
+
+    res.json({ averageVegetableIntakePerDay: averageUnits });
+  } catch (error) {
+    console.error("Error calculating average vegetable intake:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getStatisticsVegetarianVeganPercentage = async (req, res) => {
+  try {
+    const totalCount = await Survey.countDocuments();
+
+    const vegetarianVeganCount = await Survey.countDocuments({ diet: { $in: ["Vegetarian", "Vegan"] } });
+
+    const vegetarianVeganPercentage = totalCount > 0 ? (vegetarianVeganCount / totalCount) * 100 : 0;
+
+    res.json({
+      vegetarianVeganPercentage: vegetarianVeganPercentage.toFixed(2) 
+    });
+  } catch (error) {
+    console.error("Error calculating vegetarian/vegan percentage:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
+
+
+
+
 module.exports = {
   getStatistics,
   getDietDistribution,
@@ -696,4 +830,8 @@ module.exports = {
   getCountryRepresentation,
   getSocialStatus,
   getAverageChildrenStatistics,
+  getStatisticsDiet,
+  getStatisticsAverageFruitIntake,
+  getStatisticsAverageVegetableIntake,
+  getStatisticsVegetarianVeganPercentage,
 };
