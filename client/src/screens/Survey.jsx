@@ -2,6 +2,9 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useCreateSurveyMutation } from "../slices/surveyApiSlice";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 
 const Survey = () => {
   const homeMadeOptions = [
@@ -83,72 +86,373 @@ const Survey = () => {
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
 
   const handleSelect = (item) => {
-    if (formData.meat.includes(item)) {
-      setFormData({
-        ...formData,
-        meat: formData.meat.filter((meat) => meat !== item),
+    if (formik.meat.includes(item)) {
+      useFormik({
+        ...formik,
+        meat: formik.meat.filter((meat) => meat !== item),
       });
     } else {
-      setFormData({
-        ...formData,
-        meat: [...formData.meat, item],
+      useFormik({
+        ...formik,
+        meat: [...formik.meat, item],
       });
     }
   };
-  const [formData, setFormData] = useState({
-    name: "",
-    gender: "",
-    age: "",
-    state: "",
-    ville: "",
-    country: "",
-    height: "",
-    weight: "",
-    education: "",
-    customEducation: "",
-    occupation: "",
-    customOccupation: "",
-    salary: "",
-    currency: "",
-    customCurrency: "",
-    socialState: "",
-    children: "",
-    childrenNumber: "",
-    diet: "",
-    customDiet: "",
-    meat: [],
-    customMeat: "",
-    religiouslyObservant: "",
-    fruits: [],
-    customFruits: "",
-    fruitUnitPerDay: "",
-    vegetables: [],
-    customVegetables: "",
-    vegetableUnitPerDay: "",
-    religious: "",
-    customReligious: "",
-    fish: [],
-    customFish: "",
-    dairy: [],
-    customDairy: "",
-    oil: [],
-    customOil: "",
-    homeMade: [],
-    customHomeMade: { name: "" },
-    //customHomeMade: "",
-    //homeMadeConsumption: "",
-    //homeMadeConsumptionBudget: "",
-    ordered: [],
-    customOrdered: { name: "" },
-    //customOrdered: "",
-    //orderedConsumption: "",
-    //orderedConsumptionBudget: "",
-    traditionalEatingHabits: false,
-    newEatingHabits: false,
-    medicalHistory: [],
-    customMedicalHistory: "",
-    physicalActivity: "",
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().trim().required("Name is required."),
+    gender: Yup.string().required("Gender is required."),
+    age: Yup.string().required("Age is required."),
+    state: Yup.string().required("State is required."),
+    ville: Yup.string().required("Ville is required."),
+    country: Yup.string().required("Country is required."),
+    height: Yup.string().required("Height is required."),
+    weight: Yup.string().required("Weight is required."),
+    education: Yup.string().required("Education is required."),
+    occupation: Yup.string().required("Occupation is required."),
+    salary: Yup.string()
+      .when("occupation", {
+        is: (occupation) => !["Student", "Unemployed", "Housewife"].includes(occupation),
+        then: Yup.string().required("Salary is required."),
+      }),
+    socialState: Yup.string().required("Social State is required."),
+    children: Yup.string().when("socialState", {
+      is: (socialState) => !["Prefer not to say", "Single"].includes(socialState),
+      then: Yup.string().required("Children field is required."),
+    }),
+    childrenNumber: Yup.string().when("children", {
+      is: "Yes",
+      then: Yup.string().required("Children Number is required."),
+    }),
+    diet: Yup.string().required("Diet is required."),
+    fruits: Yup.array()
+      .min(1, "Please select at least one fruit.")
+      .required("Please select at least one fruit."),
+    fruitUnitPerDay: Yup.string().when("fruits", {
+      is: (fruits) => fruits && !fruits.includes("None"),
+      then: Yup.string().required("Please specify fruit units per day."),
+    }),
+    vegetables: Yup.array()
+      .min(1, "Please select at least one vegetable.")
+      .required("Please select at least one vegetable."),
+    vegetableUnitPerDay: Yup.string().when("vegetables", {
+      is: (vegetables) => vegetables && !vegetables.includes("None"),
+      then: Yup.string().required("Please specify vegetable units per day."),
+    }),
+    homeMade: Yup.array().of(
+      Yup.object().shape({
+        name: Yup.string(),
+        consumption: Yup.string().when("name", {
+          is: (name) => name !== "None",
+          then: Yup.string().required("Consumption is required for selected home-made item."),
+        }),
+        budget: Yup.string().when("name", {
+          is: (name) => name !== "None",
+          then: Yup.string().required("Budget is required for selected home-made item."),
+        }),
+      })
+    ),
+    ordered: Yup.array().of(
+      Yup.object().shape({
+        name: Yup.string(),
+        consumption: Yup.string().when("name", {
+          is: (name) => name !== "None",
+          then: Yup.string().required("Consumption is required for selected ordered item."),
+        }),
+        budget: Yup.string().when("name", {
+          is: (name) => name !== "None",
+          then: Yup.string().required("Budget is required for selected ordered item."),
+        }),
+      })
+    ),
+    customHomeMade: Yup.object().shape({
+      name: Yup.string().when("homeMade", {
+        is: (homeMade) => homeMade.some((item) => item.name === "Other"),
+        then: Yup.string().required("Please specify your custom home-made food."),
+      }),
+    }),
+    customOrdered: Yup.object().shape({
+      name: Yup.string().when("ordered", {
+        is: (ordered) => ordered.some((item) => item.name === "Other"),
+        then: Yup.string().required("Please specify your custom ordered food."),
+      }),
+    }),
+    medicalHistory: Yup.array()
+      .min(1, "Please select at least one item.")
+      .required("Please select at least one item."),
+    eatingHabits: Yup.boolean().test(
+      "eating-habits-test",
+      "You must select at least one option from Traditional or New Eating Habits.",
+      (value, context) => context.parent.traditionalEatingHabits || context.parent.newEatingHabits
+    ),
   });
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      gender: "",
+      age: "",
+      state: "",
+      ville: "",
+      country: "",
+      height: "",
+      weight: "",
+      education: "",
+      customEducation: "",
+      occupation: "",
+      customOccupation: "",
+      salary: "",
+      currency: "",
+      customCurrency: "",
+      socialState: "",
+      children: "",
+      childrenNumber: "",
+      customDiet: "",
+      diet: "",
+      meat: [],
+      customMeat: "",
+      religiouslyObservant: "",
+      fruits: [],
+      customFruits: "",
+      fruitUnitPerDay: "",
+      vegetables: [],
+      customVegetables: "",
+      vegetableUnitPerDay: "",
+      religious: "",
+      customReligious: "",
+      fish: [],
+      customFish: "",
+      dairy: [],
+      customDairy: "",
+      oil: [],
+      customOil: "",
+      homeMade: [],
+      customHomeMade: { name: "" },
+      //customHomeMade: "",
+      //homeMadeConsumption: "",
+      //homeMadeConsumptionBudget: "",
+      ordered: [],
+      customOrdered: { name: "" },
+      //customOrdered: "",
+      //orderedConsumption: "",
+      //orderedConsumptionBudget: "",
+      traditionalEatingHabits: false,
+      newEatingHabits: false,
+      medicalHistory: [],
+      customMedicalHistory: "",
+      physicalActivity: "",
+    },
+    validate: (values) => {
+      if (!values.name) {
+        return { name: "Name is required" };
+      }
+
+      if (!values.gender) {
+        errors.gender = "Gender is required";
+      }
+
+      if (!values.age) {
+        return { age: "Age is required" };
+      }
+
+      if (!values.state) {
+        return { state: "State is required" };
+      }
+      if (!values.ville) {
+        return { ville: "Ville is required" };
+      }
+      if (!values.country) {
+        return { country: "Country is required" };
+      }
+      if (!values.height) {
+        return {
+          height:
+            "Height is required"
+        }
+      };
+
+      if (!values.weight) {
+        return { weight: "Weight is required" };
+      }
+
+      if (!values.education) {
+        return { education: "Education is required" };
+      };
+
+      if (!values.occupation) {
+        return { occupation: "Occupation is required" };
+      }
+
+      const occupationsWithoutSalary = ["Student", "Unemployed", "Housewife"];
+
+      if (values.occupation && occupationsWithoutSalary.includes(values.occupation) && !values.salary) {
+        return { salary: "Salary is required" };
+      }
+
+      // if (!values.salary) {
+      //   return { salary: "Salary is required" };
+      // }
+
+      // if (!values.currency) {
+      //   return { currency: "Currency is required" };
+      // } 
+
+      if (!values.socialState) {
+        return { socialState: "Social state is required" };
+      }
+
+      if (values.children === "" &&
+        values.socialState !== "Prefer not to say" &&
+        values.socialState !== "Single"
+      ) {
+        return { children: "Children is required" };
+      }
+
+      if (values.childrenNumber === "Yes" && !values.childrenNumber) {
+        return { childrenNumber: "Children number is required" };
+      }
+
+      if (!values.diet) {
+        return { diet: "Diet is required" };
+      }
+
+      if (!values.fruits || values.fruits.length === 0) {
+        errors.fruits = "Please select at least one fruit.";
+      }
+
+      if (!values.vegetables || values.vegetables.length === 0) {
+        errors.vegetables = "Please select at least one vegetable.";
+      }
+
+      if (!values.fruits.includes('None') && !values.fruitUnitPerDay) {
+        errors.fruitUnitPerDay = "Please enter the number of fruits per day.";
+      }
+
+      if (!values.vegetables.includes('None') && !values.vegetableUnitPerDay) {
+        errors.vegetableUnitPerDay = "Please enter the number of vegetables per day.";
+      }
+
+      if (!values.homeMade.length)
+        errors.homeMade = "Please select at least one home-made food.";
+
+      if (!values.ordered.length)
+        errors.ordered = "Please select at least one ordered food.";
+
+      values.homeMade.forEach((item, index) => {
+
+        if (!item.name !== "None") {
+          if (!item.consumption) {
+            errors[`homeMadeConsumption${index}`] =
+              "Consumption is required for home-made food.";
+          }
+
+          if (!item.budget) {
+            errors[`homeMadeBudget${index}`] =
+              "Please enter the budget for home-made food.";
+          }
+        }
+      });
+
+      values.ordered.forEach((item, index) => {
+        if (!item.name !== "None") {
+          if (!item.consumption) {
+            errors[`orderedConsumption${index}`] =
+              "Consumption is required for ordered food.";
+          }
+          if (!item.budget) {
+            errors[`orderedBudget${index}`] =
+              "Please enter the budget for ordered food.";
+          }
+        }
+      });
+
+      if (values.homeMade.some((item) => item.name !== "Other") && !values.customMeat) {
+        errors.customMeat = "Please enter the custom meat.";
+      }
+
+      if (values.ordered.some((item) => item.name !== "Other") && !values.customOrdered) {
+        errors.customOrdered = "Please enter the custom ordered food.";
+      }
+
+      if (!values.medicalHistory || values.medicalHistory.length === 0) {
+        errors.medicalHistory = "Please select at least one medical history.";
+      }
+
+      if (!values.traditionalEatingHabits && !values.newEatingHabits) {
+        errors.traditionalEatingHabits = "Please select at least one eating habits.";
+      }
+      return errors;
+    },
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
+
+  // const [formData, setFormData] = useState({
+  //   name: "",
+  //   gender: "",
+  //   age: "",
+  //   state: "",
+  //   ville: "",
+  //   country: "",
+  //   height: "",
+  //   weight: "",
+  //   education: "",
+  //   customEducation: "",
+  //   occupation: "",
+  //   customOccupation: "",
+  //   salary: "",
+  //   currency: "",
+  //   customCurrency: "",
+  //   socialState: "",
+  //   children: "",
+  //   childrenNumber: "",
+  //   diet: "",
+  //   customDiet: "",
+  //   meat: [],
+  //   customMeat: "",
+  //   religiouslyObservant: "",
+  //   fruits: [],
+  //   customFruits: "",
+  //   fruitUnitPerDay: "",
+  //   vegetables: [],
+  //   customVegetables: "",
+  //   vegetableUnitPerDay: "",
+  //   religious: "",
+  //   customReligious: "",
+  //   fish: [],
+  //   customFish: "",
+  //   dairy: [],
+  //   customDairy: "",
+  //   oil: [],
+  //   customOil: "",
+  //   homeMade: [],
+  //   customHomeMade: { name: "" },
+  //   //customHomeMade: "",
+  //   //homeMadeConsumption: "",
+  //   //homeMadeConsumptionBudget: "",
+  //   ordered: [],
+  //   customOrdered: { name: "" },
+  //   //customOrdered: "",
+  //   //orderedConsumption: "",
+  //   //orderedConsumptionBudget: "",
+  //   traditionalEatingHabits: false,
+  //   newEatingHabits: false,
+  //   medicalHistory: [],
+  //   customMedicalHistory: "",
+  //   physicalActivity: "",
+  // });
+
+  const handleMeatSelect = (item) => {
+    if (formik.values.meat.includes(item)) {
+      formik.setFieldValue(
+        "meat",
+        formik.values.meat.filter((meat) => meat !== item)
+      );
+    } else {
+      formik.setFieldValue("meat", [...formik.values.meat, item]);
+    }
+  };
 
   const [errors, setErrors] = useState({});
   const [isError, setIsError] = useState(false);
@@ -156,139 +460,139 @@ const Survey = () => {
   const navigate = useNavigate();
   const [createSurvey, { isLoading }] = useCreateSurveyMutation();
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  // const handleChange = (e) => {
+  //   const { name, value, type, checked } = e.target;
 
-    setFormData((prevState) => {
-      const updatedData = {
-        ...prevState,
-        [name]: type === "checkbox" ? checked : value,
-      };
+  //   useFormik((prevState) => {
+  //     const updatedData = {
+  //       ...prevState,
+  //       [name]: type === "checkbox" ? checked : value,
+  //     };
 
-      if (Array.isArray(prevState[name])) {
-        updatedData[name] = checked
-          ? [...prevState[name], value]
-          : prevState[name].filter((item) => item !== value);
-      }
+  //     if (Array.isArray(prevState[name])) {
+  //       updatedData[name] = checked
+  //         ? [...prevState[name], value]
+  //         : prevState[name].filter((item) => item !== value);
+  //     }
 
-      if (name === "state") {
-        updatedData.ville = "";
-        updatedData.country = "";
-      } else if (name === "ville") {
-        updatedData.country = "";
-      }
+  //     if (name === "state") {
+  //       updatedData.ville = "";
+  //       updatedData.country = "";
+  //     } else if (name === "ville") {
+  //       updatedData.country = "";
+  //     }
 
-      if (name === "salary" && value === "Prefer not to say") {
-        updatedData.currency = "";
-        updatedData.customCurrency = "";
-      }
+  //     if (name === "salary" && value === "Prefer not to say") {
+  //       updatedData.currency = "";
+  //       updatedData.customCurrency = "";
+  //     }
 
-      if (name === "currency" && value !== "Other") {
-        updatedData.customCurrency = "";
-      }
+  //     if (name === "currency" && value !== "Other") {
+  //       updatedData.customCurrency = "";
+  //     }
 
-      if (
-        name === "occupation" &&
-        ["Student", "Unemployed", "Housewife"].includes(value)
-      ) {
-        updatedData.salary = "";
-        updatedData.currency = "";
-        updatedData.customCurrency = "";
-      }
+  //     if (
+  //       name === "occupation" &&
+  //       ["Student", "Unemployed", "Housewife"].includes(value)
+  //     ) {
+  //       updatedData.salary = "";
+  //       updatedData.currency = "";
+  //       updatedData.customCurrency = "";
+  //     }
 
-      if (
-        name === "socialState" &&
-        (value === "Prefer not to say" || value === "Single")
-      ) {
-        updatedData.children = "";
-        updatedData.childrenNumber = "";
-      }
+  //     if (
+  //       name === "socialState" &&
+  //       (value === "Prefer not to say" || value === "Single")
+  //     ) {
+  //       updatedData.children = "";
+  //       updatedData.childrenNumber = "";
+  //     }
 
-      if (name === "children" && value !== "Yes") {
-        updatedData.childrenNumber = "";
-      }
+  //     if (name === "children" && value !== "Yes") {
+  //       updatedData.childrenNumber = "";
+  //     }
 
-      if (name === "diet" && value !== "Other") {
-        updatedData.customDiet = "";
-      }
+  //     if (name === "diet" && value !== "Other") {
+  //       updatedData.customDiet = "";
+  //     }
 
-      if (
-        name === "diet" &&
-        ["Vegan", "Vegetarian", "Fruitarian"].includes(value)
-      ) {
-        updatedData.meat = [];
-        updatedData.customMeat = "";
-      }
+  //     if (
+  //       name === "diet" &&
+  //       ["Vegan", "Vegetarian", "Fruitarian"].includes(value)
+  //     ) {
+  //       updatedData.meat = [];
+  //       updatedData.customMeat = "";
+  //     }
 
-      if (name === "diet" && value !== "Religiously Observant") {
-        updatedData.religiouslyObservant = "";
-      }
+  //     if (name === "diet" && value !== "Religiously Observant") {
+  //       updatedData.religiouslyObservant = "";
+  //     }
 
-      if (name === "meat" && value !== "Other") {
-        updatedData.customMeat = "";
-      }
+  //     if (name === "meat" && value !== "Other") {
+  //       updatedData.customMeat = "";
+  //     }
 
-      if (name === "fruits" && value !== "Other") {
-        updatedData.customFruits = "";
-      }
+  //     if (name === "fruits" && value !== "Other") {
+  //       updatedData.customFruits = "";
+  //     }
 
-      if (name === "fruits" && value !== "None") {
-        updatedData.fruitUnitPerDay = "";
-      }
+  //     if (name === "fruits" && value !== "None") {
+  //       updatedData.fruitUnitPerDay = "";
+  //     }
 
-      if (name === "vegetables" && value !== "Other") {
-        updatedData.customVegetables = "";
-      }
+  //     if (name === "vegetables" && value !== "Other") {
+  //       updatedData.customVegetables = "";
+  //     }
 
-      if (name === "vegetables" && value !== "None") {
-        updatedData.vegetableUnitPerDay = "";
-      }
+  //     if (name === "vegetables" && value !== "None") {
+  //       updatedData.vegetableUnitPerDay = "";
+  //     }
 
-      if (name === "fish" && value !== "Other") {
-        updatedData.customFish = "";
-      }
+  //     if (name === "fish" && value !== "Other") {
+  //       updatedData.customFish = "";
+  //     }
 
-      if (name === "dairy" && value !== "Other") {
-        updatedData.customDairy = "";
-      }
+  //     if (name === "dairy" && value !== "Other") {
+  //       updatedData.customDairy = "";
+  //     }
 
-      if (name === "oil" && value !== "Other") {
-        updatedData.customOil = "";
-      }
+  //     if (name === "oil" && value !== "Other") {
+  //       updatedData.customOil = "";
+  //     }
 
-      if (name === "religious" && value !== "Other") {
-        updatedData.customReligious = "";
-      }
+  //     if (name === "religious" && value !== "Other") {
+  //       updatedData.customReligious = "";
+  //     }
 
-      if (name === "medicalHistory" && value !== "Other") {
-        updatedData.customMedicalHistory = "";
-      }
+  //     if (name === "medicalHistory" && value !== "Other") {
+  //       updatedData.customMedicalHistory = "";
+  //     }
 
-      if (name === "homeMade" && value !== "Other") {
-        updatedData.customHomeMade = "";
-      }
+  //     if (name === "homeMade" && value !== "Other") {
+  //       updatedData.customHomeMade = "";
+  //     }
 
-      if (name === "ordered" && value !== "Other") {
-        updatedData.customOrdered = "";
-      }
+  //     if (name === "ordered" && value !== "Other") {
+  //       updatedData.customOrdered = "";
+  //     }
 
-      if (name === "homeMade") {
-        updatedData.consumption.homeMade =
-          value === "None" ? "" : prevState.homeMadeConsumption;
-        updatedData.homeMadeBudget =
-          value === "None" ? "" : prevState.homeMadeBudget;
-      }
+  //     if (name === "homeMade") {
+  //       updatedData.consumption.homeMade =
+  //         value === "None" ? "" : prevState.homeMadeConsumption;
+  //       updatedData.homeMadeBudget =
+  //         value === "None" ? "" : prevState.homeMadeBudget;
+  //     }
 
-      if (name === "ordered") {
-        updatedData.orderedConsumption =
-          value === "None" ? "" : prevState.orderedConsumption;
-        updatedData.orderedBudget =
-          value === "None" ? "" : prevState.orderedBudget;
-      }
+  //     if (name === "ordered") {
+  //       updatedData.orderedConsumption =
+  //         value === "None" ? "" : prevState.orderedConsumption;
+  //       updatedData.orderedBudget =
+  //         value === "None" ? "" : prevState.orderedBudget;
+  //     }
 
-      return updatedData;
-    });
-  };
+  //     return updatedData;
+  //   });
+  // };
 
   const stateOptions = {
     Algeria: [
@@ -791,30 +1095,44 @@ const Survey = () => {
     Kranj: ["Slovenia"],
   };
 
-  const toggleSelectionn = (category, item) => {
-    setFormData((prevData) => {
-      const currentItems = [...prevData[category]];
-      const itemIndex = currentItems.findIndex((i) => i.name === item);
+  const toggleSelectionn = (category, item, setFieldValue, values) => {
+    const currentItems = [...values[category]];
+    const itemIndex = currentItems.findIndex((i) => i.name === item);
 
-      if (itemIndex !== -1) {
-        return {
-          ...prevData,
-          [category]: currentItems.filter((i) => i.name !== item),
-        };
-      } else {
-        return {
-          ...prevData,
-          [category]: [
-            ...currentItems,
-            { name: item, consumption: "", budget: "" },
-          ],
-        };
-      }
-    });
+    if (itemIndex !== -1) {
+      // Remove item if it's already selected
+      setFieldValue(category, currentItems.filter((i) => i.name !== item));
+    } else {
+      // Add new item with default properties
+      setFieldValue(category, [...currentItems, { name: item, consumption: "", budget: "" }]);
+    }
   };
 
+
+  // const toggleSelectionn = (category, item) => {
+  //   useFormik((prevData) => {
+  //     const currentItems = [...prevData[category]];
+  //     const itemIndex = currentItems.findIndex((i) => i.name === item);
+
+  //     if (itemIndex !== -1) {
+  //       return {
+  //         ...prevData,
+  //         [category]: currentItems.filter((i) => i.name !== item),
+  //       };
+  //     } else {
+  //       return {
+  //         ...prevData,
+  //         [category]: [
+  //           ...currentItems,
+  //           { name: item, consumption: "", budget: "" },
+  //         ],
+  //       };
+  //     }
+  //   });
+  // };
+
   const handleInputChange = (category, itemName, field, value) => {
-    setFormData((prevData) => {
+    useFormik((prevData) => {
       const updatedItems = prevData[category].map((item) =>
         item.name === itemName
           ? { ...item, [field]: itemName !== "None" ? value : "" }
@@ -825,151 +1143,208 @@ const Survey = () => {
   };
 
   const toggleSelection = (field, value) => {
-    setFormData((prevData) => {
-      const selectedValues = prevData[field];
-      const isCurrentlySelected = selectedValues.includes(value);
-      let updatedSelection;
+    const selectedValues = formik.values[field] || [];
+    const isCurrentlySelected = selectedValues.includes(value);
+    let updatedSelection;
 
-      if (value === "None") {
-        updatedSelection = isCurrentlySelected ? [] : ["None"];
-      } else {
-        updatedSelection = isCurrentlySelected
-          ? selectedValues.filter((item) => item !== value)
-          : [...selectedValues.filter((item) => item !== "None"), value];
-      }
+    if (value === "None") {
+      updatedSelection = isCurrentlySelected ? [] : ["None"];
+    } else {
+      updatedSelection = isCurrentlySelected
+        ? selectedValues.filter((item) => item !== value)
+        : [...selectedValues.filter((item) => item !== "None"), value];
+    }
 
-      return {
-        ...prevData,
-        [field]: updatedSelection,
-        fruitUnitPerDay:
-          field === "fruits" && updatedSelection.includes("None")
-            ? ""
-            : prevData.fruitUnitPerDay,
+    formik.setFieldValue(field, updatedSelection);
 
-        vegetableUnitPerDay:
-          field === "vegetables" && updatedSelection.includes("None")
-            ? ""
-            : prevData.vegetableUnitPerDay,
+    if (field === "fruits") {
+      formik.setFieldValue(
+        "fruitUnitPerDay",
+        updatedSelection.includes("None") ? "" : formik.values.fruitUnitPerDay
+      );
+    }
 
-        customMeat:
-          field === "meat" && updatedSelection.includes("Other")
-            ? prevData.customMeat
-            : "",
+    if (field === "vegetables") {
+      formik.setFieldValue(
+        "vegetableUnitPerDay",
+        updatedSelection.includes("None") ? "" : formik.values.vegetableUnitPerDay
+      );
+    }
 
-        customHomeMade:
-          field === "homeMade" && updatedSelection.includes("Other")
-            ? ""
-            : prevData.customHomeMade,
-        customOrdered:
-          field === "ordered" && updatedSelection.includes("Other")
-            ? ""
-            : prevData.customOrdered,
-      };
-    });
+    if (field === "meat") {
+      formik.setFieldValue(
+        "customMeat",
+        updatedSelection.includes("Other") ? formik.values.customMeat : ""
+      );
+    }
+
+    if (field === "fish") {
+      formik.setFieldValue(
+        "customFisht",
+        updatedSelection.includes("Other") ? formik.values.customFish : ""
+      );
+    }
+
+    if (field === "dairy") {
+      formik.setFieldValue(
+        "customDairy",
+        updatedSelection.includes("Other") ? formik.values.customDairy : ""
+      );
+    }
+
+    if (field === "oil") {
+      formik.setFieldValue(
+        "customOil",
+        updatedSelection.includes("Other") ? formik.values.customOil : ""
+      );
+    }
+
+    if (field === "homeMade") {
+      formik.setFieldValue(
+        "customHomeMade",
+        updatedSelection.includes("Other") ? "" : formik.values.customHomeMade
+      );
+    }
+
+    if (field === "ordered") {
+      formik.setFieldValue(
+        "customOrdered",
+        updatedSelection.includes("Other") ? "" : formik.values.customOrdered
+      );
+    }
+
+    // return {
+    //   ...prevData,
+    //   [field]: updatedSelection,
+    //   fruitUnitPerDay:
+    //     field === "fruits" && updatedSelection.includes("None")
+    //       ? ""
+    //       : prevData.fruitUnitPerDay,
+
+    //   vegetableUnitPerDay:
+    //     field === "vegetables" && updatedSelection.includes("None")
+    //       ? ""
+    //       : prevData.vegetableUnitPerDay,
+
+    //   customMeat:
+    //     field === "meat" && updatedSelection.includes("Other")
+    //       ? prevData.customMeat
+    //       : "",
+
+    //   customHomeMade:
+    //     field === "homeMade" && updatedSelection.includes("Other")
+    //       ? ""
+    //       : prevData.customHomeMade,
+    //   customOrdered:
+    //     field === "ordered" && updatedSelection.includes("Other")
+    //       ? ""
+    //       : prevData.customOrdered,
+    // };  
+
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+  // const validateForm = () => {
+  //   const newErrors = {};
 
-    if (!formData.name.trim()) newErrors.name = "Name is required.";
-    if (!formData.gender) newErrors.gender = "Gender is required.";
-    if (!formData.age) newErrors.age = "Age is required.";
-    if (!formData.state) newErrors.state = "State is required.";
-    if (!formData.ville) newErrors.ville = "Ville is required.";
-    if (!formData.country) newErrors.country = "Country is required.";
-    if (!formData.height) newErrors.height = "Height is required.";
-    if (!formData.weight) newErrors.weight = "Weight is required.";
-    if (!formData.education) newErrors.education = "Education is required.";
-    if (!formData.occupation) newErrors.occupation = "Occupation is required.";
-    const occupationsWithoutSalary = ["Student", "Unemployed", "Housewife"];
-    if (
-      !occupationsWithoutSalary.includes(formData.occupation) &&
-      !formData.salary
-    ) {
-      newErrors.salary = "Salary is required.";
-    }
-    if (!formData.socialState)
-      newErrors.socialState = "Social State is required.";
-    if (
-      formData.children === "" &&
-      formData.socialState !== "Prefer not to say" &&
-      formData.socialState !== "Single"
-    ) {
-      newErrors.children = "Children field is required.";
-    }
-    if (formData.children === "Yes" && !formData.childrenNumber) {
-      newErrors.childrenNumber = "Children Number is required.";
-    }
-    if (!formData.diet) newErrors.diet = "Diet is required.";
-    if (!formData.fruits || formData.fruits.length === 0) {
-      newErrors.fruits = "Please select at least one fruit.";
-    }
-    if (!formData.fruits.includes("None") && !formData.fruitUnitPerDay) {
-      newErrors.fruitUnitPerDay = "Please specify fruit units per day.";
-    }
-    if (!formData.vegetables || formData.vegetables.length === 0) {
-      newErrors.vegetables = "Please select at least one vegetable.";
-    }
-    if (
-      !formData.vegetables.includes("None") &&
-      !formData.vegetableUnitPerDay
-    ) {
-      newErrors.vegetableUnitPerDay = "Please specify vegetable units per day.";
-    }
-    // if (!formData.homeMade.length)
-    //   newErrors.homeMade = "Home Made Food is required.";
-    // if (!formData.ordered.length)
-    //   newErrors.ordered = "Ordered Food is required.";
+  //   if (!formData.name.trim()) newErrors.name = "Name is required.";
+  //   if (!formData.gender) newErrors.gender = "Gender is required.";
+  //   if (!formData.age) newErrors.age = "Age is required.";
+  //   if (!formData.state) newErrors.state = "State is required.";
+  //   if (!formData.ville) newErrors.ville = "Ville is required.";
+  //   if (!formData.country) newErrors.country = "Country is required.";
+  //   if (!formData.height) newErrors.height = "Height is required.";
+  //   if (!formData.weight) newErrors.weight = "Weight is required.";
+  //   if (!formData.education) newErrors.education = "Education is required.";
+  //   if (!formData.occupation) newErrors.occupation = "Occupation is required.";
+  //   const occupationsWithoutSalary = ["Student", "Unemployed", "Housewife"];
+  //   if (
+  //     !occupationsWithoutSalary.includes(formData.occupation) &&
+  //     !formData.salary
+  //   ) {
+  //     newErrors.salary = "Salary is required.";
+  //   }
+  //   if (!formData.socialState)
+  //     newErrors.socialState = "Social State is required.";
+  //   if (
+  //     formData.children === "" &&
+  //     formData.socialState !== "Prefer not to say" &&
+  //     formData.socialState !== "Single"
+  //   ) {
+  //     newErrors.children = "Children field is required.";
+  //   }
+  //   if (formData.children === "Yes" && !formData.childrenNumber) {
+  //     newErrors.childrenNumber = "Children Number is required.";
+  //   }
+  //   if (!formData.diet) newErrors.diet = "Diet is required.";
+  //   if (!formData.fruits || formData.fruits.length === 0) {
+  //     newErrors.fruits = "Please select at least one fruit.";
+  //   }
+  //   if (!formData.fruits.includes("None") && !formData.fruitUnitPerDay) {
+  //     newErrors.fruitUnitPerDay = "Please specify fruit units per day.";
+  //   }
+  //   if (!formData.vegetables || formData.vegetables.length === 0) {
+  //     newErrors.vegetables = "Please select at least one vegetable.";
+  //   }
+  //   if (
+  //     !formData.vegetables.includes("None") &&
+  //     !formData.vegetableUnitPerDay
+  //   ) {
+  //     newErrors.vegetableUnitPerDay = "Please specify vegetable units per day.";
+  //   }
+  //   // if (!formData.homeMade.length)
+  //   //   newErrors.homeMade = "Home Made Food is required.";
+  //   // if (!formData.ordered.length)
+  //   //   newErrors.ordered = "Ordered Food is required.";
 
-    formData.homeMade.forEach((item, index) => {
-      if (item.name !== "None") {
-        if (!item.consumption) {
-          newErrors[`homeMadeConsumption${index}`] =
-            "Consumption is required for selected home-made item.";
-        }
-        if (!item.budget) {
-          newErrors[`homeMadeBudget${index}`] =
-            "Budget is required for selected home-made item.";
-        }
-      }
-    });
+  //   formData.homeMade.forEach((item, index) => {
+  //     if (item.name !== "None") {
+  //       if (!item.consumption) {
+  //         newErrors[`homeMadeConsumption${index}`] =
+  //           "Consumption is required for selected home-made item.";
+  //       }
+  //       if (!item.budget) {
+  //         newErrors[`homeMadeBudget${index}`] =
+  //           "Budget is required for selected home-made item.";
+  //       }
+  //     }
+  //   });
 
-    formData.ordered.forEach((item, index) => {
-      if (item.name !== "None") {
-        if (!item.consumption) {
-          newErrors[`orderedConsumption${index}`] =
-            "Consumption is required for selected ordered item.";
-        }
-        if (!item.budget) {
-          newErrors[`orderedBudget${index}`] =
-            "Budget is required for selected ordered item.";
-        }
-      }
-    });
+  //   formData.ordered.forEach((item, index) => {
+  //     if (item.name !== "None") {
+  //       if (!item.consumption) {
+  //         newErrors[`orderedConsumption${index}`] =
+  //           "Consumption is required for selected ordered item.";
+  //       }
+  //       if (!item.budget) {
+  //         newErrors[`orderedBudget${index}`] =
+  //           "Budget is required for selected ordered item.";
+  //       }
+  //     }
+  //   });
 
-    if (
-      formData.homeMade.some((item) => item.name === "Other") &&
-      !formData.customHomeMade.name
-    ) {
-      newErrors.customHomeMade = "Please specify your custom home-made food.";
-    }
+  //   if (
+  //     formData.homeMade.some((item) => item.name === "Other") &&
+  //     !formData.customHomeMade.name
+  //   ) {
+  //     newErrors.customHomeMade = "Please specify your custom home-made food.";
+  //   }
 
-    if (
-      formData.ordered.some((item) => item.name === "Other") &&
-      !formData.customOrdered.name
-    ) {
-      newErrors.customOrdered = "Please specify your custom ordered food.";
-    }
-    if (!formData.medicalHistory || formData.medicalHistory.length === 0) {
-      newErrors.medicalHistory = "Please select at least one item.";
-    }
-    if (!formData.traditionalEatingHabits && !formData.newEatingHabits) {
-      newErrors.eatingHabits =
-        "You must select at least one option from Traditional or New Eating Habits.";
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  //   if (
+  //     formData.ordered.some((item) => item.name === "Other") &&
+  //     !formData.customOrdered.name
+  //   ) {
+  //     newErrors.customOrdered = "Please specify your custom ordered food.";
+  //   }
+  //   if (!formData.medicalHistory || formData.medicalHistory.length === 0) {
+  //     newErrors.medicalHistory = "Please select at least one item.";
+  //   }
+  //   if (!formData.traditionalEatingHabits && !formData.newEatingHabits) {
+  //     newErrors.eatingHabits =
+  //       "You must select at least one option from Traditional or New Eating Habits.";
+  //   }
+  //   setErrors(newErrors);
+  //   return Object.keys(newErrors).length === 0;
+  // };
 
   const handleSubmit = async (e) => {
     console.log("Form Data:", formData);
@@ -998,7 +1373,7 @@ const Survey = () => {
   return (
     <div className="max-w-4xl mx-auto mt-8 p-6 bg-gray-300 shadow-md rounded-lg">
       <h2 className="text-2xl font-bold text-center mb-6">Survey Form</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={formik.handleSubmit} className="space-y-4">
         {/* Name */}
         <label className="block">
           <span className="font-bold">Name:</span>
@@ -1006,11 +1381,11 @@ const Survey = () => {
             type="text"
             name="name"
             placeholder="Enter your name"
-            value={formData.name}
-            onChange={handleChange}
+            value={formik.values.name}
+            onChange={formik.handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           />
-          {errors.name && <span className="text-red-500">{errors.name}</span>}
+          {formik.errors.name && <span className="text-red-500">{formik.errors.name}</span>}
         </label>
 
         {/* Gender */}
@@ -1018,16 +1393,16 @@ const Survey = () => {
           <span className="font-bold">Gender:</span>
           <select
             name="gender"
-            value={formData.gender}
-            onChange={handleChange}
+            value={formik.values.gender}
+            onChange={formik.handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
-          {errors.gender && (
-            <span className="text-red-500">{errors.gender}</span>
+          {formik.errors.gender && (
+            <span className="text-red-500">{formik.errors.gender}</span>
           )}
         </label>
 
@@ -1036,8 +1411,8 @@ const Survey = () => {
           <span className="font-bold">Age:</span>
           <select
             name="age"
-            value={formData.age}
-            onChange={handleChange}
+            value={formik.values.age}
+            onChange={formik.handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1051,7 +1426,7 @@ const Survey = () => {
             <option value="Between 60-69 years">Between 60-69 years</option>
             <option value="Over 70 years">Over 70 years</option>
           </select>
-          {errors.age && <span className="text-red-500">{errors.age}</span>}
+          {formik.errors.age && <span className="text-red-500">{formik.errors.age}</span>}
         </label>
 
         {/* State */}
@@ -1059,18 +1434,16 @@ const Survey = () => {
           <span className="font-bold">State:</span>
           <select
             name="state"
-            value={formData.state}
+            value={formik.values.state}
             onChange={(e) => {
               const selectedState = e.target.value;
-              setFormData({
-                ...formData,
-                state: selectedState,
-                ville: "",
-                country: "",
-              });
+              formik.setFieldValue("state", selectedState);
+              formik.setFieldValue("ville", ""); // Reset 'ville' when 'state' changes
+              formik.setFieldValue("country", ""); // Reset 'country' when 'state' changes
             }}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
+
             <option value="">Select a State...</option>
             {Object.keys(stateOptions).map((state) => (
               <option key={state} value={state}>
@@ -1078,68 +1451,63 @@ const Survey = () => {
               </option>
             ))}
           </select>
-          {errors.state && <span className="text-red-500">{errors.state}</span>}
+          {formik.errors.state && <span className="text-red-500">{formik.errors.state}</span>}
         </label>
 
         {/* Ville */}
-        {formData.state && (
+        {formik.values.state && (
           <label className="block mt-4">
             <span className="font-bold">Ville:</span>
             <select
               name="ville"
-              value={formData.ville}
+              value={formik.values.ville}
               onChange={(e) => {
                 const selectedVille = e.target.value;
-                setFormData({
-                  ...formData,
-                  ville: selectedVille,
-                  country: "",
-                });
+                formik.setFieldValue("ville", selectedVille);
+                formik.setFieldValue("country", ""); // Reset 'country' when 'ville' changes
               }}
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             >
               <option value="">Select a Ville...</option>
-              {(stateOptions[formData.state] || []).map((ville) => (
+              {(stateOptions[formik.values.state] || []).map((ville) => (
                 <option key={ville} value={ville}>
                   {ville}
                 </option>
               ))}
             </select>
-            {errors.ville && (
-              <span className="text-red-500">{errors.ville}</span>
-            )}
+            {formik.errors.ville && <span className="text-red-500">{formik.errors.ville}</span>}
           </label>
         )}
 
         {/* Country */}
-        {formData.ville && (
+        {formik.values.ville && (
           <label className="block mt-4">
             <span className="font-bold">Country:</span>
             <select
               name="country"
-              value={formData.country}
-              onChange={handleChange}
+              value={formik.values.country}
+              onChange={formik.handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             >
               <option value="">Select a Country...</option>
-              {(villeOptions[formData.ville] || []).map((country) => (
+              {(villeOptions[formik.values.ville] || []).map((country) => (
                 <option key={country} value={country}>
                   {country}
                 </option>
               ))}
             </select>
-            {errors.country && (
-              <span className="text-red-500">{errors.country}</span>
-            )}
+            {formik.errors.country && <span className="text-red-500">{formik.errors.country}</span>}
           </label>
         )}
+
+
         {/* Height */}
         <label className="block">
           <span className="font-bold">Height:</span>
           <select
             name="height"
-            value={formData.height}
-            onChange={handleChange}
+            value={formik.values.height}
+            onChange={formik.handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1150,8 +1518,8 @@ const Survey = () => {
             <option value="Between 190-200">Between 190-200</option>
             <option value="Over 200">Over 200</option>
           </select>
-          {errors.height && (
-            <span className="text-red-500">{errors.height}</span>
+          {formik.errors.height && (
+            <span className="text-red-500">{formik.errors.height}</span>
           )}
         </label>
 
@@ -1160,8 +1528,8 @@ const Survey = () => {
           <span className="font-bold">Weight:</span>
           <select
             name="weight"
-            value={formData.weight}
-            onChange={handleChange}
+            value={formik.values.weight}
+            onChange={formik.handleChange}
             className="border border-gray-
           300 px-4 py-2 rounded-md w-full"
           >
@@ -1175,8 +1543,8 @@ const Survey = () => {
             <option value="Between 100-110">Between 100-110</option>
             <option value="Over 110">Over 110</option>
           </select>
-          {errors.weight && (
-            <span className="text-red-500">{errors.weight}</span>
+          {formik.errors.weight && (
+            <span className="text-red-500">{formik.errors.weight}</span>
           )}
         </label>
 
@@ -1185,8 +1553,8 @@ const Survey = () => {
           <span className="font-bold">Education:</span>
           <select
             name="education"
-            value={formData.education}
-            onChange={handleChange}
+            value={formik.values.education}
+            onChange={formik.handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1200,34 +1568,33 @@ const Survey = () => {
             <option value="Technical education">Technical education</option>
             <option value="Other">Other</option>
           </select>
-          {errors.education && (
-            <span className="text-red-500">{errors.education}</span>
+          {formik.errors.education && (
+            <span className="text-red-500">{formik.errors.education}</span>
           )}
         </label>
 
         {/* Custom Education */}
-        {formData.education === "Other" && (
+        {formik.values.education === "Other" && (
           <label className="block">
             <span className="font-bold">*Custom Education</span>
             <input
               type="text"
               name="customEducation"
-              value={formData.customEducation}
+              value={formik.values.customEducation}
               placeholder="Please specify your education"
-              onChange={handleChange}
+              onChange={formik.handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             />
           </label>
         )}
 
         {/* Occupation */}
-
         <label className="block">
           <span className="font-bold">Occupation:</span>
           <select
             name="occupation"
-            value={formData.occupation}
-            onChange={handleChange}
+            value={formik.values.occupation}
+            onChange={formik.handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1238,36 +1605,36 @@ const Survey = () => {
             <option value="Housewife">House Wife</option>
             <option value="Other">Other</option>
           </select>
-          {errors.occupation && (
-            <span className="text-red-500">{errors.occupation}</span>
+          {formik.errors.occupation && (
+            <span className="text-red-500">{formik.errors.occupation}</span>
           )}
         </label>
 
         {/* Custom Occupation */}
-        {formData.occupation === "Other" && (
+        {formik.values.occupation === "Other" && (
           <label className="block">
             <span className="font-bold">*Custom Occupation</span>
             <input
               type="text"
               name="customOccupation"
-              value={formData.customOccupation}
+              value={formik.values.customOccupation}
               placeholder="Please specify your occupation"
-              onChange={handleChange}
+              onChange={formik.handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             />
           </label>
         )}
 
         {/* Salary */}
-        {formData.occupation !== "Student" &&
-          formData.occupation !== "Unemployed" &&
-          formData.occupation !== "Housewife" && (
+        {formik.values.occupation !== "Student" &&
+          formik.values.occupation !== "Unemployed" &&
+          formik.values.occupation !== "Housewife" && (
             <label className="block">
               <span className="font-bold">Salary:</span>
               <select
                 name="salary"
-                value={formData.salary}
-                onChange={handleChange}
+                value={formik.values.salary}
+                onChange={formik.handleChange}
                 className="border border-gray-300 px-4 py-2 rounded-md w-full"
               >
                 <option value="">Select...</option>
@@ -1279,20 +1646,20 @@ const Survey = () => {
                 <option value="Between 4000-5000">Between 4000-5000</option>
                 <option value="Over 5000">Over 5000</option>
               </select>
-              {errors.salary && (
-                <span className="text-red-500">{errors.salary}</span>
+              {formik.errors.salary && (
+                <span className="text-red-500">{formik.errors.salary}</span>
               )}
             </label>
           )}
 
         {/* Currency */}
-        {formData.salary && formData.salary !== "Prefer not to say" && (
+        {formik.values.salary && formik.values.salary !== "Prefer not to say" && (
           <label className="block">
             <span className="font-bold"> Currency: </span>
             <select
               name="currency"
-              value={formData.currency}
-              onChange={handleChange}
+              value={formik.values.currency}
+              onChange={formik.handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
@@ -1314,15 +1681,15 @@ const Survey = () => {
         )}
 
         {/* Custom Currency */}
-        {formData.currency === "Other" && (
+        {formik.values.currency === "Other" && (
           <label className="block">
             <span className="font-bold"> Custom Currency: </span>
             <input
               type="text"
               name="customCurrency"
-              value={formData.customCurrency}
+              value={formik.values.customCurrency}
               placeholder="Specify your currency"
-              onChange={handleChange}
+              onChange={formik.handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md"
             />
           </label>
@@ -1333,8 +1700,8 @@ const Survey = () => {
           <span className="font-bold">Social State:</span>
           <select
             name="socialState"
-            value={formData.socialState}
-            onChange={handleChange}
+            value={formik.values.socialState}
+            onChange={formik.handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1344,23 +1711,23 @@ const Survey = () => {
             <option value="Divorced">Divorced</option>
             <option value="Widowed">Widowed</option>
           </select>
-          {errors.socialState && (
-            <span className="text-red-500">{errors.socialState}</span>
+          {formik.errors.socialState && (
+            <span className="text-red-500">{formik.errors.socialState}</span>
           )}
         </label>
 
         {/* Children */}
-        {formData.socialState !== "Prefer not to say" &&
-          formData.socialState !== "Single" && (
+        {formik.values.socialState !== "Prefer not to say" &&
+          formik.values.socialState !== "Single" && (
             <label className="block">
               <span className="font-bold">Children: </span>
               <select
                 name="children"
-                value={formData.children}
-                onChange={handleChange}
+                value={formik.values.children}
+                onChange={formik.handleChange}
                 disabled={
-                  formData.socialState === "Single" ||
-                  formData.socialState === "Prefer not to say"
+                  formik.values.socialState === "Single" ||
+                  formik.values.socialState === "Prefer not to say"
                 }
                 className="border border-gray-300 px-4 py-2 rounded-md"
               >
@@ -1368,21 +1735,21 @@ const Survey = () => {
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
-              {errors.children && (
-                <span className="text-red-500">{errors.children}</span>
+              {formik.errors.children && (
+                <span className="text-red-500">{formik.errors.children}</span>
               )}
             </label>
           )}
 
         {/* Children Number */}
-        {formData.children === "Yes" && (
+        {formik.values.children === "Yes" && (
           <label className="block">
             <span className="font-bold">Children Number: </span>
             <select
               name="childrenNumber"
-              value={formData.childrenNumber}
-              onChange={handleChange}
-              disabled={formData.children === "No"}
+              value={formik.values.childrenNumber}
+              onChange={formik.handleChange}
+              disabled={formik.values.children === "No"}
               className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
@@ -1394,8 +1761,8 @@ const Survey = () => {
               <option value="Five">Five</option>
               <option value="More than five">More than five</option>
             </select>
-            {errors.childrenNumber && (
-              <span className="text-red-500">{errors.childrenNumber}</span>
+            {formik.errors.childrenNumber && (
+              <span className="text-red-500">{formik.errors.childrenNumber}</span>
             )}
           </label>
         )}
@@ -1405,8 +1772,8 @@ const Survey = () => {
           <span className="font-bold">Religious:</span>
           <select
             name="religious"
-            value={formData.religious}
-            onChange={handleChange}
+            value={formik.values.religious}
+            onChange={formik.handleChange}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1419,14 +1786,14 @@ const Survey = () => {
         </label>
 
         {/* Custom Religious */}
-        {formData.religious === "Other" && (
+        {formik.values.religious === "Other" && (
           <label className="block">
             <span className="font-bold">*Custom:</span>
             <input
               type="text"
               name="customReligious"
-              value={formData.customReligious}
-              onChange={handleChange}
+              value={formik.values.customReligious}
+              onChange={formik.handleChange}
               placeholder="Please specify your religioun"
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             />
@@ -1434,12 +1801,16 @@ const Survey = () => {
         )}
 
         {/* Diet */}
+
         <label className="block">
           <span className="font-bold">Diet:</span>
           <select
             name="diet"
-            value={formData.diet}
-            onChange={handleChange}
+            value={formik.values.diet}
+            onChange={(e) => {
+              formik.handleChange(e);
+              formik.setFieldValue("meat", []); // Clear meat selection on diet change
+            }}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1452,11 +1823,13 @@ const Survey = () => {
             <option value="Religiously Observant">Religiously Observant</option>
             <option value="Other">Other</option>
           </select>
-          {errors.diet && <span className="text-red-500">{errors.diet}</span>}
+          {formik.errors.diet && (
+            <span className="text-red-500">{formik.errors.diet}</span>
+          )}
         </label>
 
         {/* Religiously observant field */}
-        {formData.diet === "Religiously Observant" && (
+        {formik.values.diet === "Religiously Observant" && (
           <label className="block">
             <span className="font-bold">
               *Please specify the foods that you don't eat:
@@ -1464,8 +1837,8 @@ const Survey = () => {
             <input
               type="text"
               name="religiouslyObservant"
-              value={formData.religiouslyObservant}
-              onChange={handleChange}
+              value={formik.values.religiouslyObservant}
+              onChange={formik.handleChange}
               placeholder="Specify observance details"
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             />
@@ -1473,130 +1846,72 @@ const Survey = () => {
         )}
 
         {/* Custom Diet */}
-        {formData.diet === "Other" && (
+        {formik.values.diet === "Other" && (
           <label className="block">
             <span className="font-bold">*Custom Diet:</span>
             <input
               type="text"
               name="customDiet"
-              value={formData.customDiet}
-              onChange={handleChange}
+              value={formik.values.customDiet}
+              onChange={formik.handleChange}
               placeholder="Please specify your diet"
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             />
           </label>
         )}
 
-        {/* Meat */}
-        {!["Vegan", "Vegetarian", "Fruitarian"].includes(formData.diet) && (
-          <>
-            {/* <label className="block">
-              <span className="font-bold mb-2 block">Meat:</span>
-              <div
-                className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
-                style={{ maxHeight: "200px" }}
-              >
-                {[
-                  "Beef",
-                  "Chicken",
-                  "Pork",
-                  "Lamb",
-                  "Turkey",
-                  "Duck",
-                  "Goose",
-                  "Venison",
-                  "Partridge",
-                  "Other",
-                ].map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
-                      formData.meat.includes(item)
-                        ? "bg-blue-500 text-white border-transparent"
-                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
+        {/* Multi-Choice Meat Selection */}
+        {!["Vegan", "Vegetarian", "Fruitarian"].includes(formik.values.diet) && (
+          <label className="block">
+            <span className="font-bold mb-2 block">Meat:</span>
+            <div
+              className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
+              style={{ maxHeight: "200px" }}
+            >
+              {[
+                "Beef",
+                "Chicken",
+                "Pork",
+                "Lamb",
+                "Turkey",
+                "Duck",
+                "Goose",
+                "Venison",
+                "Partridge",
+                "Other",
+              ].map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.meat.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
                     }`}
-                    onClick={() => toggleSelection("meat", item)}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </label> */}
-
-            {/* Meat Multi-Select Dropdown */}
-            {!["Vegan", "Vegetarian", "Fruitarian"].includes(formData.diet) && (
-              <label className="block mt-4">
-                <span className="font-bold mb-2 block">Meat:</span>
-                <div className="relative">
-                  <div
-                    className="border border-gray-300 p-2 rounded-md cursor-pointer"
-                    onClick={toggleDropdown}
-                  >
-                    {/* Display selected items */}
-                    {formData.meat.length > 0 ? (
-                      formData.meat.join(", ")
-                    ) : (
-                      <span className="text-gray-500">Select Meat</span>
-                    )}
-                  </div>
-
-                  {/* Dropdown menu */}
-                  {dropdownOpen && (
-                    <div className="absolute z-10 mt-1 w-full border border-gray-300 rounded-md bg-white max-h-40 overflow-y-auto">
-                      {meatOptions.map((item) => (
-                        <div
-                          key={item}
-                          className="p-2 cursor-pointer hover:bg-gray-200 flex items-center"
-                          onClick={() => handleSelect(item)}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={formData.meat.includes(item)}
-                            readOnly
-                            className="mr-2"
-                          />
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </label>
+                  onClick={() => toggleSelection("meat", item)}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+            {formik.errors.meat && (
+              <span className="text-red-500">{formik.errors.meat}</span>
             )}
+          </label>
+        )}
 
-            {/* Show customMeat field only if "Other" is selected in meat */}
-            {formData.meat.includes("Other") && (
-              <label className="block mt-4">
-                <span className="font-bold">*Custom Meat:</span>
-                <input
-                  type="text"
-                  name="customMeat"
-                  value={formData.customMeat || ""}
-                  onChange={(e) =>
-                    setFormData({ ...formData, customMeat: e.target.value })
-                  }
-                  placeholder="Please specify other meat"
-                  className="border border-gray-300 px-4 py-2 rounded-md w-full"
-                />
-              </label>
-            )}
-
-            {/* Show customMeat field only if "Other" is selected in meat */}
-            {/* {formData.meat.includes("Other") && (
-              <label className="block">
-                <span className="font-bold">*Custom Meat:</span>
-                <input
-                  type="text"
-                  name="customMeat"
-                  value={formData.customMeat}
-                  onChange={handleChange}
-                  placeholder="Please specify other meat"
-                  className="border border-gray-300 px-4 py-2 rounded-md w-full"
-                />
-              </label>
-            )} */}
-          </>
+        {/* Custom Meat Input if "Other" is selected */}
+        {formik.values.meat.includes("Other") && (
+          <label className="block mt-4">
+            <span className="font-bold">*Custom Meat:</span>
+            <input
+              type="text"
+              name="customMeat"
+              value={formik.values.customMeat}
+              onChange={formik.handleChange}
+              placeholder="Please specify other meat"
+              className="border border-gray-300 px-4 py-2 rounded-md w-full"
+            />
+          </label>
         )}
 
         {/* Fruits */}
@@ -1629,31 +1944,30 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
-                  formData.fruits.includes(item)
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.fruits.includes(item)
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                  }`}
                 onClick={() => toggleSelection("fruits", item)}
               >
                 {item}
               </button>
             ))}
           </div>
-          {errors.fruits && (
-            <span className="text-red-500">{errors.fruits}</span>
+          {formik.errors.fruits && (
+            <span className="text-red-500">{formik.errors.fruits}</span>
           )}
         </label>
 
         {/* Custom Fruits */}
-        {formData.fruits.includes("Other") && (
+        {formik.values.fruits.includes("Other") && (
           <label className="block">
             <span className="font-bold">*Custom Fruits:</span>
             <input
               type="text"
               name="customFruits"
-              value={formData.customFruits}
-              onChange={handleChange}
+              value={formik.values.customFruits}
+              onChange={formik.handleChange}
               placeholder="Please specify other fruits"
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             />
@@ -1661,13 +1975,13 @@ const Survey = () => {
         )}
 
         {/* Fruit Unit Per Day */}
-        {!formData.fruits.includes("None") && (
+        {!formik.values.fruits.includes("None") && (
           <label className="block">
             <span className="font-bold">How many fruits per day: </span>
             <select
               name="fruitUnitPerDay"
-              value={formData.fruitUnitPerDay}
-              onChange={handleChange}
+              value={formik.values.fruitUnitPerDay}
+              onChange={formik.handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
@@ -1684,8 +1998,8 @@ const Survey = () => {
               <option value="Between 9-10">Between 9-10</option>
               <option value="Over 10">Over 10</option>
             </select>
-            {errors.fruitUnitPerDay && (
-              <span className="text-red-500">{errors.fruitUnitPerDay}</span>
+            {formik.errors.fruitUnitPerDay && (
+              <span className="text-red-500">{formik.errors.fruitUnitPerDay}</span>
             )}
           </label>
         )}
@@ -1720,30 +2034,29 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
-                  formData.vegetables.includes(item)
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.vegetables.includes(item)
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                  }`}
                 onClick={() => toggleSelection("vegetables", item)}
               >
                 {item}
               </button>
             ))}
           </div>
-          {errors.vegetables && (
-            <span className="text-red-500">{errors.vegetables}</span>
+          {formik.errors.vegetables && (
+            <span className="text-red-500">{formik.errors.vegetables}</span>
           )}
         </label>
 
         {/* Custom Vegetabels */}
-        {formData.vegetables.includes("Other") && (
+        {formik.values.vegetables.includes("Other") && (
           <label className="block">
             <span className="font-bold">*Custom Vegetables:</span>
             <input
               type="text"
               name="customVegetables"
-              value={formData.customVegetables}
+              value={formik.values.customVegetables}
               onChange={handleChange}
               placeholder="Please specify other vegetables"
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
@@ -1752,13 +2065,13 @@ const Survey = () => {
         )}
 
         {/* Vegetable Unit Per Day */}
-        {formData.vegetables[0] !== "None" && (
+        {formik.values.vegetables[0] !== "None" && (
           <label className="block">
             <span className="font-bold">How many vegetables per day: </span>
             <select
               name="vegetableUnitPerDay"
-              value={formData.vegetableUnitPerDay}
-              onChange={handleChange}
+              value={formik.values.vegetableUnitPerDay}
+              onChange={formik.handleChange}
               className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
@@ -1775,8 +2088,8 @@ const Survey = () => {
               <option value="Between 9-10">Between 9-10</option>
               <option value="Over 10">Over 10</option>
             </select>
-            {errors.vegetableUnitPerDay && (
-              <span className="text-red-500">{errors.vegetableUnitPerDay}</span>
+            {formik.errors.vegetableUnitPerDay && (
+              <span className="text-red-500">{formik.errors.vegetableUnitPerDay}</span>
             )}
           </label>
         )}
@@ -1813,11 +2126,10 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
-                  formData.fish.includes(item)
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.fish.includes(item)
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                  }`}
                 onClick={() => toggleSelection("fish", item)}
               >
                 {item}
@@ -1827,13 +2139,13 @@ const Survey = () => {
         </label>
 
         {/* Custom Fish */}
-        {formData.fish.includes("Other") && (
+        {formik.values.fish.includes("Other") && (
           <label className="block">
             <span className="font-bold">*Custom Fish:</span>
             <input
               type="text"
               name="customFish"
-              value={formData.customFish}
+              value={formik.values.customFish}
               onChange={handleChange}
               placeholder="Please specify other fish"
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
@@ -1874,11 +2186,10 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
-                  formData.dairy.includes(item)
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.dairy.includes(item)
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                  }`}
                 onClick={() => toggleSelection("dairy", item)}
               >
                 {item}
@@ -1888,13 +2199,13 @@ const Survey = () => {
         </label>
 
         {/* Custom Dairy */}
-        {formData.dairy.includes("Other") && (
+        {formik.values.dairy.includes("Other") && (
           <label className="block">
             <span className="font-bold">*Custom Dairy:</span>
             <input
               type="text"
               name="customDairy"
-              value={formData.customDairy}
+              value={formik.values.customDairy}
               onChange={handleChange}
               placeholder="Please specify other dairy"
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
@@ -1930,11 +2241,10 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
-                  formData.oil.includes(item)
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.oil.includes(item)
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                  }`}
                 onClick={() => toggleSelection("oil", item)}
               >
                 {item}
@@ -1944,13 +2254,13 @@ const Survey = () => {
         </label>
 
         {/* Custom Oil */}
-        {formData.oil.includes("Other") && (
+        {formik.values.oil.includes("Other") && (
           <label className="block">
             <span className="font-bold">*Custom Oil:</span>
             <input
               type="text"
               name="customOil"
-              value={formData.customOil}
+              value={formik.values.customOil}
               onChange={handleChange}
               placeholder="Please specify other dairy"
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
@@ -1973,12 +2283,11 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center ${
-                  formData.homeMade.some((i) => i.name === item)
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
-                }`}
-                onClick={() => toggleSelectionn("homeMade", item)}
+                className={`px-4 py-2 border rounded-md text-center ${formik.values.homeMade.some((i) => i.name === item)
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
+                  }`}
+                onClick={() => toggleSelectionn("homeMade", item, formik.setFieldValue, formik.values)}
               >
                 {item}
               </button>
@@ -1988,41 +2297,37 @@ const Survey = () => {
 
         {/* Custom HomeMade */}
 
-        {formData.homeMade.map((selectedItem) => (
+        {formik.values.homeMade.map((selectedItem) => (
           <div key={selectedItem.name} className="mt-4">
             <h4 className="font-semibold">{selectedItem.name}</h4>
 
+            {/* Custom input if "Other" is selected */}
             {selectedItem.name === "Other" && (
               <input
                 type="text"
                 placeholder="Custom Item"
                 className="border p-2 rounded-md w-full"
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    customHomeMade: {
-                      ...prev.customHomeMade,
-                      name: e.target.value,
-                    },
-                  }))
-                }
+                value={formik.values.customHomeMade || ""}
+                onChange={(e) => formik.setFieldValue("customHomeMade", e.target.value)}
               />
             )}
 
+            {/* Consumption Selection */}
             {selectedItem.name !== "None" && (
               <>
-                {/* Consumption Selection */}
                 <label className="block mt-2">
                   <span className="text-gray-700">Consumption</span>
                   <select
                     className="border p-2 rounded-md w-full"
                     value={selectedItem.consumption}
                     onChange={(e) =>
-                      handleInputChange(
+                      formik.setFieldValue(
                         "homeMade",
-                        selectedItem.name,
-                        "consumption",
-                        e.target.value
+                        formik.values.homeMade.map((item) =>
+                          item.name === selectedItem.name
+                            ? { ...item, consumption: e.target.value }
+                            : item
+                        )
                       )
                     }
                   >
@@ -2042,11 +2347,13 @@ const Survey = () => {
                     className="border p-2 rounded-md w-full"
                     value={selectedItem.budget}
                     onChange={(e) =>
-                      handleInputChange(
+                      formik.setFieldValue(
                         "homeMade",
-                        selectedItem.name,
-                        "budget",
-                        e.target.value
+                        formik.values.homeMade.map((item) =>
+                          item.name === selectedItem.name
+                            ? { ...item, budget: e.target.value }
+                            : item
+                        )
                       )
                     }
                   >
@@ -2074,12 +2381,11 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center ${
-                  formData.ordered.some((i) => i.name === item)
+                className={`px-4 py-2 border rounded-md text-center ${formik.values.ordered.some((i) => i.name === item)
                     ? "bg-blue-500 text-white"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
-                }`}
-                onClick={() => toggleSelectionn("ordered", item)}
+                  }`}
+                onClick={() => toggleSelectionn("ordered", item, formik.setFieldValue, formik.values)}
               >
                 {item}
               </button>
@@ -2088,41 +2394,38 @@ const Survey = () => {
         </label>
 
         {/* Custom Ordered */}
-        {formData.ordered.map((selectedItem) => (
+        {formik.values.ordered.map((selectedItem) => (
           <div key={selectedItem.name} className="mt-4">
             <h4 className="font-semibold">{selectedItem.name}</h4>
 
+            {/* Custom input if "Other" is selected */}
             {selectedItem.name === "Other" && (
               <input
                 type="text"
                 placeholder="Custom Item"
                 className="border p-2 rounded-md w-full"
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    customOrdered: {
-                      ...prev.customOrdered,
-                      name: e.target.value,
-                    },
-                  }))
-                }
+                value={formik.values.customOrdered || ""}
+                onChange={(e) => formik.setFieldValue("customOrdered", e.target.value)}
               />
             )}
 
+
+            {/* Consumption Selection */}
             {selectedItem.name !== "None" && (
               <>
-                {/* Consumption Selection */}
                 <label className="block mt-2">
                   <span className="text-gray-700">Consumption</span>
                   <select
                     className="border p-2 rounded-md w-full"
                     value={selectedItem.consumption}
                     onChange={(e) =>
-                      handleInputChange(
+                      formik.setFieldValue(
                         "ordered",
-                        selectedItem.name,
-                        "consumption",
-                        e.target.value
+                        formik.values.ordered.map((item) =>
+                          item.name === selectedItem.name
+                            ? { ...item, consumption: e.target.value }
+                            : item
+                        )
                       )
                     }
                   >
@@ -2142,11 +2445,13 @@ const Survey = () => {
                     className="border p-2 rounded-md w-full"
                     value={selectedItem.budget}
                     onChange={(e) =>
-                      handleInputChange(
+                      formik.setFieldValue(
                         "ordered",
-                        selectedItem.name,
-                        "budget",
-                        e.target.value
+                        formik.values.ordered.map((item) =>
+                          item.name === selectedItem.name
+                            ? { ...item, budget: e.target.value }
+                            : item
+                        )
                       )
                     }
                   >
@@ -2191,31 +2496,30 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
-                  formData.medicalHistory.includes(item)
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.medicalHistory.includes(item)
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                  }`}
                 onClick={() => toggleSelection("medicalHistory", item)}
               >
                 {item}
               </button>
             ))}
           </div>
-          {errors.medicalHistory && (
-            <span className="text-red-500">{errors.medicalHistory}</span>
+          {formik.errors.medicalHistory && (
+            <span className="text-red-500">{formik.errors.medicalHistory}</span>
           )}
         </label>
 
         {/* Custom Mdical History */}
-        {formData.medicalHistory.includes("Other") && (
+        {formik.values.medicalHistory.includes("Other") && (
           <label className="block">
             <span className="font-bold">*Custom Medical History:</span>
             <input
               type="text"
               name="customMedicalHistory"
-              value={formData.customMedicalHistory}
-              onChange={handleChange}
+              value={formik.values.customMedicalHistory}
+              onChange={formik.handleChange}
               placeholder="Please specify other dairy"
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             />
@@ -2229,8 +2533,8 @@ const Survey = () => {
           <input
             type="checkbox"
             name="traditionalEatingHabits"
-            checked={formData.traditionalEatingHabits}
-            onChange={handleChange}
+            checked={formik.values.traditionalEatingHabits}
+            onChange={formik.handleChange}
             className="mr-2"
           />
           Traditional Eating Habits
@@ -2241,15 +2545,15 @@ const Survey = () => {
           <input
             type="checkbox"
             name="newEatingHabits"
-            checked={formData.newEatingHabits}
-            onChange={handleChange}
+            checked={formik.values.newEatingHabits}
+            onChange={formik.handleChange}
             className="mr-2"
           />
           New Eating Habits
         </label>
 
-        {errors.eatingHabits && (
-          <span className="text-red-500">{errors.eatingHabits}</span>
+        {formik.errors.eatingHabits && (
+          <span className="text-red-500">{formik.errors.eatingHabits}</span>
         )}
 
         <h3 className="text-lg font-semibold mt-4">Do you practice sports?</h3>
@@ -2259,8 +2563,8 @@ const Survey = () => {
             type="radio"
             name="physicalActivity"
             value="yes"
-            checked={formData.physicalActivity === "yes"}
-            onChange={handleChange}
+            checked={formik.values.physicalActivity === "yes"}
+            onChange={formik.handleChange}
             className="mr-2"
           />
           Yes
@@ -2270,8 +2574,8 @@ const Survey = () => {
             type="radio"
             name="physicalActivity"
             value="no"
-            checked={formData.physicalActivity === "no"}
-            onChange={handleChange}
+            checked={formik.values.physicalActivity === "no"}
+            onChange={formik.handleChange}
             className="mr-2"
           />
           No
