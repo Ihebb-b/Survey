@@ -65,6 +65,36 @@ const Survey = () => {
     "Other",
   ];
 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const meatOptions = [
+    "Beef",
+    "Chicken",
+    "Pork",
+    "Lamb",
+    "Turkey",
+    "Duck",
+    "Goose",
+    "Venison",
+    "Partridge",
+    "Other",
+  ];
+
+  const toggleDropdown = () => setDropdownOpen((prev) => !prev);
+
+  const handleSelect = (item) => {
+    if (formData.meat.includes(item)) {
+      setFormData({
+        ...formData,
+        meat: formData.meat.filter((meat) => meat !== item),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        meat: [...formData.meat, item],
+      });
+    }
+  };
   const [formData, setFormData] = useState({
     name: "",
     gender: "",
@@ -1460,7 +1490,7 @@ const Survey = () => {
         {/* Meat */}
         {!["Vegan", "Vegetarian", "Fruitarian"].includes(formData.diet) && (
           <>
-            <label className="block">
+            {/* <label className="block">
               <span className="font-bold mb-2 block">Meat:</span>
               <div
                 className="grid grid-cols-2 gap-2 h-40 overflow-y-auto border p-2 rounded-md"
@@ -1492,10 +1522,68 @@ const Survey = () => {
                   </button>
                 ))}
               </div>
-            </label>
+            </label> */}
+
+            {/* Meat Multi-Select Dropdown */}
+            {!["Vegan", "Vegetarian", "Fruitarian"].includes(formData.diet) && (
+              <label className="block mt-4">
+                <span className="font-bold mb-2 block">Meat:</span>
+                <div className="relative">
+                  <div
+                    className="border border-gray-300 p-2 rounded-md cursor-pointer"
+                    onClick={toggleDropdown}
+                  >
+                    {/* Display selected items */}
+                    {formData.meat.length > 0 ? (
+                      formData.meat.join(", ")
+                    ) : (
+                      <span className="text-gray-500">Select Meat</span>
+                    )}
+                  </div>
+
+                  {/* Dropdown menu */}
+                  {dropdownOpen && (
+                    <div className="absolute z-10 mt-1 w-full border border-gray-300 rounded-md bg-white max-h-40 overflow-y-auto">
+                      {meatOptions.map((item) => (
+                        <div
+                          key={item}
+                          className="p-2 cursor-pointer hover:bg-gray-200 flex items-center"
+                          onClick={() => handleSelect(item)}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.meat.includes(item)}
+                            readOnly
+                            className="mr-2"
+                          />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </label>
+            )}
 
             {/* Show customMeat field only if "Other" is selected in meat */}
             {formData.meat.includes("Other") && (
+              <label className="block mt-4">
+                <span className="font-bold">*Custom Meat:</span>
+                <input
+                  type="text"
+                  name="customMeat"
+                  value={formData.customMeat || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, customMeat: e.target.value })
+                  }
+                  placeholder="Please specify other meat"
+                  className="border border-gray-300 px-4 py-2 rounded-md w-full"
+                />
+              </label>
+            )}
+
+            {/* Show customMeat field only if "Other" is selected in meat */}
+            {/* {formData.meat.includes("Other") && (
               <label className="block">
                 <span className="font-bold">*Custom Meat:</span>
                 <input
@@ -1507,7 +1595,7 @@ const Survey = () => {
                   className="border border-gray-300 px-4 py-2 rounded-md w-full"
                 />
               </label>
-            )}
+            )} */}
           </>
         )}
 
