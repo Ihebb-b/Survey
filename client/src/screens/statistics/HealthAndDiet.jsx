@@ -23,7 +23,7 @@ const HealthAndDiet = () => {
         Health Diet Statistics
       </h1>
 
-      <div className="container mx-auto px-4 flex flex-wrap gap-6 justify-center">
+      <div className="container mx-auto px-4 flex flex-wrap gap-6 justify-center relative">
         {/* Gender Statistics Chart */}
         <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4 transform transition duration-300 hover:scale-105">
           <DietDistributionChart />
@@ -34,29 +34,31 @@ const HealthAndDiet = () => {
           <VegetarianVeganPercentageChart />
         </div>
 
-        {userInfo ? (
-          <>
+        {/* Conditionally blurred charts */}
+        <div className={`w-full flex flex-wrap gap-6 justify-center ${!userInfo && 'blur-md'}`}>
 
-        {/* Average Fruit Intake Chart Chart */}
-        <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4 transform transition duration-300 hover:scale-105">
-          <AverageFruitIntakeChart />
+
+          {/* Average Fruit Intake Chart Chart */}
+          <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4 transform transition duration-300 hover:scale-105">
+            <AverageFruitIntakeChart />
+          </div>
+
+          {/* Average Vegetable Intake Chart */}
+          <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4 transform transition duration-300 hover:scale-105">
+            <AverageVegetableIntakeChart />
+          </div>
+
+
+          {/* Physical Activity Ratio Chart */}
+          <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4 transform transition duration-300 hover:scale-105">
+            <PhysicalActivityRatioChart />
+          </div>
         </div>
 
-        {/* Average Vegetable Intake Chart */}
-        <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4 transform transition duration-300 hover:scale-105">
-          <AverageVegetableIntakeChart />
-        </div>
-
-
-        {/* Physical Activity Ratio Chart */}
-        <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg rounded-lg p-4 transform transition duration-300 hover:scale-105">
-          <PhysicalActivityRatioChart />
-        </div>  
-
-        </>
-        ) : (
-          <div className="w-full md:w-1/2 lg:w-1/3 relative flex items-center justify-center bg-white shadow-lg rounded-lg p-4">
-            <div className="absolute inset-0 bg-white bg-opacity-40 backdrop-blur-md rounded-lg flex flex-col items-center justify-center p-6">
+        {/* Sign-in overlay for locked charts */}
+        {!userInfo && (
+          <div className="absolute inset-0 flex items-center justify-center bg-opacity-50 rounded-lg">
+            <div className="w-full md:w-1/2 lg:w-1/3 bg-white/70 backdrop-blur-lg shadow-lg rounded-lg p-6 flex flex-col items-center justify-center">
               <p className="text-lg text-gray-700 text-center mb-4">
                 Sign in to view more statistics
               </p>

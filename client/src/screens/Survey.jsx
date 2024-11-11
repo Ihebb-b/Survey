@@ -99,93 +99,93 @@ const Survey = () => {
     }
   };
 
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().trim().required("Name is required."),
-    gender: Yup.string().required("Gender is required."),
-    age: Yup.string().required("Age is required."),
-    state: Yup.string().required("State is required."),
-    ville: Yup.string().required("Ville is required."),
-    country: Yup.string().required("Country is required."),
-    height: Yup.string().required("Height is required."),
-    weight: Yup.string().required("Weight is required."),
-    education: Yup.string().required("Education is required."),
-    occupation: Yup.string().required("Occupation is required."),
-    salary: Yup.string()
-      .when("occupation", {
-        is: (occupation) => !["Student", "Unemployed", "Housewife"].includes(occupation),
-        then: Yup.string().required("Salary is required."),
-      }),
-    socialState: Yup.string().required("Social State is required."),
-    children: Yup.string().when("socialState", {
-      is: (socialState) => !["Prefer not to say", "Single"].includes(socialState),
-      then: Yup.string().required("Children field is required."),
-    }),
-    childrenNumber: Yup.string().when("children", {
-      is: "Yes",
-      then: Yup.string().required("Children Number is required."),
-    }),
-    diet: Yup.string().required("Diet is required."),
-    fruits: Yup.array()
-      .min(1, "Please select at least one fruit.")
-      .required("Please select at least one fruit."),
-    fruitUnitPerDay: Yup.string().when("fruits", {
-      is: (fruits) => fruits && !fruits.includes("None"),
-      then: Yup.string().required("Please specify fruit units per day."),
-    }),
-    vegetables: Yup.array()
-      .min(1, "Please select at least one vegetable.")
-      .required("Please select at least one vegetable."),
-    vegetableUnitPerDay: Yup.string().when("vegetables", {
-      is: (vegetables) => vegetables && !vegetables.includes("None"),
-      then: Yup.string().required("Please specify vegetable units per day."),
-    }),
-    homeMade: Yup.array().of(
-      Yup.object().shape({
-        name: Yup.string(),
-        consumption: Yup.string().when("name", {
-          is: (name) => name !== "None",
-          then: Yup.string().required("Consumption is required for selected home-made item."),
-        }),
-        budget: Yup.string().when("name", {
-          is: (name) => name !== "None",
-          then: Yup.string().required("Budget is required for selected home-made item."),
-        }),
-      })
-    ),
-    ordered: Yup.array().of(
-      Yup.object().shape({
-        name: Yup.string(),
-        consumption: Yup.string().when("name", {
-          is: (name) => name !== "None",
-          then: Yup.string().required("Consumption is required for selected ordered item."),
-        }),
-        budget: Yup.string().when("name", {
-          is: (name) => name !== "None",
-          then: Yup.string().required("Budget is required for selected ordered item."),
-        }),
-      })
-    ),
-    customHomeMade: Yup.object().shape({
-      name: Yup.string().when("homeMade", {
-        is: (homeMade) => homeMade.some((item) => item.name === "Other"),
-        then: Yup.string().required("Please specify your custom home-made food."),
-      }),
-    }),
-    customOrdered: Yup.object().shape({
-      name: Yup.string().when("ordered", {
-        is: (ordered) => ordered.some((item) => item.name === "Other"),
-        then: Yup.string().required("Please specify your custom ordered food."),
-      }),
-    }),
-    medicalHistory: Yup.array()
-      .min(1, "Please select at least one item.")
-      .required("Please select at least one item."),
-    eatingHabits: Yup.boolean().test(
-      "eating-habits-test",
-      "You must select at least one option from Traditional or New Eating Habits.",
-      (value, context) => context.parent.traditionalEatingHabits || context.parent.newEatingHabits
-    ),
-  });
+  // const validationSchema = Yup.object().shape({
+  //   name: Yup.string().trim().required("Name is required."),
+  //   gender: Yup.string().required("Gender is required."),
+  //   age: Yup.string().required("Age is required."),
+  //   state: Yup.string().required("State is required."),
+  //   ville: Yup.string().required("Ville is required."),
+  //   country: Yup.string().required("Country is required."),
+  //   height: Yup.string().required("Height is required."),
+  //   weight: Yup.string().required("Weight is required."),
+  //   education: Yup.string().required("Education is required."),
+  //   occupation: Yup.string().required("Occupation is required."),
+  //   salary: Yup.string()
+  //     .when("occupation", {
+  //       is: (occupation) => !["Student", "Unemployed", "Housewife"].includes(occupation),
+  //       then: Yup.string().required("Salary is required."),
+  //     }),
+  //   socialState: Yup.string().required("Social State is required."),
+  //   children: Yup.string().when("socialState", {
+  //     is: (socialState) => !["Prefer not to say", "Single"].includes(socialState),
+  //     then: Yup.string().required("Children field is required."),
+  //   }),
+  //   childrenNumber: Yup.string().when("children", {
+  //     is: "Yes",
+  //     then: Yup.string().required("Children Number is required."),
+  //   }),
+  //   diet: Yup.string().required("Diet is required."),
+  //   fruits: Yup.array()
+  //     .min(1, "Please select at least one fruit.")
+  //     .required("Please select at least one fruit."),
+  //   fruitUnitPerDay: Yup.string().when("fruits", {
+  //     is: (fruits) => fruits && !fruits.includes("None"),
+  //     then: Yup.string().required("Please specify fruit units per day."),
+  //   }),
+  //   vegetables: Yup.array()
+  //     .min(1, "Please select at least one vegetable.")
+  //     .required("Please select at least one vegetable."),
+  //   vegetableUnitPerDay: Yup.string().when("vegetables", {
+  //     is: (vegetables) => vegetables && !vegetables.includes("None"),
+  //     then: Yup.string().required("Please specify vegetable units per day."),
+  //   }),
+  //   homeMade: Yup.array().of(
+  //     Yup.object().shape({
+  //       name: Yup.string(),
+  //       consumption: Yup.string().when("name", {
+  //         is: (name) => name !== "None",
+  //         then: Yup.string().required("Consumption is required for selected home-made item."),
+  //       }),
+  //       budget: Yup.string().when("name", {
+  //         is: (name) => name !== "None",
+  //         then: Yup.string().required("Budget is required for selected home-made item."),
+  //       }),
+  //     })
+  //   ),
+  //   ordered: Yup.array().of(
+  //     Yup.object().shape({
+  //       name: Yup.string(),
+  //       consumption: Yup.string().when("name", {
+  //         is: (name) => name !== "None",
+  //         then: Yup.string().required("Consumption is required for selected ordered item."),
+  //       }),
+  //       budget: Yup.string().when("name", {
+  //         is: (name) => name !== "None",
+  //         then: Yup.string().required("Budget is required for selected ordered item."),
+  //       }),
+  //     })
+  //   ),
+  //   customHomeMade: Yup.object().shape({
+  //     name: Yup.string().when("homeMade", {
+  //       is: (homeMade) => homeMade.some((item) => item.name === "Other"),
+  //       then: Yup.string().required("Please specify your custom home-made food."),
+  //     }),
+  //   }),
+  //   customOrdered: Yup.object().shape({
+  //     name: Yup.string().when("ordered", {
+  //       is: (ordered) => ordered.some((item) => item.name === "Other"),
+  //       then: Yup.string().required("Please specify your custom ordered food."),
+  //     }),
+  //   }),
+  //   medicalHistory: Yup.array()
+  //     .min(1, "Please select at least one item.")
+  //     .required("Please select at least one item."),
+  //   eatingHabits: Yup.boolean().test(
+  //     "eating-habits-test",
+  //     "You must select at least one option from Traditional or New Eating Habits.",
+  //     (value, context) => context.parent.traditionalEatingHabits || context.parent.newEatingHabits
+  //   ),
+  // });
 
   const formik = useFormik({
     initialValues: {
@@ -316,11 +316,11 @@ const Survey = () => {
         return { diet: "Diet is required" };
       }
 
-      if (!values.fruits || values.fruits.length === 0) {
+      if ( values.fruits.length === 0) {
         errors.fruits = "Please select at least one fruit.";
       }
 
-      if (!values.vegetables || values.vegetables.length === 0) {
+      if ( values.vegetables.length === 0) {
         errors.vegetables = "Please select at least one vegetable.";
       }
 

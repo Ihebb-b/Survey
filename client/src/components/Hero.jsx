@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetAllSuggestionsQuery } from "../slices/searchApiSlice";
 import { FaSearch, FaTimes } from "react-icons/fa";
+import backgroundImage from '../assets/background.jpg';
+
 
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,9 +62,14 @@ const Hero = () => {
   if (error) return <p>Error loading suggestions: {error.message}</p>;
 
   return (
-    <div className="py-12 bg-gray-100">
-      <div className="container mx-auto flex justify-center">
-        <div className="p-10 bg-white shadow-xl rounded-lg w-full md:w-2/3 lg:w-2/3">
+    <div className="py-12 bg-gray-100 rounded-lg" style={{
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    }}
+    >
+      <div className="container mx-auto flex justify-center"  >
+        <div className="p-10 bg-white/60 backdrop-blur-sm shadow-xl rounded-lg w-full md:w-2/3 lg:w-2/3">
           <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">
             Statistics Observatory
           </h1>
@@ -77,7 +84,7 @@ const Hero = () => {
               <input
                 ref={inputRef}
                 type="text"
-                className="w-full py-2 pl-10 pr-4 border border-gray-300 shadow-sm focus:outline-none focus:ring focus:ring-gray-500"
+                className="w-full py-2 pl-10 pr-4 border border-gray-300 shadow-sm rounded-lg focus:outline-none focus:ring focus:ring-gray-500"
                 placeholder="Search statistics..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

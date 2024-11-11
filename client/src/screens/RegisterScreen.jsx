@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import { useRegisterMutation } from "../slices/userApiSlice";
 import { setCredentials } from "../slices/authSlice";
+import backgroundImage from '../assets/background3.jpg';
+
 
 const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -43,7 +45,11 @@ const RegisterScreen = () => {
   };
 
   return (
-    <div className="py-3 bg-gray-100 min-h-screen">
+    <div className="py-3 bg-gray-100 min-h-screen rounded-lg" style={{
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    }}>
 
 
     <FormContainer>
