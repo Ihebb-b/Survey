@@ -5,7 +5,6 @@ import { useCreateSurveyMutation } from "../slices/surveyApiSlice";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-
 const Survey = () => {
   const homeMadeOptions = [
     //"None",
@@ -243,149 +242,140 @@ const Survey = () => {
       physicalActivity: "",
     },
     validate: (values) => {
+
+      const errors = {};
+
       if (!values.name) {
-        return { name: "Name is required" };
-      }
+      errors.name = "Name is required";
+    }
 
-      if (!values.gender) {
-        errors.gender = "Gender is required";
-      }
+    if (!values.gender) {
+      errors.gender = "Gender is required";
+    }
 
-      if (!values.age) {
-        return { age: "Age is required" };
-      }
+    if (!values.age) {
+      errors.age = "Age is required";
+    }
 
-      if (!values.state) {
-        return { state: "State is required" };
-      }
-      if (!values.ville) {
-        return { ville: "Ville is required" };
-      }
-      if (!values.country) {
-        return { country: "Country is required" };
-      }
-      if (!values.height) {
-        return {
-          height:
-            "Height is required"
+    if (!values.state) {
+      errors.state = "State is required";
+    }
+    if (!values.ville) {
+      errors.ville = "Ville is required";
+    }
+    if (!values.country) {
+      errors.country = "Country is required";
+    }
+    if (!values.height) {
+      errors.height = "Height is required";
+    }
+
+    if (!values.weight) {
+      errors.weight = "Weight is required";
+    }
+
+    if (!values.education) {
+      errors.education = "Education is required";
+    }
+
+    if (!values.occupation) {
+      errors.occupation = "Occupation is required";
+    }
+
+    const occupationsWithoutSalary = ["Student", "Unemployed", "Housewife"];
+    if (
+      values.occupation &&
+      !occupationsWithoutSalary.includes(values.occupation) &&
+      !values.salary
+    ) {
+      errors.salary = "Salary is required";
+    }
+
+    if (!values.socialState) {
+      errors.socialState = "Social state is required";
+    }
+
+    if (
+      values.children === "" &&
+      values.socialState !== "Prefer not to say" &&
+      values.socialState !== "Single"
+    ) {
+      errors.children = "Children is required";
+    }
+
+    if (values.childrenNumber === "Yes" && !values.childrenNumber) {
+      errors.childrenNumber = "Children number is required";
+    }
+
+    if (!values.diet) {
+      errors.diet = "Diet is required";
+    }
+
+    if (values.fruits.length === 0) {
+      errors.fruits = "Please select at least one fruit.";
+    }
+
+    if (values.vegetables.length === 0) {
+      errors.vegetables = "Please select at least one vegetable.";
+    }
+
+    if (!values.fruits.includes("None") && !values.fruitUnitPerDay) {
+      errors.fruitUnitPerDay = "Please enter the number of fruits per day.";
+    }
+
+    if (!values.vegetables.includes("None") && !values.vegetableUnitPerDay) {
+      errors.vegetableUnitPerDay = "Please enter the number of vegetables per day.";
+    }
+
+    if (!values.homeMade.length)
+      errors.homeMade = "Please select at least one home-made food.";
+
+    if (!values.ordered.length)
+      errors.ordered = "Please select at least one ordered food.";
+
+    values.homeMade.forEach((item, index) => {
+      if (item.name !== "None") {
+        if (!item.consumption) {
+          errors[`homeMadeConsumption${index}`] = "Consumption is required for home-made food.";
         }
-      };
-
-      if (!values.weight) {
-        return { weight: "Weight is required" };
-      }
-
-      if (!values.education) {
-        return { education: "Education is required" };
-      };
-
-      if (!values.occupation) {
-        return { occupation: "Occupation is required" };
-      }
-
-      const occupationsWithoutSalary = ["Student", "Unemployed", "Housewife"];
-
-      if (values.occupation && occupationsWithoutSalary.includes(values.occupation) && !values.salary) {
-        return { salary: "Salary is required" };
-      }
-
-      // if (!values.salary) {
-      //   return { salary: "Salary is required" };
-      // }
-
-      // if (!values.currency) {
-      //   return { currency: "Currency is required" };
-      // } 
-
-      if (!values.socialState) {
-        return { socialState: "Social state is required" };
-      }
-
-      if (values.children === "" &&
-        values.socialState !== "Prefer not to say" &&
-        values.socialState !== "Single"
-      ) {
-        return { children: "Children is required" };
-      }
-
-      if (values.childrenNumber === "Yes" && !values.childrenNumber) {
-        return { childrenNumber: "Children number is required" };
-      }
-
-      if (!values.diet) {
-        return { diet: "Diet is required" };
-      }
-
-      if ( values.fruits.length === 0) {
-        errors.fruits = "Please select at least one fruit.";
-      }
-
-      if ( values.vegetables.length === 0) {
-        errors.vegetables = "Please select at least one vegetable.";
-      }
-
-      if (!values.fruits.includes('None') && !values.fruitUnitPerDay) {
-        errors.fruitUnitPerDay = "Please enter the number of fruits per day.";
-      }
-
-      if (!values.vegetables.includes('None') && !values.vegetableUnitPerDay) {
-        errors.vegetableUnitPerDay = "Please enter the number of vegetables per day.";
-      }
-
-      if (!values.homeMade.length)
-        errors.homeMade = "Please select at least one home-made food.";
-
-      if (!values.ordered.length)
-        errors.ordered = "Please select at least one ordered food.";
-
-      values.homeMade.forEach((item, index) => {
-
-        if (!item.name !== "None") {
-          if (!item.consumption) {
-            errors[`homeMadeConsumption${index}`] =
-              "Consumption is required for home-made food.";
-          }
-
-          if (!item.budget) {
-            errors[`homeMadeBudget${index}`] =
-              "Please enter the budget for home-made food.";
-          }
+        if (!item.budget) {
+          errors[`homeMadeBudget${index}`] = "Please enter the budget for home-made food.";
         }
-      });
+      }
+    });
 
-      values.ordered.forEach((item, index) => {
-        if (!item.name !== "None") {
-          if (!item.consumption) {
-            errors[`orderedConsumption${index}`] =
-              "Consumption is required for ordered food.";
-          }
-          if (!item.budget) {
-            errors[`orderedBudget${index}`] =
-              "Please enter the budget for ordered food.";
-          }
+    values.ordered.forEach((item, index) => {
+      if (item.name !== "None") {
+        if (!item.consumption) {
+          errors[`orderedConsumption${index}`] = "Consumption is required for ordered food.";
         }
-      });
-
-      if (values.homeMade.some((item) => item.name !== "Other") && !values.customMeat) {
-        errors.customMeat = "Please enter the custom meat.";
+        if (!item.budget) {
+          errors[`orderedBudget${index}`] = "Please enter the budget for ordered food.";
+        }
       }
+    });
 
-      if (values.ordered.some((item) => item.name !== "Other") && !values.customOrdered) {
-        errors.customOrdered = "Please enter the custom ordered food.";
-      }
+    if (!values.medicalHistory || values.medicalHistory.length === 0) {
+      errors.medicalHistory = "Please select at least one medical history.";
+    }
 
-      if (!values.medicalHistory || values.medicalHistory.length === 0) {
-        errors.medicalHistory = "Please select at least one medical history.";
-      }
+    if (!values.traditionalEatingHabits && !values.newEatingHabits) {
+      errors.eatingHabits = "Please select at least one eating habit.";
+    }
 
-      if (!values.traditionalEatingHabits && !values.newEatingHabits) {
-        errors.traditionalEatingHabits = "Please select at least one eating habits.";
-      }
-      return errors;
-    },
-    onSubmit: (values) => {
-      console.log(values);
-    },
+    return errors;
+  },
+  onSubmit: async (values) => {
+    console.log("Submitting form with values:", values);
+    try {
+      const res = await createSurvey(values).unwrap();
+      toast.success("Survey submitted successfully!");
+      setTimeout(() => navigate("/"), 2000);
+    } catch (err) {
+      console.error("Submission error:", err);
+      toast.error("Submission failed. Please check the errors and try again.");
+    }
+  },
   });
 
   // const [formData, setFormData] = useState({
@@ -1101,13 +1091,18 @@ const Survey = () => {
 
     if (itemIndex !== -1) {
       // Remove item if it's already selected
-      setFieldValue(category, currentItems.filter((i) => i.name !== item));
+      setFieldValue(
+        category,
+        currentItems.filter((i) => i.name !== item)
+      );
     } else {
       // Add new item with default properties
-      setFieldValue(category, [...currentItems, { name: item, consumption: "", budget: "" }]);
+      setFieldValue(category, [
+        ...currentItems,
+        { name: item, consumption: "", budget: "" },
+      ]);
     }
   };
-
 
   // const toggleSelectionn = (category, item) => {
   //   useFormik((prevData) => {
@@ -1167,7 +1162,9 @@ const Survey = () => {
     if (field === "vegetables") {
       formik.setFieldValue(
         "vegetableUnitPerDay",
-        updatedSelection.includes("None") ? "" : formik.values.vegetableUnitPerDay
+        updatedSelection.includes("None")
+          ? ""
+          : formik.values.vegetableUnitPerDay
       );
     }
 
@@ -1239,8 +1236,7 @@ const Survey = () => {
     //     field === "ordered" && updatedSelection.includes("Other")
     //       ? ""
     //       : prevData.customOrdered,
-    // };  
-
+    // };
   };
 
   // const validateForm = () => {
@@ -1347,14 +1343,14 @@ const Survey = () => {
   // };
 
   const handleSubmit = async (e) => {
-    console.log("Form Data:", formData);
-    e.preventDefault();
-    if (!validateForm()) {
-      setIsError(true);
-      return;
-    }
+    console.log("Form Data:", formik.values);
+    // e.preventDefault();
+    // if (!validateForm()) {
+    //   setIsError(true);
+    //   return;
+    // }
     try {
-      const res = await createSurvey(formData).unwrap();
+      const res = await createSurvey(formik.values).unwrap();
       toast.success("Survey submitted successfully!");
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
@@ -1383,9 +1379,12 @@ const Survey = () => {
             placeholder="Enter your name"
             value={formik.values.name}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           />
-          {formik.errors.name && <span className="text-red-500">{formik.errors.name}</span>}
+          {formik.touched.name && !formik.values.name && formik.errors.name && (
+            <span className="text-red-500">{formik.errors.name}</span>
+          )}
         </label>
 
         {/* Gender */}
@@ -1395,13 +1394,14 @@ const Survey = () => {
             name="gender"
             value={formik.values.gender}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
-          {formik.errors.gender && (
+          {formik.touched.gender && !formik.values.gender && formik.errors.gender && (
             <span className="text-red-500">{formik.errors.gender}</span>
           )}
         </label>
@@ -1413,6 +1413,7 @@ const Survey = () => {
             name="age"
             value={formik.values.age}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1426,7 +1427,9 @@ const Survey = () => {
             <option value="Between 60-69 years">Between 60-69 years</option>
             <option value="Over 70 years">Over 70 years</option>
           </select>
-          {formik.errors.age && <span className="text-red-500">{formik.errors.age}</span>}
+          {formik.touched.age && !formik.values.age && formik.errors.age && (
+            <span className="text-red-500">{formik.errors.age}</span>
+          )}
         </label>
 
         {/* State */}
@@ -1441,9 +1444,9 @@ const Survey = () => {
               formik.setFieldValue("ville", ""); // Reset 'ville' when 'state' changes
               formik.setFieldValue("country", ""); // Reset 'country' when 'state' changes
             }}
+            onBlur={formik.handleBlur}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
-
             <option value="">Select a State...</option>
             {Object.keys(stateOptions).map((state) => (
               <option key={state} value={state}>
@@ -1451,7 +1454,9 @@ const Survey = () => {
               </option>
             ))}
           </select>
-          {formik.errors.state && <span className="text-red-500">{formik.errors.state}</span>}
+          {formik.touched.state && !formik.values.state && formik.errors.state && (
+            <span className="text-red-500">{formik.errors.state}</span>
+          )}
         </label>
 
         {/* Ville */}
@@ -1461,6 +1466,7 @@ const Survey = () => {
             <select
               name="ville"
               value={formik.values.ville}
+              onBlur={formik.handleBlur}
               onChange={(e) => {
                 const selectedVille = e.target.value;
                 formik.setFieldValue("ville", selectedVille);
@@ -1475,7 +1481,9 @@ const Survey = () => {
                 </option>
               ))}
             </select>
-            {formik.errors.ville && <span className="text-red-500">{formik.errors.ville}</span>}
+            {formik.touched.ville && !formik.values.ville && formik.errors.ville && (
+              <span className="text-red-500">{formik.errors.ville}</span>
+            )}
           </label>
         )}
 
@@ -1487,6 +1495,7 @@ const Survey = () => {
               name="country"
               value={formik.values.country}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border border-gray-300 px-4 py-2 rounded-md w-full"
             >
               <option value="">Select a Country...</option>
@@ -1496,10 +1505,11 @@ const Survey = () => {
                 </option>
               ))}
             </select>
-            {formik.errors.country && <span className="text-red-500">{formik.errors.country}</span>}
+            {formik.touched.country && !formik.values.country && formik.errors.country && (
+              <span className="text-red-500">{formik.errors.country}</span>
+            )}
           </label>
         )}
-
 
         {/* Height */}
         <label className="block">
@@ -1508,6 +1518,7 @@ const Survey = () => {
             name="height"
             value={formik.values.height}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1518,7 +1529,7 @@ const Survey = () => {
             <option value="Between 190-200">Between 190-200</option>
             <option value="Over 200">Over 200</option>
           </select>
-          {formik.errors.height && (
+          {formik.touched.height && !formik.values.height && formik.errors.height && (
             <span className="text-red-500">{formik.errors.height}</span>
           )}
         </label>
@@ -1530,6 +1541,7 @@ const Survey = () => {
             name="weight"
             value={formik.values.weight}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="border border-gray-
           300 px-4 py-2 rounded-md w-full"
           >
@@ -1543,7 +1555,7 @@ const Survey = () => {
             <option value="Between 100-110">Between 100-110</option>
             <option value="Over 110">Over 110</option>
           </select>
-          {formik.errors.weight && (
+          {formik.touched.weight && !formik.values.weight && formik.errors.weight && (
             <span className="text-red-500">{formik.errors.weight}</span>
           )}
         </label>
@@ -1555,6 +1567,7 @@ const Survey = () => {
             name="education"
             value={formik.values.education}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1568,7 +1581,7 @@ const Survey = () => {
             <option value="Technical education">Technical education</option>
             <option value="Other">Other</option>
           </select>
-          {formik.errors.education && (
+          {formik.touched.education && !formik.values.education && formik.errors.education && (
             <span className="text-red-500">{formik.errors.education}</span>
           )}
         </label>
@@ -1595,6 +1608,7 @@ const Survey = () => {
             name="occupation"
             value={formik.values.occupation}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1605,7 +1619,7 @@ const Survey = () => {
             <option value="Housewife">House Wife</option>
             <option value="Other">Other</option>
           </select>
-          {formik.errors.occupation && (
+          {formik.touched.occupation && !formik.values.occupation && formik.errors.occupation && (
             <span className="text-red-500">{formik.errors.occupation}</span>
           )}
         </label>
@@ -1626,15 +1640,14 @@ const Survey = () => {
         )}
 
         {/* Salary */}
-        {formik.values.occupation !== "Student" &&
-          formik.values.occupation !== "Unemployed" &&
-          formik.values.occupation !== "Housewife" && (
+        {!["Student", "Unemployed", "Housewife"].includes(formik.values.occupation) && (
             <label className="block">
               <span className="font-bold">Salary:</span>
               <select
                 name="salary"
                 value={formik.values.salary}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 className="border border-gray-300 px-4 py-2 rounded-md w-full"
               >
                 <option value="">Select...</option>
@@ -1646,39 +1659,40 @@ const Survey = () => {
                 <option value="Between 4000-5000">Between 4000-5000</option>
                 <option value="Over 5000">Over 5000</option>
               </select>
-              {formik.errors.salary && (
+              {formik.touched.salary && !formik.values.salary && formik.errors.salary && (
                 <span className="text-red-500">{formik.errors.salary}</span>
               )}
             </label>
           )}
 
         {/* Currency */}
-        {formik.values.salary && formik.values.salary !== "Prefer not to say" && (
-          <label className="block">
-            <span className="font-bold"> Currency: </span>
-            <select
-              name="currency"
-              value={formik.values.currency}
-              onChange={formik.handleChange}
-              className="border border-gray-300 px-4 py-2 rounded-md"
-            >
-              <option value="">Select...</option>
-              <option value="TND">TND</option>
-              <option value="EUR">EUR</option>
-              <option value="EGP">EGP</option>
-              <option value="CK">CK</option>
-              <option value="CM">CM</option>
-              <option value="TKL">TKL</option>
-              <option value="LBD">LBD</option>
-              <option value="MCD">MCD</option>
-              <option value="LBP">LBP</option>
-              <option value="PLP">PLP</option>
-              <option value="SYP">SYP</option>
-              <option value="AL">AL</option>
-              <option value="Other">Other</option>
-            </select>
-          </label>
-        )}
+        {formik.values.salary &&
+          formik.values.salary !== "Prefer not to say" && (
+            <label className="block">
+              <span className="font-bold"> Currency: </span>
+              <select
+                name="currency"
+                value={formik.values.currency}
+                onChange={formik.handleChange}
+                className="border border-gray-300 px-4 py-2 rounded-md"
+              >
+                <option value="">Select...</option>
+                <option value="TND">TND</option>
+                <option value="EUR">EUR</option>
+                <option value="EGP">EGP</option>
+                <option value="CK">CK</option>
+                <option value="CM">CM</option>
+                <option value="TKL">TKL</option>
+                <option value="LBD">LBD</option>
+                <option value="MCD">MCD</option>
+                <option value="LBP">LBP</option>
+                <option value="PLP">PLP</option>
+                <option value="SYP">SYP</option>
+                <option value="AL">AL</option>
+                <option value="Other">Other</option>
+              </select>
+            </label>
+          )}
 
         {/* Custom Currency */}
         {formik.values.currency === "Other" && (
@@ -1702,6 +1716,7 @@ const Survey = () => {
             name="socialState"
             value={formik.values.socialState}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1711,7 +1726,7 @@ const Survey = () => {
             <option value="Divorced">Divorced</option>
             <option value="Widowed">Widowed</option>
           </select>
-          {formik.errors.socialState && (
+          {formik.touched.socialState && !formik.values.socialState && formik.errors.socialState && (
             <span className="text-red-500">{formik.errors.socialState}</span>
           )}
         </label>
@@ -1725,6 +1740,7 @@ const Survey = () => {
                 name="children"
                 value={formik.values.children}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 disabled={
                   formik.values.socialState === "Single" ||
                   formik.values.socialState === "Prefer not to say"
@@ -1735,7 +1751,7 @@ const Survey = () => {
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
-              {formik.errors.children && (
+              {formik.touched.children && !formik.values.children && formik.errors.children && (
                 <span className="text-red-500">{formik.errors.children}</span>
               )}
             </label>
@@ -1749,6 +1765,7 @@ const Survey = () => {
               name="childrenNumber"
               value={formik.values.childrenNumber}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               disabled={formik.values.children === "No"}
               className="border border-gray-300 px-4 py-2 rounded-md"
             >
@@ -1761,8 +1778,10 @@ const Survey = () => {
               <option value="Five">Five</option>
               <option value="More than five">More than five</option>
             </select>
-            {formik.errors.childrenNumber && (
-              <span className="text-red-500">{formik.errors.childrenNumber}</span>
+            {formik.touched.childrenNumber && !formik.values.childrenNumber && formik.errors.childrenNumber && (
+              <span className="text-red-500">
+                {formik.errors.childrenNumber}
+              </span>
             )}
           </label>
         )}
@@ -1811,6 +1830,7 @@ const Survey = () => {
               formik.handleChange(e);
               formik.setFieldValue("meat", []); // Clear meat selection on diet change
             }}
+            onBlur={formik.handleBlur}
             className="border border-gray-300 px-4 py-2 rounded-md w-full"
           >
             <option value="">Select...</option>
@@ -1823,7 +1843,7 @@ const Survey = () => {
             <option value="Religiously Observant">Religiously Observant</option>
             <option value="Other">Other</option>
           </select>
-          {formik.errors.diet && (
+          {formik.touched.diet && !formik.values.diet && formik.errors.diet && (
             <span className="text-red-500">{formik.errors.diet}</span>
           )}
         </label>
@@ -1861,7 +1881,9 @@ const Survey = () => {
         )}
 
         {/* Multi-Choice Meat Selection */}
-        {!["Vegan", "Vegetarian", "Fruitarian"].includes(formik.values.diet) && (
+        {!["Vegan", "Vegetarian", "Fruitarian"].includes(
+          formik.values.diet
+        ) && (
           <label className="block">
             <span className="font-bold mb-2 block">Meat:</span>
             <div
@@ -1883,17 +1905,19 @@ const Survey = () => {
                 <button
                   key={item}
                   type="button"
-                  className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.meat.includes(item)
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                    }`}
+                  className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
+                    formik.values.meat.includes(item)
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                  }`}
                   onClick={() => toggleSelection("meat", item)}
+                  onBlur={formik.handleBlur}
                 >
                   {item}
                 </button>
               ))}
             </div>
-            {formik.errors.meat && (
+            {formik.touched.meat && !formik.values.meat && formik.errors.meat && (
               <span className="text-red-500">{formik.errors.meat}</span>
             )}
           </label>
@@ -1944,17 +1968,19 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.fruits.includes(item)
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                  }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
+                  formik.values.fruits.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                }`}
                 onClick={() => toggleSelection("fruits", item)}
+                onBlur={formik.handleBlur}
               >
                 {item}
               </button>
             ))}
           </div>
-          {formik.errors.fruits && (
+          {formik.touched.fruits && !formik.values.fruits && formik.errors.fruits && (
             <span className="text-red-500">{formik.errors.fruits}</span>
           )}
         </label>
@@ -1982,6 +2008,7 @@ const Survey = () => {
               name="fruitUnitPerDay"
               value={formik.values.fruitUnitPerDay}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
@@ -1998,8 +2025,10 @@ const Survey = () => {
               <option value="Between 9-10">Between 9-10</option>
               <option value="Over 10">Over 10</option>
             </select>
-            {formik.errors.fruitUnitPerDay && (
-              <span className="text-red-500">{formik.errors.fruitUnitPerDay}</span>
+            {formik.touched.fruitUnitPerDay && !formik.values.fruitUnitPerDay && formik.errors.fruitUnitPerDay && (
+              <span className="text-red-500">
+                {formik.errors.fruitUnitPerDay}
+              </span>
             )}
           </label>
         )}
@@ -2034,17 +2063,19 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.vegetables.includes(item)
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                  }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
+                  formik.values.vegetables.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                }`}
                 onClick={() => toggleSelection("vegetables", item)}
+                onBlur={formik.handleBlur}
               >
                 {item}
               </button>
             ))}
           </div>
-          {formik.errors.vegetables && (
+          {formik.touched.vegetables && !formik.values.vegetables && formik.errors.vegetables && (
             <span className="text-red-500">{formik.errors.vegetables}</span>
           )}
         </label>
@@ -2072,6 +2103,7 @@ const Survey = () => {
               name="vegetableUnitPerDay"
               value={formik.values.vegetableUnitPerDay}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border border-gray-300 px-4 py-2 rounded-md"
             >
               <option value="">Select...</option>
@@ -2088,8 +2120,10 @@ const Survey = () => {
               <option value="Between 9-10">Between 9-10</option>
               <option value="Over 10">Over 10</option>
             </select>
-            {formik.errors.vegetableUnitPerDay && (
-              <span className="text-red-500">{formik.errors.vegetableUnitPerDay}</span>
+            {formik.touched.vegetableUnitPerDay && !formik.values.vegetableUnitPerDay && formik.errors.vegetableUnitPerDay && (
+              <span className="text-red-500">
+                {formik.errors.vegetableUnitPerDay}
+              </span>
             )}
           </label>
         )}
@@ -2126,10 +2160,11 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.fish.includes(item)
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                  }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
+                  formik.values.fish.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                }`}
                 onClick={() => toggleSelection("fish", item)}
               >
                 {item}
@@ -2186,10 +2221,11 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.dairy.includes(item)
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                  }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
+                  formik.values.dairy.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                }`}
                 onClick={() => toggleSelection("dairy", item)}
               >
                 {item}
@@ -2241,10 +2277,11 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.oil.includes(item)
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                  }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
+                  formik.values.oil.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                }`}
                 onClick={() => toggleSelection("oil", item)}
               >
                 {item}
@@ -2283,11 +2320,19 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center ${formik.values.homeMade.some((i) => i.name === item)
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
-                  }`}
-                onClick={() => toggleSelectionn("homeMade", item, formik.setFieldValue, formik.values)}
+                className={`px-4 py-2 border rounded-md text-center ${
+                  formik.values.homeMade.some((i) => i.name === item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
+                }`}
+                onClick={() =>
+                  toggleSelectionn(
+                    "homeMade",
+                    item,
+                    formik.setFieldValue,
+                    formik.values
+                  )
+                }
               >
                 {item}
               </button>
@@ -2308,7 +2353,9 @@ const Survey = () => {
                 placeholder="Custom Item"
                 className="border p-2 rounded-md w-full"
                 value={formik.values.customHomeMade || ""}
-                onChange={(e) => formik.setFieldValue("customHomeMade", e.target.value)}
+                onChange={(e) =>
+                  formik.setFieldValue("customHomeMade", e.target.value)
+                }
               />
             )}
 
@@ -2381,11 +2428,19 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center ${formik.values.ordered.some((i) => i.name === item)
+                className={`px-4 py-2 border rounded-md text-center ${
+                  formik.values.ordered.some((i) => i.name === item)
                     ? "bg-blue-500 text-white"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-200"
-                  }`}
-                onClick={() => toggleSelectionn("ordered", item, formik.setFieldValue, formik.values)}
+                }`}
+                onClick={() =>
+                  toggleSelectionn(
+                    "ordered",
+                    item,
+                    formik.setFieldValue,
+                    formik.values
+                  )
+                }
               >
                 {item}
               </button>
@@ -2405,10 +2460,11 @@ const Survey = () => {
                 placeholder="Custom Item"
                 className="border p-2 rounded-md w-full"
                 value={formik.values.customOrdered || ""}
-                onChange={(e) => formik.setFieldValue("customOrdered", e.target.value)}
+                onChange={(e) =>
+                  formik.setFieldValue("customOrdered", e.target.value)
+                }
               />
             )}
-
 
             {/* Consumption Selection */}
             {selectedItem.name !== "None" && (
@@ -2496,11 +2552,13 @@ const Survey = () => {
               <button
                 key={item}
                 type="button"
-                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${formik.values.medicalHistory.includes(item)
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
-                  }`}
+                className={`px-4 py-2 border rounded-md text-center transition-colors duration-200 ${
+                  formik.values.medicalHistory.includes(item)
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-900"
+                }`}
                 onClick={() => toggleSelection("medicalHistory", item)}
+                onBlur={formik.handleBlur}
               >
                 {item}
               </button>
@@ -2535,6 +2593,7 @@ const Survey = () => {
             name="traditionalEatingHabits"
             checked={formik.values.traditionalEatingHabits}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="mr-2"
           />
           Traditional Eating Habits
@@ -2547,12 +2606,13 @@ const Survey = () => {
             name="newEatingHabits"
             checked={formik.values.newEatingHabits}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             className="mr-2"
           />
           New Eating Habits
         </label>
 
-        {formik.errors.eatingHabits && (
+        {formik.touched.eatingHabits && !formik.values.eatingHabits && formik.errors.eatingHabits && (
           <span className="text-red-500">{formik.errors.eatingHabits}</span>
         )}
 
@@ -2582,7 +2642,7 @@ const Survey = () => {
         </label>
 
         {/* Error Message */}
-        {isError && (
+        {Object.keys(formik.errors).length > 0 && formik.submitCount > 0 && (
           <p className="text-red-500 mt-2">
             There was an error submitting the form. Please fill all fields.
           </p>
