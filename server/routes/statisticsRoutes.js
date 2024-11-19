@@ -19,6 +19,7 @@ const {
   getStatisticsAverageFruitIntake,
   getStatisticsAverageVegetableIntake,
   getStatisticsVegetarianVeganPercentage,
+  getParticipantsByState,
 } = require("../controllers/statisticsController");
 const { get } = require("mongoose");
 const router = express.Router();
@@ -35,6 +36,9 @@ router.get("/countryRepresentation", getCountryRepresentation);
 router.get("/socialStatus", getSocialStatus);
 router.get("/averageChildren", getAverageChildrenStatistics);
 router.get("/eatingHabits", getEatingHabitsStatistics);
+router.get("/participantsByState/:stateName", getParticipantsByState);
+
+
 // Health and Diet statistics
 router.get("/fruitStatsByCountry", getFruitStatisticsByCountry);
 router.get("/statisticsDiet", getStatisticsDiet);

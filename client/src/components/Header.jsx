@@ -83,6 +83,11 @@ const Header = () => {
                   About
                 </Nav.Link>
               </LinkContainer>
+              <LinkContainer to="/survey">
+                <Nav.Link className="text-white hidden md:inline">
+                  Survey
+                </Nav.Link>
+              </LinkContainer>
             </Nav>
           )}
 

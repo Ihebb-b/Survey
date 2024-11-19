@@ -419,6 +419,72 @@ const getFruitStatisticsByCountry = async (req, res) => {
 
 // Demographic statistics
 
+// const getParticipantsByState = async (req, res) => {
+//   try {
+//     const { stateName } = req.params;
+
+//     // Aggregate statistics for the given state
+//     const participants = await Survey.aggregate([
+//       { $match: { state: stateName } }, // Filter by state
+//       {
+//         $group: {
+//           _id: "$ville", // Group by ville
+//           count: { $sum: 1 }, // Count participants
+//         },
+//       },
+//     ]);
+
+//     // Respond with aggregated statistics
+//     res.status(200).json({
+//       state: stateName,
+//       totalParticipants: participants.reduce((sum, p) => sum + p.count, 0),
+//       details: participants,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to retrieve statistics" });
+//   }
+
+// }
+
+const getParticipantsByState = async (req, res) => {
+  try {
+    const { stateName } = req.params;
+
+    // Aggregate statistics for the given state
+    const participants = await Survey.aggregate([
+      { $match: { state: stateName } }, // Filter by state
+      {
+        $group: {
+          _id: "$ville", // Group by ville
+          count: { $sum: 1 }, // Count participants
+        },
+      },
+    ]);
+
+    // Calculate total participants and unique cities
+    const totalParticipants = participants.reduce((sum, p) => sum + p.count, 0);
+    const uniqueCities = participants.length;
+
+    // Prepare detailed statistics
+    const statistics = {
+      state: stateName,
+      totalParticipants,
+      uniqueCities,
+      details: participants.map(p => ({
+        city: p._id,
+        count: p.count,
+        percentage: ((p.count / totalParticipants) * 100).toFixed(2) + '%', // Percentage of total participants
+      })),
+    };
+
+    // Respond with aggregated statistics
+    res.status(200).json(statistics);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to retrieve statistics" });
+  }
+};
+
+
 const getGenderStatistics = async (req, res) => {
   try {
     const totalSurveys = await Survey.countDocuments();
@@ -809,4 +875,5 @@ module.exports = {
   getStatisticsAverageFruitIntake,
   getStatisticsAverageVegetableIntake,
   getStatisticsVegetarianVeganPercentage,
+  getParticipantsByState,
 };

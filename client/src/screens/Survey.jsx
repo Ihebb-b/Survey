@@ -2662,3 +2662,45 @@ const Survey = () => {
 };
 
 export default Survey;
+
+
+// import React from 'react'
+// import DynamicForm from '../components/Forms/DynamicForm'
+// import { formFields } from '../components/Forms/fields'
+// import FormView from '../components/Forms/FormView'
+// import { useCreateSurveyMutation } from '../slices/surveyApiSlice'
+// import { toast } from 'react-toastify'
+
+// const Survey = () => {
+
+//   const fields = formFields()
+//   const [createSurvey, { isLoading }] = useCreateSurveyMutation();
+
+
+//   const handleSubmit = async (values) => {
+//         try {
+//           const res = await createSurvey(values).unwrap();
+//           toast.success("Survey submitted successfully!");
+//           setTimeout(() => navigate("/"), 2000);
+//         } catch (err) {
+//           if (err && err.status) {
+//             console.error("Error Status:", err.status);
+//             console.error("Error Status Text:", err.statusText);
+//             console.error("Error Data:", err.data);
+//             toast.error(`Submission failed: ${err.statusText}`);
+//           } else {
+//             console.error("An unexpected error occurred:", err);
+//             toast.error("Submission failed due to an unexpected error.");
+//           }
+//         }
+//       };
+ 
+//   return (
+//     <FormView isLoading={isLoading} title="Survey">
+   
+//     {(saveRef) =>  <DynamicForm onSubmit={(values)=>handleSubmit(values)} saveRef={saveRef} formFields={fields}/>}
+//     </FormView>
+//   )
+// }
+
+// export default Survey
