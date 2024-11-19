@@ -10,6 +10,7 @@ const filterEmptyStrings = (data) => {
   return data;
 };
 
+// Survey's basic crud
 
 const createSurvey = async (req, res) => {
   try {

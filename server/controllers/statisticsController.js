@@ -1,5 +1,7 @@
 const Survey = require("../models/Survey");
 
+// Tries statistics
+
 const getStatistics = async (req, res) => {
   try {
     // Calculate the total number of surveys
@@ -100,8 +102,6 @@ const getPopularFoodChoices = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
 
 const getSurveyStatistics = async (req, res) => {
   try {

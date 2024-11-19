@@ -3,8 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetAllSuggestionsQuery } from "../slices/searchApiSlice";
 import { FaSearch, FaTimes } from "react-icons/fa";
-import backgroundImage from '../assets/background.jpg';
-
+import backgroundImage from "../assets/background.jpg";
 
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,20 +19,50 @@ const Hero = () => {
   useEffect(() => {
     if (searchQuery.trim() && allSuggestions) {
       const combinedSuggestions = [
+        ...(allSuggestions.name || []),
         ...(allSuggestions.gender || []),
+        ...(allSuggestions.state || []),
+        ...(allSuggestions.ville || []),
         ...(allSuggestions.country || []),
+        ...(allSuggestions.height || []),
+        ...(allSuggestions.weight || []),
         ...(allSuggestions.education || []),
-        ...(allSuggestions.ethnicity || []),
-        ...(allSuggestions.dietDescription || []),
-        ...(allSuggestions.household || []),
-        ...(allSuggestions.readyToEatFood || []),
-        ...(allSuggestions.weather || []),
+        ...(allSuggestions.occupation || []),
+        ...(allSuggestions.salary || []),
+        ...(allSuggestions.currency || []),
+        ...(allSuggestions.socialStatus || []),
+        ...(allSuggestions.diet || []),
+        ...(allSuggestions.meat || []),
+        ...(allSuggestions.fruit || []),
+        ...(allSuggestions.fruitUnitPerDay || []),
+        ...(allSuggestions.vegetable || []),
+        ...(allSuggestions.vegetableUnitPerDay || []),
+        ...(allSuggestions.religious || []),
+        ...(allSuggestions.fish || []),
+        ...(allSuggestions.dairy || []),
+        ...(allSuggestions.oil || []),
+        ...(allSuggestions.homeMade || []),
+        ...(allSuggestions.ordered || []),
         ...(allSuggestions.medicalHistory || []),
       ];
 
-      const filtered = combinedSuggestions.filter((suggestion) =>
-        suggestion?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      // const filtered = combinedSuggestions.filter((suggestion) =>
+      //   suggestion?.toLowerCase().includes(searchQuery.toLowerCase())
+      // );
+
+      // const filtered = combinedSuggestions.filter(
+      //   (suggestion) =>
+      //     typeof suggestion === "string" &&
+      //     suggestion.toLowerCase().includes(searchQuery.toLowerCase())
+      // );
+
+      const filtered = combinedSuggestions.filter((suggestion) => {
+        if (typeof suggestion === "string") {
+          return suggestion.toLowerCase().includes(searchQuery.toLowerCase());
+        }
+        return false;
+      });
+      
 
       setFilteredSuggestions(filtered);
     } else {
@@ -62,13 +91,15 @@ const Hero = () => {
   if (error) return <p>Error loading suggestions: {error.message}</p>;
 
   return (
-    <div className="py-12 bg-gray-100 rounded-lg" style={{
-      backgroundImage: `url(${backgroundImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-    }}
+    <div
+      className="py-12 bg-gray-100 rounded-lg"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
-      <div className="container mx-auto flex justify-center"  >
+      <div className="container mx-auto flex justify-center">
         <div className="p-10 bg-white/60 backdrop-blur-sm shadow-xl rounded-lg w-full md:w-2/3 lg:w-2/3">
           <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">
             Statistics Observatory

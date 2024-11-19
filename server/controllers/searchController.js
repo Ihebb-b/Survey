@@ -1,4 +1,7 @@
 const Survey = require("../models/Survey");
+const { getSocialStatus } = require("./statisticsController");
+
+
 
 const searchStatistics = async (req, res) => {
   const { query, page = 1, limit = 30 } = req.query; 
@@ -75,15 +78,30 @@ const getAllSuggestions = async (req, res) => {
     const suggestions = {
       name: await Survey.distinct("name"),
       gender: await Survey.distinct("gender"),
-      country: await Survey.distinct("country"),
+      age: await Survey.distinct("age"),
+      state: await Survey.distinct("state"),
+      ville: await Survey.distinct("ville"),
+      country: await Survey.distinct("country"),   
+      height: await Survey.distinct("height"),
+      weight: await Survey.distinct("weight"),
       education: await Survey.distinct("education"),
-      ethnicity: await Survey.distinct("ethnicity"),
-      dietDescription: await Survey.distinct("dietDescription"),
-      household: await Survey.distinct("household"),
-      readyToEatFood: await Survey.distinct("readyToEatFood"),
-      foodConsumptionFrequencyDietDescription: await Survey.distinct("foodConsumptionFrequency.dietDescription"),
-      weather: await Survey.distinct("weather"),
-      medicalHistory: await Survey.distinct("medicalHistory")
+      Occupation: await Survey.distinct("Occupation"),
+      salary: await Survey.distinct("salary"),
+      currency: await Survey.distinct("currency"),
+      socialStatus: await Survey.distinct("socialStatus"),
+      diet: await Survey.distinct("diet"),
+      meat: await Survey.distinct("meat"),
+      fruit: await Survey.distinct("fruit"),
+      fruitUnitPerDay: await Survey.distinct("fruitUnitPerDay"),
+      vegetable: await Survey.distinct("vegetable"),
+      vegetableUnitPerDay: await Survey.distinct("vegetableUnitPerDay"),
+      religious: await Survey.distinct("religious"),
+      fish: await Survey.distinct("fish"),
+      dairy: await Survey.distinct("dairy"),
+      oil: await Survey.distinct("oil"),
+      homeMade: await Survey.distinct("homeMade"),
+      ordered: await Survey.distinct("ordered"),
+      medicalHistory: await Survey.distinct("medicalHistory"),
     };
 
     res.status(200).json(suggestions);
