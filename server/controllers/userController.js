@@ -1,6 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const generateToken = require("../utils/generateToken");
+
+
 // @desc  Auth user/set token
 // route POST /api/users/auth
 // @access Public
@@ -21,6 +23,7 @@ const authUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid email or password");
   }
 });
+
 
 // @desc  Auth user/set token
 // route POST /api/users/register

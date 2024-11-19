@@ -5,7 +5,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import { useLogoutMutation } from "../slices/userApiSlice";
 import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../slices/authSlice";
-import logo from '../assets/logo.png';
+import logo from "../assets/logo.png";
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -28,22 +28,22 @@ const Header = () => {
     location.pathname === "/login" || location.pathname === "/register";
 
   return (
-    <header >
-      <Navbar
-        variant="dark"
-        className="header"
-      >
-        <Container fluid >
-          <LinkContainer to="/">       
-          <div className="flex items-center"> {/* Added a div to wrap the image and brand */}
-          <img
-            alt="MMD Statistica Logo"
-            style={{ width: "40px", height: "40px", marginLeft: "5px", backgroundImage: `url(${logo})`}} // Adjust width, height, and spacing as needed
-          />
-          <Navbar.Brand className="text-lg text-white sm:text-xl md:text-2xl">
-            Statistics Observatory
-          </Navbar.Brand>
-        </div>
+    <header>
+      <Navbar variant="dark" className="header">
+        <Container fluid>
+          <LinkContainer to="/">
+            <div className="flex items-center">
+              {" "}
+              
+              <img
+                alt="MMD Statistica Logo"
+                src={logo} 
+                style={{ width: "40px", height: "40px", marginLeft: "5px", marginRight: "5px" }} // Adjust width, height, and spacing
+              />
+              <Navbar.Brand className="text-lg text-white sm:text-xl md:text-2xl font-bold">
+                MMD Statistica
+              </Navbar.Brand>
+            </div>
           </LinkContainer>
 
           {!isAuthPage && (
@@ -52,27 +52,27 @@ const Header = () => {
                 <Nav.Link className="text-white">Statistics</Nav.Link>
                 <div className="absolute hidden group-hover:block bg-white shadow-lg rounded-md p-2 mt-1 w-64 sm:w-72 md:w-80 lg:w-96 z-50">
                   <LinkContainer to="/statistics/demographic-statistics">
-                    <NavDropdown.Item className="p-2 hover:bg-white rounded">
+                    <NavDropdown.Item className="nav-item">
                       Demographic Statistics
                     </NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to="/statistics/health-diet">
-                    <NavDropdown.Item className="p-2 hover:bg-white rounded">
+                    <NavDropdown.Item className="nav-item">
                       Health and Diet-Related Statistics
                     </NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to="/statistics/economic-and-social">
-                    <NavDropdown.Item className="p-2 hover:bg-white rounded">
+                    <NavDropdown.Item className="nav-item">
                       Economic and Social Statistics
                     </NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to="/statistics/dietary-preferences">
-                    <NavDropdown.Item className="p-2 hover:bg-white rounded">
+                    <NavDropdown.Item className="nav-item">
                       Dietary Preferences and Frequency
                     </NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to="/statistics/nutritional-insights">
-                    <NavDropdown.Item className="p-2 hover:bg-white rounded">
+                    <NavDropdown.Item className="nav-item">
                       Nutritional Insights
                     </NavDropdown.Item>
                   </LinkContainer>

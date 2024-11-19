@@ -6,6 +6,7 @@ import { FaSearch, FaTimes } from "react-icons/fa";
 import backgroundImage from '../assets/background.jpg';
 import backgroundImage2 from '../assets/background2.jpg';
 import chartsBackground2 from '../assets/chartsBackground2.jpg';
+import ImageGallery from "./ImageGallery";
 
 
 
@@ -101,10 +102,11 @@ const Hero = () => {
       backgroundPosition: 'center',
     }}
     >
+      <div className="flex-container">
       <div className="container2"  >
         <div className="container3">
           <h1 className="hero-title"> 
-            Statistics Observatory
+            MM.Diet Statistics Observatory
           </h1>
           <p className="phrase">
             Search and explore diet-related statistics across various
@@ -172,6 +174,10 @@ const Hero = () => {
           </div>
         </div>
       </div>
+      <div className="container4">
+         <ImageGallery/>
+          </div>
+          </div>
     </div>
   );
 };
