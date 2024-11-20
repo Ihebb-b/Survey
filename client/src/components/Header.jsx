@@ -32,25 +32,26 @@ const Header = () => {
       <Navbar variant="dark" className="header">
         <Container fluid>
           <LinkContainer to="/">
-            <div className="flex items-center">
-              {" "}
-              
+            <Navbar.Brand className="logo">
               <img
                 alt="MMD Statistica Logo"
-                src={logo} 
-                style={{ width: "40px", height: "40px", marginLeft: "5px", marginRight: "5px" }} // Adjust width, height, and spacing
+                src={logo}
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  marginLeft: "5px",
+                  marginRight: "5px",
+                }}
               />
-              <Navbar.Brand className="text-lg text-white sm:text-xl md:text-2xl font-bold">
-                MMD Statistica
-              </Navbar.Brand>
-            </div>
+              MMD Statistica
+            </Navbar.Brand>
           </LinkContainer>
 
           {!isAuthPage && (
             <Nav className="flex items-center space-x-2 sm:space-x-4 md:space-x-6 lg:space-x-8 mx-auto">
               <div className="relative group hidden sm:block">
-                <Nav.Link className="text-white">Statistics</Nav.Link>
-                <div className="absolute hidden group-hover:block bg-white shadow-lg rounded-md p-2 mt-1 w-64 sm:w-72 md:w-80 lg:w-96 z-50">
+                <Nav.Link className="nav-link">Statistics &#x25BE;</Nav.Link>
+                <div className="custom-dropdown-nav">
                   <LinkContainer to="/statistics/demographic-statistics">
                     <NavDropdown.Item className="nav-item">
                       Demographic Statistics
@@ -80,17 +81,17 @@ const Header = () => {
               </div>
 
               <LinkContainer to="/reports">
-                <Nav.Link className="text-white hidden sm:inline">
+                <Nav.Link className="nav-link hidden sm:inline">
                   Reports
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/about">
-                <Nav.Link className="text-white hidden md:inline">
+                <Nav.Link className="nav-link hidden md:inline">
                   About
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/survey">
-                <Nav.Link className="text-white hidden md:inline">
+                <Nav.Link className="nav-link hidden md:inline">
                   Survey
                 </Nav.Link>
               </LinkContainer>
@@ -102,18 +103,20 @@ const Header = () => {
               <NavDropdown
                 title={userInfo.name}
                 id="username"
-                className="hidden sm:inline text-white"
+                className="hidden sm:inline"
               >
                 <LinkContainer to="/profile">
-                  <NavDropdown.Item>Profile</NavDropdown.Item>
+                  <NavDropdown.Item className="nav-item">Profile</NavDropdown.Item>
                 </LinkContainer>
-                <NavDropdown.Item onClick={logoutHandler}>
+                <NavDropdown.Item className="nav-item" onClick={logoutHandler}>
                   Logout
                 </NavDropdown.Item>
               </NavDropdown>
+              
+             
             ) : (
               <LinkContainer to="/login">
-                <Nav.Link className="text-white">
+                <Nav.Link >
                   <FaSignInAlt className="inline-block mr-1" /> Sign In
                 </Nav.Link>
               </LinkContainer>

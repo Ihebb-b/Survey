@@ -14,11 +14,11 @@ import chartsBackground2 from '../assets/chartsBackground2.jpg';
 const ImageGallery = () => {
   const images = [
     diet1,
-    diet2,
-    diet3,
-    diet4,
-    diet5,
+    diet2,   
     diet6,
+    diet4,
+    diet5,  
+    diet3,
   ];
 
   return (

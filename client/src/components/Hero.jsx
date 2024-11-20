@@ -113,8 +113,8 @@ const Hero = () => {
             demographics.
           </p>
 
-          <div className="flex justify-center mb-4">
-            <div className="relative w-full max-w-lg">
+          <div className="d-flex mb-4">
+            <div className="relative w-full max-w-3xl">
               <FaSearch className="search-icon" />
               <input
                 ref={inputRef}
@@ -127,24 +127,25 @@ const Hero = () => {
 
               {filteredSuggestions.length > 0 && (
                 <FaTimes
-                  className="absolute right-28 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                  className="close-icon"
                   onClick={() => setSearchQuery("")}
                 />
               )}
 
               <button
                 onClick={handleSearch}
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 py-2 px-4 bg-gray-600 rounded text-white shadow hover:bg-indigo-700 transition duration-300"
+                className="custom-btn"
+              
               >
                 Search
               </button>
 
               {filteredSuggestions.length > 0 && (
-                <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-2 max-h-80 overflow-y-auto">
+                <ul className="suggestions-list">
                   {filteredSuggestions.slice(0, 50).map((suggestion, index) => (
                     <li
                       key={index}
-                      className="px-4 py-2 hover:bg-indigo-500 hover:text-white cursor-pointer"
+                      className="suggestion-dropdown-item"
                       onClick={() => handleSuggestionClick(suggestion)}
                     >
                       {suggestion}
@@ -155,18 +156,18 @@ const Hero = () => {
             </div>
           </div>
 
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <div className="mt-10 flex flex-wrap justify-center gap-2">
             {[
               "Sport practicing",
               "Healthiest foods",
               "Pizza consumed",
-              "Weather and foods",
-              "Stay slim",
-              "Or not",
+              "Climate and foods",
+              "Gender distribution",
+              "Traditional foods",
             ].map((filter, index) => (
               <button
                 key={index}
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition duration-300"
+                className=" custom-btn  text-white rounded transition duration-300"
               >
                 {filter}
               </button>
