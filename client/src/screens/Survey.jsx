@@ -1367,7 +1367,7 @@ const Survey = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-6 bg-gray-300 shadow-md rounded-lg">
+    <div className="  max-w-4xl mx-auto mt-24 p-6 bg-gray-300 shadow-md rounded-lg">
       <h2 className="text-2xl font-bold text-center mb-6">Survey Form</h2>
       <form onSubmit={formik.handleSubmit} className="space-y-4">
         {/* Name */}
