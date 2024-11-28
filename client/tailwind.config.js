@@ -14,6 +14,7 @@ export default {
       },
       colors: {
         'custom-bg': '#000000',
+        'custom-bg2' : '#FDFEFE',
         'jet': 'hsl(0, 0%, 20%)',
         'white': 'hsl(0, 0%, 100%)',
         'black': 'hsl(0, 0%, 0%)',

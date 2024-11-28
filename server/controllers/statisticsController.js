@@ -849,11 +849,612 @@ const getPhysicalActivityRatio = async (req, res) => {
   }
 };
 
+//Economic Statistics
+
+
+const getAverageFoodExpenditure = async (req, res) => {
+  try {
+    // Retrieve query parameters for filtering (e.g., region or state)
+    const { state, ville, country } = req.query;
+
+    // Build query filter dynamically based on query parameters
+    const filter = {};
+    if (state) filter.state = state;
+    if (ville) filter.ville = ville;
+    if (country) filter.country = country;
+
+    // Fetch all users matching the filter
+    const users = await Survey.find(filter);
+
+    if (users.length === 0) {
+      return res.json({ message: "No users found for the specified filter." });
+    }
+
+    // Assume expenditure data is derived from diet and consumption patterns
+    const totalExpenditure = users.reduce((total, user) => {
+      // Example calculations (adjust based on your actual model)
+      const fruitCost = parseInt(user.fruitUnitPerDay.split(' ')[1]) * 30 * 0.5; // $0.5 per fruit unit
+      const vegetableCost = parseInt(user.vegetableUnitPerDay.split(' ')[1]) * 30 * 0.3; // $0.3 per vegetable unit
+
+      const userExpenditure = fruitCost + vegetableCost ;
+      return total + userExpenditure;
+    }, 0);
+
+    // Calculate average expenditure
+    const averageExpenditure = totalExpenditure / users.length;
+
+    res.json({
+      averageMonthlyExpenditure: averageExpenditure.toFixed(2),
+      totalUsers: users.length,
+      state,
+      ville,
+      country,
+    });
+  } catch (error) {
+    console.error("Error calculating average food expenditure:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getIncomeDistribution = async (req, res) => {
+  try {
+    // Fetch all users
+    const users = await Survey.find();
+
+    if (users.length === 0) {
+      return res.json({ message: "No users found." });
+    }
+
+    // Initialize counters for each income level
+    const incomeLevels = {
+      low: 0, // "Less than 1000" and "Between 1000-2000"
+      middle: 0, // "Between 2000-3000", "Between 3000-4000", "Between 4000-5000"
+      high: 0, // "Over 5000"
+      undisclosed: 0, // "Prefer not to say"
+    };
+
+    // Categorize users by salary
+    users.forEach((user) => {
+      switch (user.salary) {
+        case "Less than 1000":
+        case "Between 1000-2000":
+          incomeLevels.low++;
+          break;
+        case "Between 2000-3000":
+        case "Between 3000-4000":
+        case "Between 4000-5000":
+          incomeLevels.middle++;
+          break;
+        case "Over 5000":
+          incomeLevels.high++;
+          break;
+        case "Prefer not to say":
+        default:
+          incomeLevels.undisclosed++;
+          break;
+      }
+    });
+
+    // Calculate total users
+    const totalUsers = users.length;
+
+    // Convert to percentage distribution
+    const incomeDistribution = {
+      low: ((incomeLevels.low / totalUsers) * 100).toFixed(2),
+      middle: ((incomeLevels.middle / totalUsers) * 100).toFixed(2),
+      high: ((incomeLevels.high / totalUsers) * 100).toFixed(2),
+      undisclosed: ((incomeLevels.undisclosed / totalUsers) * 100).toFixed(2),
+    };
+
+    res.json({
+      totalUsers,
+      incomeDistribution,
+      counts: incomeLevels, // Optional: Return counts along with percentages
+    });
+  } catch (error) {
+    console.error("Error calculating income distribution:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getIncomeDietCorrelation = async (req, res) => {
+  try {
+    // Fetch all users
+    const users = await Survey.find();
+
+    if (users.length === 0) {
+      return res.json({ message: "No users found." });
+    }
+
+    // Initialize counters for each income level
+    const incomeLevels = {
+      low: { count: 0, totalDietDiversity: 0 }, // To store the count and total diet diversity score for 'low' income users
+      middle: { count: 0, totalDietDiversity: 0 }, // 'middle' income
+      high: { count: 0, totalDietDiversity: 0 }, // 'high' income
+      undisclosed: { count: 0, totalDietDiversity: 0 }, // For users who prefer not to disclose income
+    };
+
+    // Function to calculate the diet diversity score for each user
+    const calculateDietDiversity = (user) => {
+      let diversityScore = 0;
+
+      // Count the number of food items in each category
+      diversityScore += user.fruits ? user.fruits.length : 0;
+      diversityScore += user.vegetables ? user.vegetables.length : 0;
+      diversityScore += user.meat ? user.meat.length : 0;
+      diversityScore += user.dairy ? user.dairy.length : 0;
+      diversityScore += user.fish ? user.fish.length : 0;
+      diversityScore += user.oil ? user.oil.length : 0;
+      diversityScore += user.homeMade ? user.homeMade.length : 0;
+      // Add custom categories if needed
+
+      return diversityScore;
+    };
+
+    // Categorize users by income and calculate their diet diversity
+    users.forEach((user) => {
+      const dietDiversityScore = calculateDietDiversity(user);
+
+      // Categorize user by income
+      switch (user.salary) {
+        case "Less than 1000":
+        case "Between 1000-2000":
+          incomeLevels.low.count++;
+          incomeLevels.low.totalDietDiversity += dietDiversityScore;
+          break;
+        case "Between 2000-3000":
+        case "Between 3000-4000":
+        case "Between 4000-5000":
+          incomeLevels.middle.count++;
+          incomeLevels.middle.totalDietDiversity += dietDiversityScore;
+          break;
+        case "Over 5000":
+          incomeLevels.high.count++;
+          incomeLevels.high.totalDietDiversity += dietDiversityScore;
+          break;
+        case "Prefer not to say":
+        default:
+          incomeLevels.undisclosed.count++;
+          incomeLevels.undisclosed.totalDietDiversity += dietDiversityScore;
+          break;
+      }
+    });
+
+    // Calculate average diet diversity score for each income group
+    const incomeDistribution = {
+      low: incomeLevels.low.count ? (incomeLevels.low.totalDietDiversity / incomeLevels.low.count).toFixed(2) : 0,
+      middle: incomeLevels.middle.count ? (incomeLevels.middle.totalDietDiversity / incomeLevels.middle.count).toFixed(2) : 0,
+      high: incomeLevels.high.count ? (incomeLevels.high.totalDietDiversity / incomeLevels.high.count).toFixed(2) : 0,
+      undisclosed: incomeLevels.undisclosed.count ? (incomeLevels.undisclosed.totalDietDiversity / incomeLevels.undisclosed.count).toFixed(2) : 0,
+    };
+
+    res.json({
+      incomeDistribution,
+      counts: {
+        low: incomeLevels.low.count,
+        middle: incomeLevels.middle.count,
+        high: incomeLevels.high.count,
+        undisclosed: incomeLevels.undisclosed.count,
+      },
+    });
+  } catch (error) {
+    console.error("Error calculating income and diet diversity correlation:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getEatingOutVsCooking = async (req, res) => {
+  try {
+    // Fetch all users from the database
+    const users = await Survey.find();
+
+    if (users.length === 0) {
+      return res.json({ message: "No users found." });
+    }
+
+    // Initialize counters for eating out vs. cooking at home frequency
+    const homeMadeFrequency = {
+      everyday: 0,
+      twoToThreeTimes: 0,
+      oneToTwoTimes: 0,
+      rarely: 0,
+      never: 0,
+    };
+
+    const orderedFrequency = {
+      everyday: 0,
+      twoToThreeTimes: 0,
+      oneToTwoTimes: 0,
+      rarely: 0,
+      never: 0,
+    };
+
+    const homeMadeSpending = {
+      low: 0,  // Less than 200
+      medium: 0,  // 200-500
+      high: 0,  // More than 500
+    };
+
+    const orderedSpending = {
+      low: 0,  // Less than 200
+      medium: 0,  // 200-500
+      high: 0,  // More than 500
+    };
+
+    // Iterate through users to classify them based on their consumption and spending patterns
+    users.forEach((user) => {
+      // Classify home-made meal frequency and budget
+      user.homeMade.forEach((meal) => {
+        if (meal.name !== "None") {
+          // Classify frequency of home-made meals
+          switch (meal.consumption) {
+            case "Every Day":
+              homeMadeFrequency.everyday++;
+              break;
+            case "2-3 Times a Week":
+              homeMadeFrequency.twoToThreeTimes++;
+              break;
+            case "1-2 Times a Week":
+              homeMadeFrequency.oneToTwoTimes++;
+              break;
+            case "Rarely":
+              homeMadeFrequency.rarely++;
+              break;
+            case "Never":
+              homeMadeFrequency.never++;
+              break;
+            default:
+              break;
+          }
+
+          // Classify spending on home-made meals
+          switch (meal.budget) {
+            case "Less than 100":
+            case "100-200":
+              homeMadeSpending.low++;
+              break;
+            case "200-300":
+            case "300-400":
+            case "400-500":
+              homeMadeSpending.medium++;
+              break;
+            case "500-600":
+            case "600-700":
+            case "700-800":
+            case "800-900":
+            case "900-1000":
+            case "More than 1000":
+              homeMadeSpending.high++;
+              break;
+            default:
+              break;
+          }
+        }
+      });
+
+      // Classify ordered meal frequency and budget
+      user.ordered.forEach((meal) => {
+        if (meal.name !== "None") {
+          // Classify frequency of ordered meals
+          switch (meal.consumption) {
+            case "Every Day":
+              orderedFrequency.everyday++;
+              break;
+            case "2-3 Times a Week":
+              orderedFrequency.twoToThreeTimes++;
+              break;
+            case "1-2 Times a Week":
+              orderedFrequency.oneToTwoTimes++;
+              break;
+            case "Rarely":
+              orderedFrequency.rarely++;
+              break;
+            case "Never":
+              orderedFrequency.never++;
+              break;
+            default:
+              break;
+          }
+
+          // Classify spending on ordered meals
+          switch (meal.budget) {
+            case "Less than 100":
+            case "100-200":
+              orderedSpending.low++;
+              break;
+            case "200-300":
+            case "300-400":
+            case "400-500":
+              orderedSpending.medium++;
+              break;
+            case "500-600":
+            case "600-700":
+            case "700-800":
+            case "800-900":
+            case "900-1000":
+            case "More than 1000":
+              orderedSpending.high++;
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    });
+
+    // Calculate percentage distribution for homeMade and ordered frequencies
+    const totalUsers = users.length;
+
+    const homeMadeDistribution = {
+      everyday: ((homeMadeFrequency.everyday / totalUsers) * 100).toFixed(2),
+      twoToThreeTimes: ((homeMadeFrequency.twoToThreeTimes / totalUsers) * 100).toFixed(2),
+      oneToTwoTimes: ((homeMadeFrequency.oneToTwoTimes / totalUsers) * 100).toFixed(2),
+      rarely: ((homeMadeFrequency.rarely / totalUsers) * 100).toFixed(2),
+      never: ((homeMadeFrequency.never / totalUsers) * 100).toFixed(2),
+    };
+
+    const orderedDistribution = {
+      everyday: ((orderedFrequency.everyday / totalUsers) * 100).toFixed(2),
+      twoToThreeTimes: ((orderedFrequency.twoToThreeTimes / totalUsers) * 100).toFixed(2),
+      oneToTwoTimes: ((orderedFrequency.oneToTwoTimes / totalUsers) * 100).toFixed(2),
+      rarely: ((orderedFrequency.rarely / totalUsers) * 100).toFixed(2),
+      never: ((orderedFrequency.never / totalUsers) * 100).toFixed(2),
+    };
+
+    const spendingPatternDistribution = {
+      homeMadeLow: ((homeMadeSpending.low / totalUsers) * 100).toFixed(2),
+      homeMadeMedium: ((homeMadeSpending.medium / totalUsers) * 100).toFixed(2),
+      homeMadeHigh: ((homeMadeSpending.high / totalUsers) * 100).toFixed(2),
+      orderedLow: ((orderedSpending.low / totalUsers) * 100).toFixed(2),
+      orderedMedium: ((orderedSpending.medium / totalUsers) * 100).toFixed(2),
+      orderedHigh: ((orderedSpending.high / totalUsers) * 100).toFixed(2),
+    };
+
+    // Return the calculated distributions as a response
+    res.json({
+      homeMadeDistribution,
+      orderedDistribution,
+      spendingPatternDistribution,
+      counts: {
+        homeMadeFrequency,
+        orderedFrequency,
+        homeMadeSpending,
+        orderedSpending,
+      },
+    });
+  } catch (error) {
+    console.error("Error calculating eating out vs cooking at home statistics:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const calculateActivityDietCorrelation = async (req, res) => {
+  try {
+    // Fetch all users
+    const users = await Survey.find();
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'No users found' });
+    }
+
+    // Initialize counters for each diet type and physical activity status
+    const correlationData = {
+      Crudism: { yes: 0, no: 0 },
+      Fruitarian: { yes: 0, no: 0 },
+      Vegetarian: { yes: 0, no: 0 },
+      Vegan: { yes: 0, no: 0 },
+      Flexitarian: { yes: 0, no: 0 },
+      NoDiet: { yes: 0, no: 0 },
+      ReligiouslyObservant: { yes: 0, no: 0 },
+      Other: { yes: 0, no: 0 },
+    };
+
+    // Categorize users by diet type and physical activity status
+    users.forEach((user) => {
+      const { diet, physicalActivity } = user;
+      if (correlationData[diet]) {
+        correlationData[diet][physicalActivity]++;
+      }
+    });
+
+    // Calculate total users for each diet type
+    const dietCounts = Object.keys(correlationData).reduce((acc, diet) => {
+      const totalDietUsers = correlationData[diet].yes + correlationData[diet].no;
+      acc[diet] = totalDietUsers;
+      return acc;
+    }, {});
+
+    // Convert counts to percentages for each diet type
+    const correlationPercentages = Object.keys(correlationData).reduce((acc, diet) => {
+      const totalDietUsers = dietCounts[diet];
+      const yesPercentage = ((correlationData[diet].yes / totalDietUsers) * 100).toFixed(2);
+      const noPercentage = ((correlationData[diet].no / totalDietUsers) * 100).toFixed(2);
+      acc[diet] = {
+        yes: yesPercentage,
+        no: noPercentage,
+      };
+      return acc;
+    }, {});
+
+    res.json({
+      totalUsers: users.length,
+      dietCounts, // Total users for each diet type
+      correlationPercentages, // Percentage of physical activity ("yes" or "no") for each diet type
+      counts: correlationData, // Raw counts for each diet and activity combination
+    });
+  } catch (error) {
+    console.error('Error calculating correlation:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const calculateFastFoodConsumptionFrequency = async (req, res) => {
+  try {
+    // Fetch all user surveys
+    const users = await Survey.find();
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
+
+    // Initialize counters for each consumption frequency
+    const frequencyData = {
+      "Every Day": 0,
+      "2-3 Times a Week": 0,
+      "1-2 Times a Week": 0,
+      "1-2 Times a Month": 0,
+      "Rarely": 0,
+      "Never": 0,
+    };
+
+    // Iterate through each user's ordered items
+    users.forEach((user) => {
+      user.ordered.forEach((item) => {
+        const { name, consumption } = item;
+
+        // Only consider valid fast food items
+        if (
+          [
+            "Pizza",
+            "Sandwiches",
+            "Burgers",
+            "Wraps",
+            "Paninis",
+            "Mlewi",
+            "Chappati",
+            "Manakish",
+            "Lahmacun",
+            "Koshari",
+            "Other",
+          ].includes(name) &&
+          frequencyData[consumption] !== undefined
+        ) {
+          frequencyData[consumption]++;
+        }
+      });
+    });
+
+    // Calculate total occurrences and percentages
+    const totalOrders = Object.values(frequencyData).reduce((sum, count) => sum + count, 0);
+
+    const frequencyPercentages = Object.keys(frequencyData).reduce((acc, frequency) => {
+      const count = frequencyData[frequency];
+      const percentage = ((count / totalOrders) * 100).toFixed(2);
+      acc[frequency] = percentage;
+      return acc;
+    }, {});
+
+    // Respond with calculated statistics
+    res.json({
+      totalUsers: users.length,
+      totalOrders,
+      counts: frequencyData, // Raw counts for each consumption frequency
+      percentages: frequencyPercentages, // Percentages for each frequency
+    });
+  } catch (error) {
+    console.error("Error calculating fast food consumption frequency:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Dietary preferences Statistics
+const getDietAgeCorrelation = async (req, res) => {
+  try {
+    const users = await Survey.find({}, { diet: 1, age: 1 });
+
+    // Defined age groups
+    const ageGroups = [
+      "Between 1-10 years",
+      "Between 10-18 years",
+      "Between 19-25 years",
+      "Between 26-29 years",
+      "Between 30-39 years",
+      "Between 40-49 years",
+      "Between 50-59 years",
+      "Between 60-69 years",
+      "Over 70 years",
+    ];
+
+    // Initialize statistics structure
+    const correlation = {};
+    ageGroups.forEach((ageGroup) => {
+      correlation[ageGroup] = {};
+    });
+
+    // Populate statistics
+    users.forEach((user) => {
+      const { age, diet } = user;
+
+      if (!correlation[age][diet]) {
+        correlation[age][diet] = 0;
+      }
+      correlation[age][diet]++;
+    });
+
+    // Format data for frontend
+    const formattedData = ageGroups.map((ageGroup) => ({
+      ageGroup,
+      diets: correlation[ageGroup],
+    }));
+
+    res.status(200).json({
+      totalUsers: users.length,
+      correlation: formattedData,
+    });
+  } catch (error) {
+    console.error("Error calculating diet-age correlation:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 
 
+const getPizza =  async (req, res) => {
+  try {
+    // Aggregate pizza consumption statistics by country
+    const pizzaStatsByVille = await Survey.aggregate([
+      {
+        $project: {
+          homeMadePizza: {
+            $in: ["Home Made Pizza", "$homeMade.name"], // Check if "Home Made Pizza" is in the homeMade array
+          },
+          orderedPizza: {
+            $in: ["Pizza", "$ordered.name"], // Check if "Pizza" is in the ordered array
+          },
+          ville: 1, // Include the ville field
+        },
+      },
+      {
+        $group: {
+          _id: "$ville", // Group by ville
+          pizzaCount: {
+            $sum: {
+              $cond: [
+                { $or: ["$homeMadePizza", "$orderedPizza"] },
+                1,
+                0,
+              ],
+            },
+          },
+        },
+      },
+      {
+        $sort: { pizzaCount: -1 }, // Sort by pizzaCount in descending order
+      },
+    ]);
 
+    // Return the result as an array of objects with ville and pizza count
+    const result = pizzaStatsByVille.map((item) => ({
+      ville: item._id,
+      pizzaConsumptionCount: item.pizzaCount || 0, // Pizza consumption count (0 if no pizza consumed in the country)
+    }));
 
+    return res.json(result); // Return pizza consumption statistics by country
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Error calculating pizza consumption statistics by country." });
+  }
+};
 
 module.exports = {
   getStatistics,
@@ -876,4 +1477,13 @@ module.exports = {
   getStatisticsAverageVegetableIntake,
   getStatisticsVegetarianVeganPercentage,
   getParticipantsByState,
+  getAverageFoodExpenditure,
+  getIncomeDistribution,
+  getIncomeDietCorrelation,
+  getEatingOutVsCooking,
+  calculateActivityDietCorrelation,
+  calculateFastFoodConsumptionFrequency,
+  getDietAgeCorrelation,
+  getPizza,
+
 };

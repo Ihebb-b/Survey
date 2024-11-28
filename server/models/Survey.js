@@ -1417,6 +1417,8 @@ const surveySchema = new Schema({
   physicalActivity: { type: String, enum: ["yes", "no"] },
 });
 
+{ timestamps: true }
+
 surveySchema.pre("validate", function (next) {
   if (!this.state) {
     return next(new Error("State is required"));

@@ -17,7 +17,7 @@ const DemographicStatistics = () => {
 
   return (
     <>
-      <h1 className="text-4xl mt-20 font-bold text-center text-white mb-6">
+      <h1 className="text-4xl mt-24 font-bold text-center text-black mb-6">
         Demographic Statistics
       </h1>
 

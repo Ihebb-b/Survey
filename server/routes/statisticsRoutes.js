@@ -20,15 +20,27 @@ const {
   getStatisticsAverageVegetableIntake,
   getStatisticsVegetarianVeganPercentage,
   getParticipantsByState,
+  getAverageFoodExpenditure,
+  getIncomeDistribution,
+  getIncomeDietCorrelation,
+  getEatingOutVsCooking,
+  calculateActivityDietCorrelation,
+  calculateFastFoodConsumptionFrequency,
+  getDietAgeCorrelation,
+  getPizza,
 } = require("../controllers/statisticsController");
 const { get } = require("mongoose");
 const router = express.Router();
+
+
 // General statistics
 router.get("/stats", getStatistics);
 router.get("/dietDistribution", getDietDistribution);
 router.get("/popularFoodChoices", getPopularFoodChoices);
 router.get("/surveyStats", getSurveyStatistics);
 router.get("/matchingSurveys", getMatchingSurveys);
+
+
 // Demographic statistics
 router.get("/genderStats", getGenderStatistics);
 router.get("/age-group", getAgeGroupDistribution);
@@ -48,6 +60,23 @@ router.get("/statisticsVegetarianVeganPercentage", getStatisticsVegetarianVeganP
 router.get("/medicalHistory", getMedicalHistoryStatistics);
 router.get("/medicalHistorySport", getMedicalHistorySportStatistics);
 router.get("/physicalRatio", getPhysicalActivityRatio);
+
+// Economic and Social statistics
+router.get("/averageFoodExpenditure", getAverageFoodExpenditure);
+router.get("/incomeDistribution", getIncomeDistribution);
+router.get("/incomeDietCorrelation", getIncomeDietCorrelation);
+router.get("/eatingOutVsCooking", getEatingOutVsCooking);
+router.get("/calculateActivityDietCorrelation", calculateActivityDietCorrelation);
+router.get("/calculateFastFoodConsumptionFrequency", calculateFastFoodConsumptionFrequency);
+
+//Dietary preferences statistics
+
+router.get("/dietAgeCorrelation", getDietAgeCorrelation);
+
+
+
+// In generl now
+router.get("/pizza", getPizza);
 
 
 module.exports = router;

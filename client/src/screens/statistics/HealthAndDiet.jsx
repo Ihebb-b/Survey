@@ -19,7 +19,7 @@ const HealthAndDiet = () => {
 
   return (
     <>
-      <h1 className="text-4xl font-bold text-center mt-20 text-white mb-6">
+      <h1 className="text-4xl font-bold text-center mt-24 text-black mb-6">
         Health Diet Statistics
       </h1>
 
